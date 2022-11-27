@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "99359749947",
+    "project_id": "c5waitermobileclient",
+    "storage_bucket": "c5waitermobileclient.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:99359749947:android:c6f75f78ae3e67f0ca691e",
+        "android_client_info": {
+          "package_name": "com.breezedevs.cafe5_shop_mobile_client"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "99359749947-vl6nf7o5bjq1ncslttkfnh09ue6vtlo7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-NJYM2ZjV_OOp-uSfSTOrxMjpWLqOekg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "99359749947-vl6nf7o5bjq1ncslttkfnh09ue6vtlo7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
