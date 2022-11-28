@@ -1,6 +1,11 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
+
+List<String> dbCreate = [
+  "create table currency (id integer primary key, name text)",
+];
+
 class Db {
   static Database? db;
 
@@ -12,7 +17,7 @@ class Db {
             db.execute(s);
           }
         }, onUpgrade: (db, oldVersion, newVersion) {
-          List<String> oldTable = ["halls", "tables", "dish_part1", "dish_part2", "dish", "car_model", "dish_menu", "dish_comment"];
+          List<String> oldTable = ["currency"];
           for (String t in oldTable) {
             try {
               db.execute("drop table $t");
@@ -23,7 +28,7 @@ class Db {
           for (String s in createList) {
             db.execute(s);
           }
-        }, version: 33)
+        }, version: 34)
             .then((value) => db = value);
       });
     }

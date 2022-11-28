@@ -1,12 +1,13 @@
-import 'dart:io';
 import 'dart:typed_data';
-import 'package:cafe5_shop_mobile_client/translator.dart';
-import 'package:flutter/cupertino.dart';
-import 'client_socket_interface.dart';
-import 'client_socket.dart';
-import 'package:flutter/material.dart';
+
 import 'package:cafe5_shop_mobile_client/socket_message.dart';
+import 'package:cafe5_shop_mobile_client/translator.dart';
 import 'package:cafe5_shop_mobile_client/widget_choose_settings.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
+import 'package:cafe5_shop_mobile_client/client_socket.dart';
+import 'package:cafe5_shop_mobile_client/client_socket_interface.dart';
 
 abstract class BaseWidgetState<T extends StatefulWidget> extends State<T> with WidgetsBindingObserver implements SocketInterface {
 

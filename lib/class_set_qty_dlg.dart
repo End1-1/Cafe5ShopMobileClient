@@ -2,8 +2,6 @@ import 'package:cafe5_shop_mobile_client/class_outlinedbutton.dart';
 import 'package:cafe5_shop_mobile_client/translator.dart';
 import 'package:flutter/material.dart';
 
-import 'class_dish_comment.dart';
-
 class ClassSetQtyDlg {
   static Future<double?> getQty(BuildContext context, String msg) async {
     return showDialog<double?>(

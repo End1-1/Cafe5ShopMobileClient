@@ -86,13 +86,12 @@ class WidgetChooseSettingsState extends BaseWidgetState<WidgetChooseSettings> {
                   onPressed: ()  {
                     FlutterBarcodeScanner.scanBarcode('#ff6666', 'Cancel', true, ScanMode.QR).then((barcodeScanRes) {
                       List<String> params = barcodeScanRes.split(";");
-                      if (params.length >= 6) {
+                      if (params.length >= 5) {
                         Config.setString(key_server_address, params[0]);
                         Config.setString(key_server_port, params[1]);
                         Config.setString(key_server_username, params[2]);
                         Config.setString(key_server_password, params[3]);
                         Config.setString(key_database_name, params[4]);
-                        Config.setInt(key_protocol_version, int.tryParse(params[5])!);
                         ClientSocket.init(Config.getString(key_server_address), int.tryParse(Config.getString(key_server_port)) ?? 0);
                       }
                     });},

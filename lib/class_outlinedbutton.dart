@@ -31,4 +31,20 @@ class ClassOutlinedButton {
             },
             child: Image.asset(img, width: w, height: h)));
   }
+
+  static Widget createTextAndImage(Function f, String text, String img, {double h = 36, double w = 200}) {
+    return Container(
+      width: w,
+      height: h,
+      margin: const EdgeInsets.only(left:3, right: 3),
+        child: OutlinedButton(
+            style: OutlinedButton.styleFrom(
+              padding: const EdgeInsets.all(2),
+            ),
+            onPressed: () {
+              f();
+            },
+            child: Align(alignment: Alignment.center, child: Row(children: [ Image.asset(img, width: h, height: h), const VerticalDivider(width: 20,), Text(text)])))
+    );
+  }
 }

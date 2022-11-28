@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:cafe5_shop_mobile_client/config.dart';
 
 class SocketMessage {
   static const int c_hello = 1;
@@ -10,32 +9,11 @@ class SocketMessage {
   static const int c_dllplugin = 11;
 
   static const int op_login = 1;
-  static const int op_get_hall_list = 2;
-  static const int op_get_table_list = 3;
-  static const int op_get_dish_part1_list = 4;
-  static const int op_get_dish_part2_list = 5;
-  static const int op_get_dish_dish_list = 6;
-  static const int op_login_pashhash = 7;
-  static const int op_open_table = 8;
-  static const int op_unlock_table = 9;
-  static const int op_car_model = 10;
-  static const int op_search_licenseplate = 11;
-  static const int op_create_header = 12;
-  static const int op_set_car = 13;
-  static const int op_open_order = 14;
-  static const int op_get_car = 15;
-  static const int op_dish_menu = 16;
-  static const int op_add_dish_to_order = 17;
-  static const int op_remove_dish_from_order = 18;
-  static const int op_modify_order_dish = 19;
-  static const int op_print_service = 20;
-  static const int op_login_pin = 21;
-  static const int op_update_tables = 22;
-  static const int op_get_dish_comments = 23;
-  static const int op_print_bill = 24;
-  static const int op_ready_dishes = 25;
+  static const int op_login_pashhash = 2;
+  static const int op_check_qty = 3;
+  static const int op_data_currency_list = 4;
 
-  static const String waiterclientp = "8b90e61a-1385-4fb4-85ce-f23849045e69";
+  static const String shopclientp = "0afc8abf-95d2-48d9-bc34-358714715d60";
 
   late BytesBuilder buffer;
   int messageId;
@@ -168,9 +146,8 @@ class SocketMessage {
   static SocketMessage dllplugin(int op) {
     print("new socketmessage $c_dllplugin : $op");
     SocketMessage m = SocketMessage(messageId: messageNumber(), command: c_dllplugin);
-    m.addString(waiterclientp);
+    m.addString(shopclientp);
     m.addInt(op);
-    m.addByte(Config.getInt(key_protocol_version));
     return m;
   }
 }
