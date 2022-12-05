@@ -12,6 +12,7 @@ class SocketMessage {
   static const int op_login_pashhash = 2;
   static const int op_check_qty = 3;
   static const int op_data_currency_list = 4;
+  static const int op_data_currency_crossrate_list = 5;
 
   static const String shopclientp = "0afc8abf-95d2-48d9-bc34-358714715d60";
 

@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:cafe5_shop_mobile_client/base_widget.dart';
 import 'package:cafe5_shop_mobile_client/class_currency.dart';
+import 'package:cafe5_shop_mobile_client/class_currency_crossrate.dart';
 import 'package:cafe5_shop_mobile_client/class_outlinedbutton.dart';
 import 'package:cafe5_shop_mobile_client/config.dart';
 import 'package:cafe5_shop_mobile_client/network_table.dart';
@@ -97,6 +98,24 @@ class WidgetHomeState extends BaseWidgetState with TickerProviderStateMixin {
             b.delete("currency");
             for (int i = 0; i < nt.rowCount; i++) {
               b.insert("currency", {'id': nt.getRawData(i, 0), 'name': nt.getRawData(i, 1)});
+            }
+            await b.commit();
+          });
+
+          setState(() {
+            _progressString = tr("Loading list of currencies cross rates");
+          });
+          m = SocketMessage.dllplugin(SocketMessage.op_data_currency_crossrate_list);
+          sendSocketMessage(m);
+          break;
+        case SocketMessage.op_data_currency_crossrate_list:
+          NetworkTable nt = NetworkTable();
+          nt.readFromSocketMessage(m);
+          await Db.db!.transaction((txn) async {
+            Batch b = txn.batch();
+            b.delete("currency_crossrate");
+            for (int i = 0; i < nt.rowCount; i++) {
+              b.insert("currency_crossrate", {'id': nt.getRawData(i, 0), 'curr1': nt.getRawData(i, 1), 'curr2': nt.getRawData(i, 2), 'rate': nt.getRawData(i, 3)});
             }
             await b.commit();
           });
@@ -341,10 +360,18 @@ class WidgetHomeState extends BaseWidgetState with TickerProviderStateMixin {
 
   void _initData() async {
     await Db.query("currency").then((map) {
-      CurrencyList.list.clear();
+      Currency.list.clear();
       List.generate(map.length, (i) {
         Currency c = Currency(id: map[i]["id"], name: map[i]["name"]);
-        CurrencyList.list.add(c);
+        Currency.list.add(c);
+      });
+    });
+
+    await Db.query("currency_crossrate").then((map) {
+      CurrencyCrossRate.data.clear();
+      List.generate(map.length, (i) {
+        CurrencyCrossRate c = CurrencyCrossRate(id: map[i]["id"], curr1: map[i]["curr1"], curr2: map[i]["curr2"], rate: map[i]["rate"]);
+        CurrencyCrossRate.data.add(c);
       });
     });
   }

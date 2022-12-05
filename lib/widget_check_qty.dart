@@ -5,9 +5,12 @@ import 'package:cafe5_shop_mobile_client/base_widget.dart';
 import 'package:cafe5_shop_mobile_client/class_outlinedbutton.dart';
 import 'package:cafe5_shop_mobile_client/socket_message.dart';
 import 'package:cafe5_shop_mobile_client/translator.dart';
+import 'package:cafe5_shop_mobile_client/widget_datatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+
+import 'package:cafe5_shop_mobile_client/network_table.dart';
 
 class WidgetCheckQty extends StatefulWidget {
   const WidgetCheckQty({super.key});
@@ -21,6 +24,7 @@ class WidgetCheckQty extends StatefulWidget {
 class WidgetCheckQtyState extends BaseWidgetState<WidgetCheckQty> {
 
   final TextEditingController _barcodeController = TextEditingController();
+  NetworkTable _ntData = NetworkTable();
 
   @override
   void handler(Uint8List data) async {
@@ -38,6 +42,11 @@ class WidgetCheckQtyState extends BaseWidgetState<WidgetCheckQty> {
         return;
       }
       switch (op) {
+        case SocketMessage.op_check_qty:
+          setState((){
+            _ntData.readFromSocketMessage(m);
+          });
+          break;
       }
     }
   }
@@ -66,7 +75,10 @@ class WidgetCheckQtyState extends BaseWidgetState<WidgetCheckQty> {
                 ClassOutlinedButton.createImage(_search, "images/search.png"),
                 ClassOutlinedButton.createImage(_readBarcode, "images/barcode.png")
               ]),
-
+              const Divider(),
+              Expanded(
+                child: WidgetNetworkDataTable(networkTable: _ntData,)
+              )
             ])));
   }
 
@@ -76,6 +88,7 @@ class WidgetCheckQtyState extends BaseWidgetState<WidgetCheckQty> {
     }
     SocketMessage m = SocketMessage.dllplugin(SocketMessage.op_check_qty);
     m.addString(_barcodeController.text);
+    m.addInt(1);
     sendSocketMessage(m);
   }
 
