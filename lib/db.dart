@@ -5,6 +5,8 @@ import 'package:path/path.dart';
 List<String> dbCreate = [
   "create table currency (id integer primary key, name text)",
   "create table currency_crossrate (id integer primary key, curr1 int, curr2 int, rate real)",
+  "create table goods (id integer primary key, groupid integer, name text, barcode text)",
+  "create table goods_pricelist (goods integer, currencyid integer, price1 real, price2 real)"
 ];
 
 class Db {
@@ -18,7 +20,7 @@ class Db {
             db.execute(s);
           }
         }, onUpgrade: (db, oldVersion, newVersion) {
-          List<String> oldTable = ["currency", "currency_crossrate"];
+          List<String> oldTable = ["currency", "currency_crossrate", "goods", "goods_pricelist"];
           for (String t in oldTable) {
             try {
               db.execute("drop table $t");

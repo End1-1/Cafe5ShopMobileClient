@@ -3,6 +3,7 @@ import 'package:cafe5_shop_mobile_client/config.dart';
 import 'package:cafe5_shop_mobile_client/translator.dart';
 import 'package:cafe5_shop_mobile_client/base_widget.dart';
 import 'package:cafe5_shop_mobile_client/widget_check_qty.dart';
+import 'package:cafe5_shop_mobile_client/widget_order.dart';
 import 'package:flutter/material.dart';
 
 import 'home_page.dart';
@@ -35,6 +36,8 @@ class WidgetMainState extends BaseWidgetState<WidgetMain> {
                 ]),
               const Divider(height: 20, thickness: 2, color: Colors.black26),
                 Align(alignment: Alignment.center, child: ClassOutlinedButton.createTextAndImage(_checkQty, tr("Check quantity"), "images/quantity.png" , w: 300)),
+                const Divider(height: 30,),
+                Align(alignment: Alignment.center, child: ClassOutlinedButton.createTextAndImage(_newOrder, tr("New order"), "images/quantity.png" , w: 300)),
                 const Divider(height: 30,)
               ]),
           _menu()])
@@ -52,6 +55,10 @@ class WidgetMainState extends BaseWidgetState<WidgetMain> {
 
   void _checkQty() {
     Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => const WidgetCheckQty()));
+  }
+
+  void _newOrder() {
+    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => WidgetOrder(uuid: '',)));
   }
 
   Widget _menu() {

@@ -12,20 +12,20 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 import 'package:cafe5_shop_mobile_client/network_table.dart';
 
-class WidgetCheckQty extends StatefulWidget {
-  const WidgetCheckQty({super.key});
+class WidgetOrder extends StatefulWidget {
+  String uuid;
+  WidgetOrder({super.key, required this.uuid});
 
   @override
   State<StatefulWidget> createState() {
-    return WidgetCheckQtyState();
+    return WidgetOrderState();
   }
 }
 
-class WidgetCheckQtyState extends BaseWidgetState<WidgetCheckQty> {
+class WidgetOrderState extends BaseWidgetState<WidgetOrder> {
 
   final TextEditingController _barcodeController = TextEditingController();
-  final NetworkTable _ntData = NetworkTable();
-  String _name = "";
+  bool _searchVisible = false;
 
   @override
   void handler(Uint8List data) async {
@@ -43,12 +43,7 @@ class WidgetCheckQtyState extends BaseWidgetState<WidgetCheckQty> {
         return;
       }
       switch (op) {
-        case SocketMessage.op_check_qty:
-          setState((){
-            _ntData.readFromSocketMessage(m);
-            _name = m.getString();
-          });
-          break;
+
       }
     }
   }
@@ -62,25 +57,23 @@ class WidgetCheckQtyState extends BaseWidgetState<WidgetCheckQty> {
               Row(children: [
                 Expanded(child: ClassOutlinedButton.createTextAndImage(() {
                   Navigator.pop(context);
-                }, tr("Check quantity"), "images/back.png", w: null)),
+                }, tr("Order"), "images/back.png", w: null)),
+                ClassOutlinedButton.createImage(_addGoods, "images/plus.png"),
+                ClassOutlinedButton.createImage(_showMenu, "images/menu.png"),
               ]),
               const Divider(height: 20, thickness: 2, color: Colors.black26),
-              Row(children: [
-                Expanded(child:
-              Form(child: Container(
-                margin: const EdgeInsets.only(right: 3),
-                  child: TextFormField(
-                controller: _barcodeController,
-              )))),
+              Visibility(visible: _searchVisible, child: Row(children: [
+                Expanded(child: Container(
+                    margin: const EdgeInsets.only(right: 3),
+                    child: TextFormField(
+                      controller: _barcodeController,
+                    ))),
                 ClassOutlinedButton.createImage((){_barcodeController.clear();}, "images/cancel.png"),
                 ClassOutlinedButton.createImage(_search, "images/search.png"),
                 ClassOutlinedButton.createImage(_readBarcode, "images/barcode.png")
-              ]),
+              ])),
               const Divider(),
-              Text(_name),
-              Expanded(
-                child: WidgetNetworkDataTable(networkTable: _ntData,)
-              )
+
             ])));
   }
 
@@ -100,6 +93,16 @@ class WidgetCheckQtyState extends BaseWidgetState<WidgetCheckQty> {
         _barcodeController.text = barcodeScanRes;
         _search();
       }
+    });
+  }
+
+  void _showMenu() {
+
+  }
+
+  void _addGoods() {
+    setState(() {
+      _searchVisible = true;
     });
   }
 }

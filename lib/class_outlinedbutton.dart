@@ -32,9 +32,9 @@ class ClassOutlinedButton {
             child: Image.asset(img, width: w, height: h)));
   }
 
-  static Widget createTextAndImage(Function f, String text, String img, {double h = 36, double w = 200}) {
+  static Widget createTextAndImage(Function f, String text, String img, {double h = 36, double? w = 200}) {
     return Container(
-      width: w,
+      width: w ?? double.infinity,
       height: h,
       margin: const EdgeInsets.only(left:3, right: 3),
         child: OutlinedButton(
