@@ -10,6 +10,8 @@ const Map<String, String> vals = {
   'logout':'Ելք',
   'confirm to logout': 'Հաստատեք ելքը',
   'check quantity': 'Ստուգել առկայությունը',
+  'create new sale': 'Նոր վաճառք',
+  'sale document': 'Վաճառքի փասթաթուղթ'
 };
 
 String tr(String s) {
