@@ -24,7 +24,8 @@ class WidgetCheckQty extends StatefulWidget {
 class WidgetCheckQtyState extends BaseWidgetState<WidgetCheckQty> {
 
   final TextEditingController _barcodeController = TextEditingController();
-  NetworkTable _ntData = NetworkTable();
+  final NetworkTable _ntData = NetworkTable();
+  String _name = "";
 
   @override
   void handler(Uint8List data) async {
@@ -45,6 +46,7 @@ class WidgetCheckQtyState extends BaseWidgetState<WidgetCheckQty> {
         case SocketMessage.op_check_qty:
           setState((){
             _ntData.readFromSocketMessage(m);
+            _name = m.getString();
           });
           break;
       }
@@ -58,24 +60,24 @@ class WidgetCheckQtyState extends BaseWidgetState<WidgetCheckQty> {
             minimum: const EdgeInsets.only(left: 5, right: 5, bottom: 5, top: 35),
             child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [
-                ClassOutlinedButton.createTextAndImage(() {
+                Expanded(child: ClassOutlinedButton.createTextAndImage(() {
                   Navigator.pop(context);
-                }, tr("Check quantity"), "images/back.png", w: 300),
-                Expanded(child: Container()),
+                }, tr("Check quantity"), "images/back.png", w: null)),
               ]),
               const Divider(height: 20, thickness: 2, color: Colors.black26),
               Row(children: [
-              Container(
+                Expanded(child:
+              Form(child: Container(
                 margin: const EdgeInsets.only(right: 3),
-                  width: 250,
                   child: TextFormField(
                 controller: _barcodeController,
-              )),
+              )))),
                 ClassOutlinedButton.createImage((){_barcodeController.clear();}, "images/cancel.png"),
                 ClassOutlinedButton.createImage(_search, "images/search.png"),
                 ClassOutlinedButton.createImage(_readBarcode, "images/barcode.png")
               ]),
               const Divider(),
+              Text(_name),
               Expanded(
                 child: WidgetNetworkDataTable(networkTable: _ntData,)
               )
@@ -94,8 +96,10 @@ class WidgetCheckQtyState extends BaseWidgetState<WidgetCheckQty> {
 
   void _readBarcode() {
     FlutterBarcodeScanner.scanBarcode('#ff6666', 'Cancel', true, ScanMode.BARCODE).then((barcodeScanRes) {
-      _barcodeController.text = barcodeScanRes;
-      _search();
+      if (barcodeScanRes != "-1") {
+        _barcodeController.text = barcodeScanRes;
+        _search();
+      }
     });
   }
 }

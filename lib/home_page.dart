@@ -4,6 +4,7 @@ import 'package:cafe5_shop_mobile_client/base_widget.dart';
 import 'package:cafe5_shop_mobile_client/class_currency.dart';
 import 'package:cafe5_shop_mobile_client/class_currency_crossrate.dart';
 import 'package:cafe5_shop_mobile_client/class_outlinedbutton.dart';
+import 'package:cafe5_shop_mobile_client/class_sale_goods.dart';
 import 'package:cafe5_shop_mobile_client/config.dart';
 import 'package:cafe5_shop_mobile_client/network_table.dart';
 import 'package:cafe5_shop_mobile_client/socket_message.dart';
@@ -116,6 +117,42 @@ class WidgetHomeState extends BaseWidgetState with TickerProviderStateMixin {
             b.delete("currency_crossrate");
             for (int i = 0; i < nt.rowCount; i++) {
               b.insert("currency_crossrate", {'id': nt.getRawData(i, 0), 'curr1': nt.getRawData(i, 1), 'curr2': nt.getRawData(i, 2), 'rate': nt.getRawData(i, 3)});
+            }
+            await b.commit();
+          });
+
+          setState(() {
+            _progressString = tr("Loading list of goods");
+          });
+          m = SocketMessage.dllplugin(SocketMessage.op_get_goods_list);
+          sendSocketMessage(m);
+          break;
+        case SocketMessage.op_get_goods_list:
+          NetworkTable nt = NetworkTable();
+          nt.readFromSocketMessage(m);
+          await Db.db!.transaction((txn) async {
+            Batch b = txn.batch();
+            b.delete("goods");
+            for (int i = 0; i < nt.rowCount; i++) {
+              b.insert("goods", {'id': nt.getRawData(i, 0), 'groupid': nt.getRawData(i, 1), 'name': nt.getRawData(i, 2), 'barcode': nt.getRawData(i, 3)});
+            }
+            await b.commit();
+          });
+
+          setState(() {
+            _progressString = tr("Loading list of goods prices");
+          });
+          m = SocketMessage.dllplugin(SocketMessage.op_goods_prices);
+          sendSocketMessage(m);
+          break;
+        case SocketMessage.op_goods_prices:
+          NetworkTable nt = NetworkTable();
+          nt.readFromSocketMessage(m);
+          await Db.db!.transaction((txn) async {
+            Batch b = txn.batch();
+            b.delete("goods_pricelist");
+            for (int i = 0; i < nt.rowCount; i++) {
+              b.insert("goods_pricelist", {'goods': nt.getRawData(i, 0), 'currencyid': nt.getRawData(i, 1), 'price1': nt.getRawData(i, 2), 'price2': nt.getRawData(i, 3)});
             }
             await b.commit();
           });
@@ -372,6 +409,18 @@ class WidgetHomeState extends BaseWidgetState with TickerProviderStateMixin {
       List.generate(map.length, (i) {
         CurrencyCrossRate c = CurrencyCrossRate(id: map[i]["id"], curr1: map[i]["curr1"], curr2: map[i]["curr2"], rate: map[i]["rate"]);
         CurrencyCrossRate.data.add(c);
+      });
+    });
+
+    await Db.rawQuery("select gp.goods, gp.currencyid, g.name, g.barcode, gp.price1, gp.price2 "
+                      "from goods_pricelist gp "
+                      "left join goods g on g.id=gp.goods "
+                      "order by g.name ").then((map) {
+      CurrencyCrossRate.data.clear();
+      List.generate(map.length, (i) {
+       SaleGoods s = SaleGoods(goods: map[i]["goods"], currency: map[i]["currencyid"], name: map[i]["name"], barcode: map[i]["barcode"],
+                    price1: map[i]["price1"], price2: map[i]["price2"]);
+       SaleGoods.list.add(s);
       });
     });
   }

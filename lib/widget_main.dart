@@ -1,12 +1,12 @@
 import 'package:cafe5_shop_mobile_client/class_outlinedbutton.dart';
 import 'package:cafe5_shop_mobile_client/config.dart';
+import 'package:cafe5_shop_mobile_client/home_page.dart';
 import 'package:cafe5_shop_mobile_client/translator.dart';
 import 'package:cafe5_shop_mobile_client/base_widget.dart';
 import 'package:cafe5_shop_mobile_client/widget_check_qty.dart';
 import 'package:cafe5_shop_mobile_client/widget_sale.dart';
+import 'package:cafe5_shop_mobile_client/widget_sale_drafts.dart';
 import 'package:flutter/material.dart';
-
-import 'home_page.dart';
 
 class WidgetMain extends StatefulWidget {
   const WidgetMain({super.key});
@@ -38,6 +38,8 @@ class WidgetMainState extends BaseWidgetState<WidgetMain> {
                 Align(alignment: Alignment.center, child: ClassOutlinedButton.createTextAndImage(_checkQty, tr("Check quantity"), "images/quantity.png" , w: 300)),
                 const Divider(height: 30,),
                 Align(alignment: Alignment.center, child: ClassOutlinedButton.createTextAndImage(_createNewSale, tr("Create new sale"), "images/quantity.png" , w: 300)),
+                const Divider(height: 30,),
+                Align(alignment: Alignment.center, child: ClassOutlinedButton.createTextAndImage(_showDrafts, tr("Drafts"), "images/quantity.png" , w: 300)),
                 const Divider(height: 30,)
               ]),
           _menu()])
@@ -58,7 +60,15 @@ class WidgetMainState extends BaseWidgetState<WidgetMain> {
   }
 
   void _createNewSale() {
-    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => WidgetSaleDocument(saleUuid: "")));
+    sq(tr("Create new sale document?"), (){
+      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => WidgetSaleDocument(saleUuid: "")));
+    }, (){
+
+    });
+  }
+
+  void _showDrafts() {
+    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => const WidgetSaleDrafts()));
   }
 
   Widget _menu() {

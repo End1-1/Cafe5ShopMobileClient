@@ -33,12 +33,12 @@ class WidgetNetworkDataTableState extends State<WidgetNetworkDataTable> {
     List<Widget> l = [];
     if (index == 0) {
       for (int i = 0; i < widget.networkTable.columnCount; i++) {
-        l.add(Container(padding: const EdgeInsets.only(left: 2), width: 100, height: 30, decoration: BoxDecoration(border: Border.all()), child: Text(widget.networkTable.columnName(i))));
+        l.add(Container(padding: const EdgeInsets.only(left: 2), width: 100, height: 30, decoration: BoxDecoration(border: Border.all()), child: Text(overflow: TextOverflow.ellipsis, widget.networkTable.columnName(i))));
       }
     } else {
       for (int i = 0; i < widget.networkTable.columnCount; i++) {
-        Color color = _currentIndex == index - 1 ? const Color(0x00a3a3a2) : const Color(0x00ffffff);
-        l.add(Container(padding: const EdgeInsets.only(left: 2), width: 100, height: 30, decoration: BoxDecoration(color: color, border: Border.all()), child: Text(widget.networkTable.getDisplayData(index - 1, i))));
+        Color color = _currentIndex == index - 1 ? const Color(0x00a3a3a2) : const Color(0x00fff00);
+        l.add(Container(padding: const EdgeInsets.only(left: 2), width: 100, height: 30, decoration: BoxDecoration(color: color, border: Border.all()), child: Text(overflow: TextOverflow.ellipsis, widget.networkTable.getDisplayData(index - 1, i))));
       }
     }
     return l;

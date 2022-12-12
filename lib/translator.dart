@@ -11,7 +11,12 @@ const Map<String, String> vals = {
   'confirm to logout': 'Հաստատեք ելքը',
   'check quantity': 'Ստուգել առկայությունը',
   'create new sale': 'Նոր վաճառք',
-  'sale document': 'Վաճառքի փասթաթուղթ'
+  'sale document': 'Վաճառքի փասթաթուղթ',
+  'new order': 'Նոր պատվեր',
+  'order': 'Պատվեր',
+  'currency':'Փոխարժեք',
+  'create new sale document?' : 'Ստեղծել՞ նոր վաճառքի փասթաթուղթ',
+  'drafts':'Սևագրեր'
 };
 
 String tr(String s) {

@@ -13,6 +13,11 @@ class SocketMessage {
   static const int op_check_qty = 3;
   static const int op_data_currency_list = 4;
   static const int op_data_currency_crossrate_list = 5;
+  static const int op_get_goods_list = 6;
+  static const int op_goods_prices = 7;
+  static const int op_create_empty_sale = 8;
+  static const int op_open_sale_document = 9;
+  static const int op_show_drafts_sale = 10;
 
   static const String shopclientp = "0afc8abf-95d2-48d9-bc34-358714715d60";
 
