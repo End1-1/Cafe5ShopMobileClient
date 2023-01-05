@@ -9,4 +9,5 @@ class SaleGoods {
   SaleGoods({required this.goods, required this.currency, required this.name, required this.barcode, required this.price1, required this.price2});
 
   static List<SaleGoods> list = [];
+  static Map<int, String> names = {};
 }

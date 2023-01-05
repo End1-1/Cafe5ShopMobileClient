@@ -16,7 +16,11 @@ const Map<String, String> vals = {
   'order': 'Պատվեր',
   'currency':'Փոխարժեք',
   'create new sale document?' : 'Ստեղծել՞ նոր վաճառքի փասթաթուղթ',
-  'drafts':'Սևագրեր'
+  'drafts':'Սևագրեր',
+  'retail': 'Մանրածախ',
+  'whosale': 'Մեծածախ',
+  'price':'Գին',
+  'Confirm to remove row': 'Հաստատեք տողի հեռացումը'
 };
 
 String tr(String s) {

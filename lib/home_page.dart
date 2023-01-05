@@ -4,6 +4,7 @@ import 'package:cafe5_shop_mobile_client/base_widget.dart';
 import 'package:cafe5_shop_mobile_client/class_currency.dart';
 import 'package:cafe5_shop_mobile_client/class_currency_crossrate.dart';
 import 'package:cafe5_shop_mobile_client/class_outlinedbutton.dart';
+import 'package:cafe5_shop_mobile_client/class_price_type.dart';
 import 'package:cafe5_shop_mobile_client/class_sale_goods.dart';
 import 'package:cafe5_shop_mobile_client/config.dart';
 import 'package:cafe5_shop_mobile_client/network_table.dart';
@@ -421,8 +422,12 @@ class WidgetHomeState extends BaseWidgetState with TickerProviderStateMixin {
        SaleGoods s = SaleGoods(goods: map[i]["goods"], currency: map[i]["currencyid"], name: map[i]["name"], barcode: map[i]["barcode"],
                     price1: map[i]["price1"], price2: map[i]["price2"]);
        SaleGoods.list.add(s);
+       SaleGoods.names[s.goods] = s.name;
       });
     });
+
+    PriceType.list.add(PriceType(id: 1, name: tr("Retail")));
+    PriceType.list.add(PriceType(id: 2, name: tr("Whosale")));
   }
 
 }

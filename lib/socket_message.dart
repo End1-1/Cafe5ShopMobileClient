@@ -16,8 +16,10 @@ class SocketMessage {
   static const int op_get_goods_list = 6;
   static const int op_goods_prices = 7;
   static const int op_create_empty_sale = 8;
-  static const int op_open_sale_document = 9;
-  static const int op_show_drafts_sale = 10;
+  static const int op_open_sale_draft_document = 9;
+  static const int op_show_drafts_sale_list = 10;
+  static const int op_add_goods_to_draft = 11;
+  static const int op_open_sale_draft_body = 12;
 
   static const String shopclientp = "0afc8abf-95d2-48d9-bc34-358714715d60";
 

@@ -10,6 +10,7 @@ import 'package:cafe5_shop_mobile_client/network_table.dart';
 import 'package:cafe5_shop_mobile_client/socket_message.dart';
 import 'package:cafe5_shop_mobile_client/translator.dart';
 import 'package:cafe5_shop_mobile_client/widget_datatable.dart';
+import 'package:cafe5_shop_mobile_client/widget_sale.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
@@ -23,9 +24,9 @@ class WidgetSaleDrafts extends StatefulWidget {
   }
 }
 
-class WidgetSaleDraftsSate extends BaseWidgetState<WidgetSaleDrafts> {
+class WidgetSaleDraftsSate extends BaseWidgetState<WidgetSaleDrafts> implements WidgetNetDataTableRowClick {
   final NetworkTable _ntData = NetworkTable();
-
+  final List<double> _columnWidths = [0, 100, 100, 100];
 
   @override
   void handler(Uint8List data) async {
@@ -43,8 +44,10 @@ class WidgetSaleDraftsSate extends BaseWidgetState<WidgetSaleDrafts> {
         return;
       }
       switch (op) {
-        case SocketMessage.op_create_empty_sale:
-
+        case SocketMessage.op_show_drafts_sale_list:
+          setState(() {
+            _ntData.readFromSocketMessage(m);
+          });
           break;
       }
     }
@@ -52,8 +55,31 @@ class WidgetSaleDraftsSate extends BaseWidgetState<WidgetSaleDrafts> {
 
   @override
   void initState() {
-      SocketMessage m = SocketMessage.dllplugin(SocketMessage.op_show_drafts_sale);
-      sendSocketMessage(m);
+    super.initState();
+    SocketMessage m = SocketMessage.dllplugin(SocketMessage.op_show_drafts_sale_list);
+    sendSocketMessage(m);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        SocketMessage m = SocketMessage.dllplugin(SocketMessage.op_show_drafts_sale_list);
+        sendSocketMessage(m);
+        break;
+
+      case AppLifecycleState.inactive:
+        print('app inactive');
+        break;
+
+      case AppLifecycleState.paused:
+
+        break;
+
+      case AppLifecycleState.detached:
+        print('app deatched');
+        break;
+    }
   }
 
   @override
@@ -71,7 +97,13 @@ class WidgetSaleDraftsSate extends BaseWidgetState<WidgetSaleDrafts> {
                 // ClassOutlinedButton.createImage(_showMainMenu, "images/menu.png")
               ]),
               const Divider(height: 20, thickness: 2, color: Colors.black26),
+              WidgetNetworkDataTable(networkTable: _ntData, columnWidths: _columnWidths, onRowClick: this,)
               ])
             ])));
+  }
+
+  @override
+  void onRowClick(data) {
+    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => WidgetSaleDocument(saleUuid: data)));
   }
 }

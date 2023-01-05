@@ -12,6 +12,7 @@ const key_use_this_hall_id = "key_use_this_hall_id";
 const key_data_dont_update = "key_data_dont_update";
 const key_firebase_token = "key_firebase_token";
 const key_local_currency_id = "key_local_currency_id";
+const key_local_price_type = "key_local_price_type";
 
 final RegExp regex = RegExp(r'([.]*0)(?!.*\d)');
 String num(double x) {
