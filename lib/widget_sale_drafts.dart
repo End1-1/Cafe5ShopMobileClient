@@ -67,15 +67,11 @@ class WidgetSaleDraftsSate extends BaseWidgetState<WidgetSaleDrafts> implements 
         SocketMessage m = SocketMessage.dllplugin(SocketMessage.op_show_drafts_sale_list);
         sendSocketMessage(m);
         break;
-
       case AppLifecycleState.inactive:
         print('app inactive');
         break;
-
       case AppLifecycleState.paused:
-
         break;
-
       case AppLifecycleState.detached:
         print('app deatched');
         break;

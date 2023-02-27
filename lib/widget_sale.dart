@@ -224,7 +224,7 @@ class WidgetSaleDocumentState extends BaseWidgetState<WidgetSaleDocument> with T
             });
           }, child: Container(padding: const EdgeInsets.all(3), width: 80, child: Text(s.qty.toString()))),
           GestureDetector(onTap:(){
-
+            
           }, child: Container(padding: const EdgeInsets.all(3), width: 80, child: Text(s.price.toString()))),
           Container(padding: const EdgeInsets.all(3), width: 80, child: Text((s.qty * s.price).toString()))],
       ));
@@ -279,7 +279,7 @@ class WidgetSaleDocumentState extends BaseWidgetState<WidgetSaleDocument> with T
     if (_animation.status != AnimationStatus.completed) {
       _animationController.forward();
     } else {
-      _animationController.animateBack(0, duration: const Duration(seconds: 1));
+      _animationController.animateBack(0, duration: const Duration(milliseconds: 300));
     }
   }
 
@@ -287,7 +287,7 @@ class WidgetSaleDocumentState extends BaseWidgetState<WidgetSaleDocument> with T
     if (_animation2.status != AnimationStatus.completed) {
       _animationController2.forward();
     } else {
-      _animationController2.animateBack(0, duration: const Duration(seconds: 1));
+      _animationController2.animateBack(0, duration: const Duration(milliseconds: 300));
     }
   }
 
