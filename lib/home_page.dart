@@ -122,11 +122,14 @@ class WidgetHomeState extends BaseWidgetState with TickerProviderStateMixin {
             await b.commit();
           });
 
-          setState(() {
-            _progressString = tr("Loading list of goods");
-          });
-          m = SocketMessage.dllplugin(SocketMessage.op_get_goods_list);
-          sendSocketMessage(m);
+          // setState(() {
+          //   _progressString = tr("Loading list of goods");
+          // });
+          _initData();
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context) => const WidgetMain()), (route) => false);
+          return;
+          // m = SocketMessage.dllplugin(SocketMessage.op_get_goods_list);
+          // sendSocketMessage(m);
           break;
         case SocketMessage.op_get_goods_list:
           NetworkTable nt = NetworkTable();
@@ -417,7 +420,7 @@ class WidgetHomeState extends BaseWidgetState with TickerProviderStateMixin {
                       "from goods_pricelist gp "
                       "left join goods g on g.id=gp.goods "
                       "order by g.name ").then((map) {
-      CurrencyCrossRate.data.clear();
+      SaleGoods.list.clear();
       List.generate(map.length, (i) {
        SaleGoods s = SaleGoods(goods: map[i]["goods"], currency: map[i]["currencyid"], name: map[i]["name"], barcode: map[i]["barcode"],
                     price1: map[i]["price1"], price2: map[i]["price2"]);

@@ -59,7 +59,7 @@ class WidgetSaleDocumentState extends BaseWidgetState<WidgetSaleDocument> with T
           widget.saleUuid = m.getString();
           break;
         case SocketMessage.op_add_goods_to_draft:
-          SaleGoodsRecord s = SaleGoodsRecord(id: m.getString(), state: m.getInt(), goods: m.getInt(), name: "", qty: m.getDouble(), price: m.getDouble());
+          SaleGoodsRecord s = SaleGoodsRecord(id: m.getString(), state: m.getInt(), goods: m.getInt(), name: m.getString(), qty: m.getDouble(), price: m.getDouble());
           s.name = SaleGoods.names[s.goods]!;
           _totalAmount = m.getDouble();
           if (s.state == 2) {
@@ -147,7 +147,7 @@ class WidgetSaleDocumentState extends BaseWidgetState<WidgetSaleDocument> with T
                 Row(children: [
                   ClassOutlinedButton.createTextAndImage(() {
                     Navigator.pop(context);
-                  }, tr("Sale document"), "images/back.png", w: 250),
+                  }, tr("Sale document"), "images/back.png", w: 280),
                   Expanded(child: Container()),
                   ClassOutlinedButton.createImage(_showAppendGoods, "images/plus.png"),
                   ClassOutlinedButton.createImage(_showMainMenu, "images/menu.png")
@@ -178,10 +178,7 @@ class WidgetSaleDocumentState extends BaseWidgetState<WidgetSaleDocument> with T
     }
     for (int i = 0; i < SaleGoods.list.length; i++) {
       final SaleGoods s = SaleGoods.list[i];
-      if (s.currency != Config.getInt(key_local_currency_id)) {
-        continue;
-      }
-      if (s.name.toLowerCase().contains(suggestion.toLowerCase()) || s.barcode.contains(suggestion)) {
+      if (s.name.toLowerCase().contains(suggestion.toLowerCase()) || s.barcode == suggestion) {
         _indexOfSugges.add(i);
       }
     }
@@ -265,7 +262,7 @@ class WidgetSaleDocumentState extends BaseWidgetState<WidgetSaleDocument> with T
           const VerticalDivider(
             width: 5,
           ),
-          Container(width: 100, child: Text(Config.getInt(key_local_price_type) == 2 ? s.price2.toString() : s.price1.toString()))
+          SizedBox(width: 100, child: Text(Config.getInt(key_local_price_type) == 2 ? s.price2.toString() : s.price1.toString()))
         ],
       ));
       l.add(const Divider(
@@ -388,10 +385,11 @@ class WidgetSaleDocumentState extends BaseWidgetState<WidgetSaleDocument> with T
     if (_barcodeController.text.isEmpty) {
       return;
     }
-    SocketMessage m = SocketMessage.dllplugin(SocketMessage.op_check_qty);
-    m.addString(_barcodeController.text);
-    m.addInt(1);
-    sendSocketMessage(m);
+    _buildSearchList(_barcodeController.text);
+    // SocketMessage m = SocketMessage.dllplugin(SocketMessage.op_check_qty);
+    // m.addString(_barcodeController.text);
+    // m.addInt(1);
+    // sendSocketMessage(m);
   }
 
   void _readBarcode() {
