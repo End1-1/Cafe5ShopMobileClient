@@ -37,7 +37,7 @@ class WidgetSaleDocumentState extends BaseWidgetState<WidgetSaleDocument> with T
   late Animation<double> _animation;
   late AnimationController _animationController2;
   late Animation<double> _animation2;
-  List<int> _indexOfSugges = [];
+  List<SaleGoods> _indexOfGoods = [];
 
   @override
   void handler(Uint8List data) async {
@@ -60,7 +60,6 @@ class WidgetSaleDocumentState extends BaseWidgetState<WidgetSaleDocument> with T
           break;
         case SocketMessage.op_add_goods_to_draft:
           SaleGoodsRecord s = SaleGoodsRecord(id: m.getString(), state: m.getInt(), goods: m.getInt(), name: m.getString(), qty: m.getDouble(), price: m.getDouble());
-          s.name = SaleGoods.names[s.goods]!;
           _totalAmount = m.getDouble();
           if (s.state == 2) {
             for (int i = 0; i < _goods.length; i++) {
@@ -96,13 +95,30 @@ class WidgetSaleDocumentState extends BaseWidgetState<WidgetSaleDocument> with T
         case SocketMessage.op_open_sale_draft_body:
           _ntData.readFromSocketMessage(m);
           for (int i = 0; i < _ntData.rowCount; i++) {
-            SaleGoodsRecord s = SaleGoodsRecord(id: _ntData.getRawData(i, 0), state: 1, goods: _ntData.getRawData(i, 1), name: "", qty: _ntData.getRawData(i, 2), price: _ntData.getRawData(i, 2));
-            s.name = SaleGoods.names[s.goods]!;
+            SaleGoodsRecord s = SaleGoodsRecord(id: _ntData.getRawData(i, 0),
+                state: 1,
+                goods: _ntData.getRawData(i, 1),
+                qty: _ntData.getRawData(i, 2),
+                price: _ntData.getRawData(i, 3),
+                name: _ntData.getRawData(i, 4));
             _goods.add(s);
           }
           setState(() {
 
           });
+          break;
+        case SocketMessage.op_check_qty:
+          _ntData.readFromSocketMessage(m);
+          _indexOfGoods.clear();
+          for (int i = 0; i < _ntData.rowCount; i++) {
+            _indexOfGoods.add(SaleGoods(goods: _ntData.getRawData(i, 6),
+                currency: 1,
+                name: _ntData.getRawData(i, 1),
+                barcode: _ntData.getRawData(i, 5),
+                price1: _ntData.getRawData(i, 3),
+                price2: _ntData.getRawData(i, 4)));
+          }
+          setState((){});
           break;
       }
     }
@@ -170,21 +186,6 @@ class WidgetSaleDocumentState extends BaseWidgetState<WidgetSaleDocument> with T
             ])));
   }
 
-  void _buildSearchList(String suggestion) {
-    _indexOfSugges.clear();
-    if (suggestion.length < 4) {
-      setState(() {});
-      return;
-    }
-    for (int i = 0; i < SaleGoods.list.length; i++) {
-      final SaleGoods s = SaleGoods.list[i];
-      if (s.name.toLowerCase().contains(suggestion.toLowerCase()) || s.barcode == suggestion) {
-        _indexOfSugges.add(i);
-      }
-    }
-    setState(() {});
-  }
-
   List<Widget> _listOfGoods() {
     List<Widget> l = [];
     for (int i = 0; i < _goods.length; i++) {
@@ -231,8 +232,8 @@ class WidgetSaleDocumentState extends BaseWidgetState<WidgetSaleDocument> with T
 
   List<Widget> _listOfSuggestions() {
     List<Widget> l = [];
-    for (int i = 0; i < _indexOfSugges.length; i++) {
-      final SaleGoods s = SaleGoods.list[_indexOfSugges[i]];
+    for (int i = 0; i < _indexOfGoods.length; i++) {
+      final SaleGoods s = _indexOfGoods[i];
       l.add(Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -298,12 +299,10 @@ class WidgetSaleDocumentState extends BaseWidgetState<WidgetSaleDocument> with T
                 child: Container(
                     margin: const EdgeInsets.only(right: 3),
                     child: TextFormField(
-                      onChanged: _buildSearchList,
                       controller: _barcodeController,
                     ))),
             ClassOutlinedButton.createImage(() {
               _barcodeController.clear();
-              _buildSearchList("");
             }, "images/cancel.png"),
             ClassOutlinedButton.createImage(_search, "images/search.png"),
             ClassOutlinedButton.createImage(_readBarcode, "images/barcode.png")
@@ -385,19 +384,17 @@ class WidgetSaleDocumentState extends BaseWidgetState<WidgetSaleDocument> with T
     if (_barcodeController.text.isEmpty) {
       return;
     }
-    _buildSearchList(_barcodeController.text);
-    // SocketMessage m = SocketMessage.dllplugin(SocketMessage.op_check_qty);
-    // m.addString(_barcodeController.text);
-    // m.addInt(1);
-    // sendSocketMessage(m);
+    SocketMessage m = SocketMessage.dllplugin(SocketMessage.op_check_qty);
+    m.addString(_barcodeController.text);
+    m.addInt(1);
+    sendSocketMessage(m);
   }
 
   void _readBarcode() {
     FlutterBarcodeScanner.scanBarcode('#ff6666', 'Cancel', true, ScanMode.BARCODE).then((barcodeScanRes) {
       if (barcodeScanRes != "-1") {
         _barcodeController.text = barcodeScanRes;
-        _buildSearchList(barcodeScanRes);
-        //_search();
+        _search();
       }
     });
   }
