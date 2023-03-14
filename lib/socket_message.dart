@@ -21,6 +21,9 @@ class SocketMessage {
   static const int op_add_goods_to_draft = 11;
   static const int op_open_sale_draft_body = 12;
 
+  static const int op_json_partners_list = 100;
+  static const int op_json_predefined_goods = 101;
+
   static const String shopclientp = "0afc8abf-95d2-48d9-bc34-358714715d60";
 
   late BytesBuilder buffer;

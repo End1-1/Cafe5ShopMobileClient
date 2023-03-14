@@ -10,7 +10,7 @@ import 'package:cafe5_shop_mobile_client/network_table.dart';
 import 'package:cafe5_shop_mobile_client/socket_message.dart';
 import 'package:cafe5_shop_mobile_client/translator.dart';
 import 'package:cafe5_shop_mobile_client/widget_datatable.dart';
-import 'package:cafe5_shop_mobile_client/widget_sale.dart';
+import 'package:cafe5_shop_mobile_client/screens/sale/sale_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 

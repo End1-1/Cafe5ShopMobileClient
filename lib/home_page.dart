@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:cafe5_shop_mobile_client/base_widget.dart';
@@ -8,6 +9,8 @@ import 'package:cafe5_shop_mobile_client/class_price_type.dart';
 import 'package:cafe5_shop_mobile_client/class_sale_goods.dart';
 import 'package:cafe5_shop_mobile_client/config.dart';
 import 'package:cafe5_shop_mobile_client/network_table.dart';
+import 'package:cafe5_shop_mobile_client/screens/partners/partners_model.dart';
+import 'package:cafe5_shop_mobile_client/screens/sale/sale_model.dart';
 import 'package:cafe5_shop_mobile_client/socket_message.dart';
 import 'package:cafe5_shop_mobile_client/translator.dart';
 import 'package:cafe5_shop_mobile_client/widget_main.dart';
@@ -15,6 +18,9 @@ import 'package:flutter/material.dart';
 
 import 'package:cafe5_shop_mobile_client/db.dart';
 import 'package:sqflite/sqflite.dart';
+
+import 'freezed/goods.dart';
+import 'freezed/partner.dart';
 
 class WidgetHome extends StatefulWidget {
   WidgetHome({super.key}) {
@@ -85,12 +91,12 @@ class WidgetHomeState extends BaseWidgetState with TickerProviderStateMixin {
           setState(() {
             _progressString = tr("Loading list of currencies");
           });
-          m = SocketMessage.dllplugin(SocketMessage.op_data_currency_list);
+          m = SocketMessage.dllplugin(SocketMessage.op_json_partners_list);
           sendSocketMessage(m);
           break;
         case SocketMessage.op_login_pashhash:
-          _initData();
-          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context) => const WidgetMain()), (route) => false);
+          m = SocketMessage.dllplugin(SocketMessage.op_json_partners_list);
+          sendSocketMessage(m);
           break;
         case SocketMessage.op_data_currency_list:
           NetworkTable nt = NetworkTable();
@@ -125,6 +131,8 @@ class WidgetHomeState extends BaseWidgetState with TickerProviderStateMixin {
           // setState(() {
           //   _progressString = tr("Loading list of goods");
           // });
+
+
           _initData();
           Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context) => const WidgetMain()), (route) => false);
           return;
@@ -161,8 +169,23 @@ class WidgetHomeState extends BaseWidgetState with TickerProviderStateMixin {
             await b.commit();
           });
 
-          _initData();
-          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context) => const WidgetMain()), (route) => false);
+
+          // _initData();
+          // Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context) => const WidgetMain()), (route) => false);
+          break;
+        case SocketMessage.op_json_partners_list:
+          String json = m.getString();
+          PartnersModel.partners = Partners.fromJson({'partners': jsonDecode(json)});
+
+          m = SocketMessage.dllplugin(SocketMessage.op_json_predefined_goods);
+          sendSocketMessage(m);
+          break;
+        case SocketMessage.op_json_predefined_goods:
+          String json = m.getString();
+          SaleModel.predefinedGoodsList = GoodsList.fromJson({'goods': jsonDecode(json)});
+
+          m = SocketMessage.dllplugin(SocketMessage.op_data_currency_list);
+          sendSocketMessage(m);
           break;
       }
     }
@@ -429,6 +452,7 @@ class WidgetHomeState extends BaseWidgetState with TickerProviderStateMixin {
       });
     });
 
+    PriceType.list.clear();
     PriceType.list.add(PriceType(id: 1, name: tr("Retail")));
     PriceType.list.add(PriceType(id: 2, name: tr("Whosale")));
   }
