@@ -214,7 +214,11 @@ class WidgetSaleDocumentState extends BaseWidgetState<WidgetSaleDocument>
     List<Widget> l = [];
     for (int i = 0; i < _goods.length; i++) {
       SaleGoodsRecord s = _goods[i];
-      l.add(Row(
+      l.add(Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.black12, width: 0.2)
+        ),
+          child: Row(
         children: [
           ClassOutlinedButton.createImage(() {
             sq(tr("Confirm to remove row"), () {
@@ -265,7 +269,7 @@ class WidgetSaleDocumentState extends BaseWidgetState<WidgetSaleDocument>
                 padding: const EdgeInsets.all(3),
                 width: 80,
                 child: Text('${s.qty * s.price}', style: const TextStyle(fontWeight: FontWeight.bold)))])
-          ])
+          ]))
       );
     }
     return l;

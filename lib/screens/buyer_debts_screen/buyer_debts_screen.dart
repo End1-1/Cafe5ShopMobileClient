@@ -48,8 +48,11 @@ class BuyerDebtsScreen extends StatelessWidget {
         )));
   }
 
-  List<Widget> _data(BuyerDebtsStateReady d) {
+  List<Widget> _data(BuyerDebtsState d) {
     List<Widget>  l = [];
-
+    if (d is BuyerDebtsStateError) {
+      l.add(Align(alignment:  Alignment.center, child: Text(d.error)));
+    }
+    return l;
   }
 }

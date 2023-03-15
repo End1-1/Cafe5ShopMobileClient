@@ -6,6 +6,7 @@ part 'debt.g.dart';
 @freezed
 class Debt with _$Debt {
   const factory Debt({
+    required int patner,
     required String taxname,
     required String date,
     required double amount,

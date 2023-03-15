@@ -20,27 +20,8 @@ class BuyerDebtsActionLoad extends BuyerDebtsAction {
   }
 
   void process() async {
-    SocketMessage m = SocketMessage.dllplugin(SocketMessage.op_json_debts);
-    ClientSocket.send(m);
-  }
-
-  @override
-  void authenticate() {
-    // TODO: implement authenticate
-  }
-
-  @override
-  void connected() {
-    // TODO: implement connected
-  }
-
-  @override
-  void disconnected() {
-    // TODO: implement disconnected
-  }
-
-  @override
-  void handler(Uint8List data) {
 
   }
+
+
 }

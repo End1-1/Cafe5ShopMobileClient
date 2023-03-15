@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:cafe5_shop_mobile_client/screens/buyer_debts_screen/buyer_debts_action.dart';
@@ -7,18 +8,26 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../client_socket.dart';
 import '../../client_socket_interface.dart';
+import '../../freezed/debt.dart';
+import '../../translator.dart';
 
 class BuyerDebtsBlock extends Bloc<BuyerDebtsAction, BuyerDebtsState> implements SocketInterface {
   BuyerDebtsBlock(super.initialState) {
     ClientSocket.socket.addInterface(this);
+    SocketMessage m = SocketMessage.dllplugin(SocketMessage.op_json_debts);
+    ClientSocket.send(m);
   }
 
   Future<void> eventToState(BuyerDebtsAction a) async {
+    emit(BuyerDebtsStateProgress());
     if (a is BuyerDebtsActionLoad) {
-
+      SocketMessage m = SocketMessage.dllplugin(SocketMessage.op_json_debts);
+      ClientSocket.send(m);
     }
 
   }
+
+
 
   @override
   void authenticate() {
@@ -32,7 +41,7 @@ class BuyerDebtsBlock extends Bloc<BuyerDebtsAction, BuyerDebtsState> implements
 
   @override
   void disconnected() {
-    // TODO: implement disconnected
+    emit(BuyerDebtsStateError(tr('Disconnected from server')));
   }
 
   @override
@@ -50,6 +59,9 @@ class BuyerDebtsBlock extends Bloc<BuyerDebtsAction, BuyerDebtsState> implements
       }
       switch (op) {
         case SocketMessage.op_json_debts:
+          String json = m.getString();
+          Debts debts = Debts.fromJson({'debts' : jsonDecode(json)});
+          emit(BuyerDebtsStateReady(debts));
           break;
       }
     }
