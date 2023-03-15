@@ -60,10 +60,13 @@ class WidgetCheckQtyState extends BaseWidgetState<WidgetCheckQty> {
             minimum: const EdgeInsets.only(left: 5, right: 5, bottom: 5, top: 35),
             child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [
-                Expanded(child: ClassOutlinedButton.createTextAndImage(() {
+                ClassOutlinedButton.createTextAndImage(() {
                   Navigator.pop(context);
-                }, tr("Check quantity"), "images/back.png", w: null)),
-              ]),
+                }, tr("Check quantity"), "images/back.png", w: null),
+                Expanded(child: Container()),
+                ClassOutlinedButton.createImage(
+                        (){}, 'images/menu.png'
+                )]),
               const Divider(height: 20, thickness: 2, color: Colors.black26),
               Row(children: [
                 Expanded(child:

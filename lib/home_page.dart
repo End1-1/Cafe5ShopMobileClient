@@ -8,6 +8,7 @@ import 'package:cafe5_shop_mobile_client/class_outlinedbutton.dart';
 import 'package:cafe5_shop_mobile_client/class_price_type.dart';
 import 'package:cafe5_shop_mobile_client/class_sale_goods.dart';
 import 'package:cafe5_shop_mobile_client/config.dart';
+import 'package:cafe5_shop_mobile_client/models/storage_names_model.dart';
 import 'package:cafe5_shop_mobile_client/network_table.dart';
 import 'package:cafe5_shop_mobile_client/screens/partners/partners_model.dart';
 import 'package:cafe5_shop_mobile_client/screens/sale/sale_model.dart';
@@ -21,6 +22,7 @@ import 'package:sqflite/sqflite.dart';
 
 import 'freezed/goods.dart';
 import 'freezed/partner.dart';
+import 'freezed/storagename.dart';
 
 class WidgetHome extends StatefulWidget {
   WidgetHome({super.key}) {
@@ -183,6 +185,13 @@ class WidgetHomeState extends BaseWidgetState with TickerProviderStateMixin {
         case SocketMessage.op_json_predefined_goods:
           String json = m.getString();
           SaleModel.predefinedGoodsList = GoodsList.fromJson({'goods': jsonDecode(json)});
+
+          m = SocketMessage.dllplugin(SocketMessage.op_json_storage_names);
+          sendSocketMessage(m);
+          break;
+        case SocketMessage.op_json_storage_names:
+          String json = m.getString();
+          StorageNamesModel.storageNames = StorageNames.fromJson({'storages': jsonDecode(json)});
 
           m = SocketMessage.dllplugin(SocketMessage.op_data_currency_list);
           sendSocketMessage(m);
