@@ -66,6 +66,8 @@ class StockScreen extends StatelessWidget {
       return const SizedBox(height: 50, width: 50, child: CircularProgressIndicator());
     } else if (state is QueryStateReady) {
       _model.items = StorageItems.fromJson({'storageitems': jsonDecode(state.data)});
+      List<Widget> rows = [];
+      return SingleChildScrollView(child: Column(children: rows));
     }
     return Align(alignment: Alignment.center, child: Text(tr('Unknown error'), style: const TextStyle(fontSize: 20, color: Colors.red)));
   }
