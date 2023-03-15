@@ -23,6 +23,7 @@ class SocketMessage {
 
   static const int op_json_partners_list = 100;
   static const int op_json_predefined_goods = 101;
+  static const int op_json_debts = 102;
 
   static const String shopclientp = "0afc8abf-95d2-48d9-bc34-358714715d60";
 
