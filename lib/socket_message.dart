@@ -27,6 +27,7 @@ class SocketMessage {
   static const int op_json_debts = 102;
   static const int op_json_storage_names = 103;
   static const int op_json_stock = 104;
+  static const int op_json_sales_history = 105;
 
   static const String shopclientp = "0afc8abf-95d2-48d9-bc34-358714715d60";
 

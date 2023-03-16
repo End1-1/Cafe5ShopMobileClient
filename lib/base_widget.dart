@@ -88,7 +88,7 @@ abstract class BaseWidgetState<T extends StatefulWidget> extends State<T> with W
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(tr('Tasks')),
+          //title: Text(tr('Tasks')),
           content: SingleChildScrollView(
             child: ListBody(
               children: [

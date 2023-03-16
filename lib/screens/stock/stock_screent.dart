@@ -24,7 +24,7 @@ class StockScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
         create: (_) =>
-            QueryBloc(QueryStateNeedUserAction(message: tr('Select storage'))),
+            QueryBloc(QueryStateNeedUserAction(message: tr('Please, wait'))),
         child: Scaffold(
             body: SafeArea(
                 minimum: const EdgeInsets.only(
@@ -66,7 +66,7 @@ class StockScreen extends StatelessWidget {
     } else if (state is QueryStateNeedUserAction) {
       return Align(alignment: Alignment.center, child: Text(tr('Choose a warehouse'), style: const TextStyle(fontSize: 20, color: Colors.red)));
     } else if (state is QueryStateProgress) {
-      return const SizedBox(height: 50, width: 50, child: CircularProgressIndicator());
+      return const Align(alignment: Alignment.center, child: SizedBox(height: 50, width: 50, child: CircularProgressIndicator()));
     } else if (state is QueryStateReady) {
       _model.items = StorageItems.fromJson({'items': jsonDecode(state.data)});
       return _filteredItem(context, state);

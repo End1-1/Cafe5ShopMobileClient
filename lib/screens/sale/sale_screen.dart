@@ -62,6 +62,9 @@ class WidgetSaleDocumentState extends BaseWidgetState<WidgetSaleDocument>
       switch (op) {
         case SocketMessage.op_create_empty_sale:
           widget.saleUuid = m.getString();
+          String jsonStr = m.getString();
+          _model.saleHeader = SaleHeader.fromJson(jsonDecode(jsonStr));
+          setState(() {});
           break;
         case SocketMessage.op_add_goods_to_draft:
           SaleGoodsRecord s = SaleGoodsRecord(
@@ -554,7 +557,15 @@ class WidgetSaleDocumentState extends BaseWidgetState<WidgetSaleDocument>
                               setState(() {});
                             }),
                         Text(tr('Debt'), style: AppFonts.standardText)
-                      ])
+                      ]),
+                      const Divider(
+                        height: 30,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(child: ClassOutlinedButton.createTextAndImage((){sd(tr('Access denied'));}, tr('Write order'), 'images/printer.png'))
+                        ],
+                      )
                     ],
                   )
                 ])));

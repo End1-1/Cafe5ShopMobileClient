@@ -20,7 +20,21 @@ const Map<String, String> vals = {
   'retail': 'Մանրածախ',
   'whosale': 'Մեծածախ',
   'price':'Գին',
-  'Confirm to remove row': 'Հաստատեք տողի հեռացումը'
+  'confirm to remove row': 'Հաստատեք տողի հեռացումը',
+  'choose a warehouse':'Ընտրեք պահեստը',
+  'debts':'Պարտքեր',
+  'partner':'Գործընկեր',
+  'discount':'Զեղչ',
+  'debt':'Պարտք',
+  'sales history':'Վաճառքների պատմություն',
+  'please, wait': 'Սպասեք',
+  'empty':'Ոչինչ չկա',
+  'predefined list':'Ապրաների ցանկ 1',
+  'scancode':'Բարկոդ',
+  'route list is empty':'Երթուղին բացակայում է',
+  'route':'Երթուղի',
+  'access denied':'Իրավասությունների բացակայություն',
+  'write order':'Գրանցել պատվերը'
 };
 
 String tr(String s) {
@@ -29,7 +43,7 @@ String tr(String s) {
 
 class Translator {
   static String tr(String s) {
-    if (vals.containsKey(s.toLowerCase())) {
+    if (vals.keys.contains(s.toLowerCase())) {
       return vals[s.toLowerCase()]!;
     }
     return s;

@@ -2,6 +2,7 @@ import 'package:cafe5_shop_mobile_client/class_outlinedbutton.dart';
 import 'package:cafe5_shop_mobile_client/config.dart';
 import 'package:cafe5_shop_mobile_client/home_page.dart';
 import 'package:cafe5_shop_mobile_client/screens/buyer_debts_screen/buyer_debts_screen.dart';
+import 'package:cafe5_shop_mobile_client/screens/sale_history/sale_history_screen.dart';
 import 'package:cafe5_shop_mobile_client/screens/stock/stock_screent.dart';
 import 'package:cafe5_shop_mobile_client/translator.dart';
 import 'package:cafe5_shop_mobile_client/base_widget.dart';
@@ -43,7 +44,11 @@ class WidgetMainState extends BaseWidgetState<WidgetMain> {
                 const Divider(height: 30,),
                 Align(alignment: Alignment.center, child: ClassOutlinedButton.createTextAndImage(_showDrafts, tr("Drafts"), "images/quantity.png" , w: 300)),
                 const Divider(height: 30,),
-                Align(alignment: Alignment.center, child: ClassOutlinedButton.createTextAndImage(_showDebts, tr("Debts"), "images/currency.png" , w: 300)),
+                Align(alignment: Alignment.center, child: ClassOutlinedButton.createTextAndImage(_showDebts, tr('Debts'), "images/currency.png" , w: 300)),
+                const Divider(height: 30,),
+                Align(alignment: Alignment.center, child: ClassOutlinedButton.createTextAndImage(_showSalesHistory, tr('Sales history'), "images/currency.png" , w: 300)),
+                const Divider(height: 30,),
+                Align(alignment: Alignment.center, child: ClassOutlinedButton.createTextAndImage(_showRoute, tr('Route'), "images/route.png" , w: 300)),
                 const Divider(height: 30,)
               ]),
           _menu()])
@@ -78,6 +83,10 @@ class WidgetMainState extends BaseWidgetState<WidgetMain> {
 
   void _showDebts() {
     Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => const BuyerDebtsScreen()));
+  }
+
+  void _showSalesHistory() {
+    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => SaleHistoryScreen()));
   }
 
   Widget _menu() {
@@ -176,5 +185,9 @@ class WidgetMainState extends BaseWidgetState<WidgetMain> {
                 ],
               )),
         ));
+  }
+
+  void _showRoute() {
+    sd(tr('Route list is empty'));
   }
 }
