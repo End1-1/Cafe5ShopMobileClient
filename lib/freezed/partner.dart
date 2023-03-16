@@ -9,7 +9,8 @@ class Partner with _$Partner {
   required String taxname,
   required String taxcode,
   required String contact,
-  required String phone}) = _Partner;
+  required String phone,
+  required double discount}) = _Partner;
   factory Partner.fromJson(Map<String,dynamic> json) => _$PartnerFromJson(json);
 }
 

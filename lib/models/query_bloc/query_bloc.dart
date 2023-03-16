@@ -13,15 +13,26 @@ class QueryBloc extends Bloc<QueryAction, QueryState>
     implements SocketInterface {
   QueryBloc(super.initialState) {
     ClientSocket.socket.addInterface(this);
-    SocketMessage m = SocketMessage.dllplugin(SocketMessage.op_json_debts);
-    ClientSocket.send(m);
   }
 
   Future<void> eventToState(QueryAction a) async {
     emit(const QueryStateProgress());
     if (a is QueryActionLoad) {
       SocketMessage m = SocketMessage.dllplugin(a.op);
+      if (a.optional != null) {
+        for (var o in a.optional!) {
+          if (o is int) {
+            m.addInt(o);
+          } else if (o is String) {
+            m.addString(o);
+          } else if (o is double) {
+            m.addDouble(o);
+          }
+        }
+      }
       ClientSocket.send(m);
+    } else if (a is QueryActionFilter) {
+      emit(QueryStateFilter(filter: a.filter));
     }
   }
 
@@ -37,7 +48,9 @@ class QueryBloc extends Bloc<QueryAction, QueryState>
 
   @override
   void disconnected() {
-    emit(QueryStateError(error: tr('Disconnected from server')));
+    if (!isClosed) {
+      emit(QueryStateError(error: tr('Disconnected from server')));
+    }
   }
 
   @override

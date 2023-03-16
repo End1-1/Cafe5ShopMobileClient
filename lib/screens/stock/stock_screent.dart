@@ -13,6 +13,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cafe5_shop_mobile_client/socket_message.dart';
 
 import '../../translator.dart';
+import '../../utils/app_colors.dart';
+import '../../utils/app_fonts.dart';
+import '../../utils/app_table.dart';
 
 class StockScreen extends StatelessWidget {
   final StockModel _model = StockModel();
@@ -46,7 +49,7 @@ class StockScreen extends StatelessWidget {
                                         StorageNamesPopupScreen()
                                       ],);
                                     }).then((s) {
-                                      BlocProvider.of<QueryBloc>(context).eventToState(const QueryActionLoad(op: SocketMessage.op_json_stock));
+                                      BlocProvider.of<QueryBloc>(context).eventToState(QueryActionLoad(op: SocketMessage.op_json_stock, optional: [s.id]));
                                     });
                                   }, 'images/menu.png')
                             ]),
@@ -65,10 +68,75 @@ class StockScreen extends StatelessWidget {
     } else if (state is QueryStateProgress) {
       return const SizedBox(height: 50, width: 50, child: CircularProgressIndicator());
     } else if (state is QueryStateReady) {
-      _model.items = StorageItems.fromJson({'storageitems': jsonDecode(state.data)});
-      List<Widget> rows = [];
-      return SingleChildScrollView(child: Column(children: rows));
+      _model.items = StorageItems.fromJson({'items': jsonDecode(state.data)});
+      return _filteredItem(context, state);
+    } else if (state is QueryStateFilter) {
+      return _filteredItem(context, state);
     }
     return Align(alignment: Alignment.center, child: Text(tr('Unknown error'), style: const TextStyle(fontSize: 20, color: Colors.red)));
+  }
+
+  Widget _filteredItem(BuildContext context, QueryState state) {
+    List<Widget> rows = [];
+    rows.add(
+        Container(
+            decoration: const BoxDecoration(border: Border.fromBorderSide(
+                BorderSide(color: Colors.black12))),
+            child: Row(
+              children: [
+                Expanded(child: TextFormField(
+                  controller: _model.filterController,
+                  decoration: const InputDecoration(
+                      contentPadding: EdgeInsets.zero,
+                      border: InputBorder.none),
+                  onChanged: (text) {
+                    BlocProvider.of<QueryBloc>(context).eventToState(QueryActionFilter(filter: _model.filterController.text));
+                  },
+                )),
+                Padding(
+                    padding: AppTable.cellPadding, child: InkWell(onTap: () {
+                  _model.filterController.clear();
+                  BlocProvider.of<QueryBloc>(context).eventToState(QueryActionFilter(filter: _model.filterController.text));
+                },
+                    child: Image.asset(
+                      'images/cancel.png', height: 30, width: 30,)))
+              ],
+            ))
+    );
+    rows.add(const Divider(height: 10,));
+    int i = 0;
+    for (var e in _model.items!.items) {
+      if (!e.name.toLowerCase().contains(_model.filterController.text)) {
+        continue;
+      }
+      i++;
+      rows.add(Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(padding: AppTable.cellPadding,
+              height: 60,
+              width: 150,
+              decoration: i % 2 == 0 ? AppTable.tableCellEven : AppTable
+                  .tableCellOdd,
+              child: Text(
+                  e.groupname, maxLines: 1, style: AppFonts.tableRowText)),
+          Expanded(child: Container(padding: AppTable.cellPadding,
+              height: 60,
+              decoration: i % 2 == 0 ? AppTable.tableCellEven : AppTable
+                  .tableCellOdd,
+              child: Text(
+                  e.groupname, maxLines: 2, style: AppFonts.tableRowText))),
+          Container(padding: AppTable.cellPadding,
+              height: 60,
+              width: 50,
+              decoration: i % 2 == 0 ? AppTable.tableCellEven : AppTable
+                  .tableCellOdd,
+              child: Text(
+                  '${e.qty}', maxLines: 1, style: AppFonts.tableRowText)),
+        ],));
+    }
+    return SingleChildScrollView(child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: rows));
   }
 }

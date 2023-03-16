@@ -16,9 +16,9 @@ class StorageItem with _$StorageItem {
 }
 
 @freezed
-class StorageItems with _$StorageItems{
-  const factory StorageItems(
-      {required List<StorageItem> items}) = _StorageItems;
+class StorageItems with _$StorageItems {
+  const factory StorageItems({required List<StorageItem> items}) =
+      _StorageItems;
 
   factory StorageItems.fromJson(Map<String, dynamic> json) =>
       _$StorageItemsFromJson(json);

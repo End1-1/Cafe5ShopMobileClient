@@ -26,7 +26,7 @@ class WidgetSaleDrafts extends StatefulWidget {
 
 class WidgetSaleDraftsSate extends BaseWidgetState<WidgetSaleDrafts> implements WidgetNetDataTableRowClick {
   final NetworkTable _ntData = NetworkTable();
-  final List<double> _columnWidths = [0, 100, 100, 100];
+  final List<double> _columnWidths = [0, 100, 100, 200, 100];
 
   @override
   void handler(Uint8List data) async {

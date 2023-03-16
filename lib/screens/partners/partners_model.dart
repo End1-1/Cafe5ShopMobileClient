@@ -1,17 +1,17 @@
 import 'package:flutter/cupertino.dart';
 
 import '../../freezed/partner.dart';
+import '../../models/lists.dart';
 
 class PartnersModel {
-  static late Partners partners;
   final TextEditingController partnerTextController = TextEditingController();
 
   Partners filtered() {
     if (partnerTextController.text.isEmpty) {
-      return partners;
+      return Lists.partners;
     }
     var p = <Partner>[];
-    for (var e in partners.partners) {
+    for (var e in Lists.partners.partners) {
       if (e.taxcode.toLowerCase().contains(partnerTextController.text.toLowerCase())
       || e.taxname.toLowerCase().contains(partnerTextController.text.toLowerCase())
       || e.contact.toLowerCase().contains(partnerTextController.text.toLowerCase())) {

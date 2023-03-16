@@ -20,6 +20,7 @@ class SocketMessage {
   static const int op_show_drafts_sale_list = 10;
   static const int op_add_goods_to_draft = 11;
   static const int op_open_sale_draft_body = 12;
+  static const int op_update_draft_header = 13;
 
   static const int op_json_partners_list = 100;
   static const int op_json_predefined_goods = 101;

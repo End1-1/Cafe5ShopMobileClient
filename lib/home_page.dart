@@ -8,7 +8,7 @@ import 'package:cafe5_shop_mobile_client/class_outlinedbutton.dart';
 import 'package:cafe5_shop_mobile_client/class_price_type.dart';
 import 'package:cafe5_shop_mobile_client/class_sale_goods.dart';
 import 'package:cafe5_shop_mobile_client/config.dart';
-import 'package:cafe5_shop_mobile_client/models/storage_names_model.dart';
+import 'package:cafe5_shop_mobile_client/models/lists.dart';
 import 'package:cafe5_shop_mobile_client/network_table.dart';
 import 'package:cafe5_shop_mobile_client/screens/partners/partners_model.dart';
 import 'package:cafe5_shop_mobile_client/screens/sale/sale_model.dart';
@@ -177,7 +177,7 @@ class WidgetHomeState extends BaseWidgetState with TickerProviderStateMixin {
           break;
         case SocketMessage.op_json_partners_list:
           String json = m.getString();
-          PartnersModel.partners = Partners.fromJson({'partners': jsonDecode(json)});
+          Lists.partners = Partners.fromJson({'partners': jsonDecode(json)});
 
           m = SocketMessage.dllplugin(SocketMessage.op_json_predefined_goods);
           sendSocketMessage(m);
@@ -191,7 +191,7 @@ class WidgetHomeState extends BaseWidgetState with TickerProviderStateMixin {
           break;
         case SocketMessage.op_json_storage_names:
           String json = m.getString();
-          StorageNamesModel.storageNames = StorageNames.fromJson({'storages': jsonDecode(json)});
+          Lists.storageNames = StorageNames.fromJson({'storages': jsonDecode(json)});
 
           m = SocketMessage.dllplugin(SocketMessage.op_data_currency_list);
           sendSocketMessage(m);

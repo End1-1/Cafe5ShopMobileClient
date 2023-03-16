@@ -25,3 +25,8 @@ class QueryStateProgress extends QueryState with _$QueryStateProgress {
 class QueryStateReady extends QueryState with _$QueryStateReady {
   const factory QueryStateReady({required int op, required String data}) = _QueryStateReady;
 }
+
+@freezed
+class QueryStateFilter extends QueryState with _$QueryStateFilter {
+  const factory QueryStateFilter({required String filter}) = _QueryStateFilter;
+}

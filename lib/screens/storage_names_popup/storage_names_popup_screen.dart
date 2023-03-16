@@ -1,4 +1,4 @@
-import 'package:cafe5_shop_mobile_client/models/storage_names_model.dart';
+import 'package:cafe5_shop_mobile_client/models/lists.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -21,7 +21,7 @@ class StorageNamesPopupScreen extends StatelessWidget {
 
   List<Widget> _children(BuildContext context) {
     List<Widget> l = [];
-    for (var s in StorageNamesModel.storageNames.storages) {
+    for (var s in Lists.storageNames.storages) {
       l.add(
         Container(
           padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
