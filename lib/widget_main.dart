@@ -2,6 +2,7 @@ import 'package:cafe5_shop_mobile_client/class_outlinedbutton.dart';
 import 'package:cafe5_shop_mobile_client/config.dart';
 import 'package:cafe5_shop_mobile_client/home_page.dart';
 import 'package:cafe5_shop_mobile_client/screens/buyer_debts_screen/buyer_debts_screen.dart';
+import 'package:cafe5_shop_mobile_client/screens/route/route_screen.dart';
 import 'package:cafe5_shop_mobile_client/screens/sale_history/sale_history_screen.dart';
 import 'package:cafe5_shop_mobile_client/screens/stock/stock_screent.dart';
 import 'package:cafe5_shop_mobile_client/translator.dart';
@@ -10,6 +11,8 @@ import 'package:cafe5_shop_mobile_client/widget_check_qty.dart';
 import 'package:cafe5_shop_mobile_client/screens/sale/sale_screen.dart';
 import 'package:cafe5_shop_mobile_client/widget_sale_drafts.dart';
 import 'package:flutter/material.dart';
+
+import 'models/lists.dart';
 
 class WidgetMain extends StatefulWidget {
   const WidgetMain({super.key});
@@ -188,6 +191,10 @@ class WidgetMainState extends BaseWidgetState<WidgetMain> {
   }
 
   void _showRoute() {
-    sd(tr('Route list is empty'));
+    if (Lists.route.list.isEmpty) {
+      sd(tr('Route list is empty'));
+      return;
+    }
+    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => RouteScreen()));
   }
 }
