@@ -15,3 +15,5 @@ class QueryActionLoad extends QueryAction with _$QueryActionLoad {
 class QueryActionFilter extends QueryAction with _$QueryActionFilter {
   const factory QueryActionFilter({required String filter}) = _QueryAction;
 }
+
+class QueryActionShowFilter extends QueryAction{}

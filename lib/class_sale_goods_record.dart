@@ -1,11 +1,18 @@
-class SaleGoodsRecord {
-  String id;
-  int state;
-  int goods;
-  String name;
-  double qty;
-  double price;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  SaleGoodsRecord({required this.id, required this.state, required this.goods, required this.name, required this.qty, required this.price});
+part 'class_sale_goods_record.freezed.dart';
+part 'class_sale_goods_record.g.dart';
 
+@freezed
+class SaleGoodsRecord with _$SaleGoodsRecord {
+  const factory SaleGoodsRecord({
+  required String id,
+  required int state,
+  required int goods,
+  required String name,
+  required double qty,
+  required double back,
+  required double price }) = _SaleGoodsRecord;
+
+  factory SaleGoodsRecord.fromJson(Map<String,dynamic> json) => _$SaleGoodsRecordFromJson(json);
 }

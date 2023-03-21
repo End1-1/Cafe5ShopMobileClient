@@ -63,7 +63,7 @@ class SaleHistoryScreen extends StatelessWidget {
                                         controller: _model.filterController,
                                         onChanged: (text) {
                                           BlocProvider.of<QueryBloc>(context)
-                                              .eventToState(QueryActionFilter(
+                                              .add(QueryActionFilter(
                                                   filter: _model
                                                       .filterController.text));
                                         },
@@ -217,7 +217,7 @@ class SaleHistoryScreen extends StatelessWidget {
   }
 
   void _query(BuildContext context) {
-    BlocProvider.of<QueryBloc>(context).eventToState(
+    BlocProvider.of<QueryBloc>(context).add(
         QueryActionLoad(op: SocketMessage.op_json_sales_history, optional: [
       DateFormat("dd/MM/yyyy").format(_model.date1),
       DateFormat('dd/MM/yyyy').format(_model.date2)

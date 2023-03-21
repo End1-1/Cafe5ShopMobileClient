@@ -100,6 +100,6 @@ class WidgetSaleDraftsSate extends BaseWidgetState<WidgetSaleDrafts> implements 
 
   @override
   void onRowClick(data) {
-    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => WidgetSaleDocument(saleUuid: data)));
+    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => SaleScreen(saleUuid: data)));
   }
 }

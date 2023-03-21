@@ -74,7 +74,7 @@ class WidgetMainState extends BaseWidgetState<WidgetMain> {
 
   void _createNewSale() {
     sq(tr("Create new sale document?"), (){
-      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => WidgetSaleDocument(saleUuid: "")));
+      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => SaleScreen(saleUuid: "")));
     }, (){
 
     });

@@ -30,3 +30,5 @@ class QueryStateReady extends QueryState with _$QueryStateReady {
 class QueryStateFilter extends QueryState with _$QueryStateFilter {
   const factory QueryStateFilter({required String filter}) = _QueryStateFilter;
 }
+
+class QueryStateShowFilter extends QueryState{}

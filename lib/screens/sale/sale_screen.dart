@@ -7,6 +7,7 @@ import 'package:cafe5_shop_mobile_client/class_sale_goods.dart';
 import 'package:cafe5_shop_mobile_client/class_sale_goods_record.dart';
 import 'package:cafe5_shop_mobile_client/class_set_qty_dlg.dart';
 import 'package:cafe5_shop_mobile_client/config.dart';
+import 'package:cafe5_shop_mobile_client/freezed/stock.dart';
 import 'package:cafe5_shop_mobile_client/network_table.dart';
 import 'package:cafe5_shop_mobile_client/screens/partners/partners_screen.dart';
 import 'package:cafe5_shop_mobile_client/screens/sale/sale_model.dart';
@@ -15,23 +16,25 @@ import 'package:cafe5_shop_mobile_client/translator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
+import '../../freezed/partner.dart';
 import '../../freezed/sale.dart';
 import '../../models/lists.dart';
 import '../../utils/app_fonts.dart';
 import '../pricemode/price_mode_popup_screen.dart';
 
-class WidgetSaleDocument extends StatefulWidget {
+class SaleScreen extends StatefulWidget {
   String saleUuid;
+  Partner? partner;
 
-  WidgetSaleDocument({super.key, required this.saleUuid});
+  SaleScreen({super.key, required this.saleUuid, this.partner});
 
   @override
   State<StatefulWidget> createState() {
-    return WidgetSaleDocumentState();
+    return SaleScreenState();
   }
 }
 
-class WidgetSaleDocumentState extends BaseWidgetState<WidgetSaleDocument>
+class SaleScreenState extends BaseWidgetState<SaleScreen>
     with TickerProviderStateMixin {
   final TextEditingController _barcodeController = TextEditingController();
   final NetworkTable _ntData = NetworkTable();
@@ -65,6 +68,7 @@ class WidgetSaleDocumentState extends BaseWidgetState<WidgetSaleDocument>
           String jsonStr = m.getString();
           _model.saleHeader = SaleHeader.fromJson(jsonDecode(jsonStr));
           setState(() {});
+          getStock();
           break;
         case SocketMessage.op_add_goods_to_draft:
           SaleGoodsRecord s = SaleGoodsRecord(
@@ -73,6 +77,7 @@ class WidgetSaleDocumentState extends BaseWidgetState<WidgetSaleDocument>
               goods: m.getInt(),
               name: m.getString(),
               qty: m.getDouble(),
+              back: m.getDouble(),
               price: m.getDouble());
           _model.saleHeader =
               _model.saleHeader!.copyWith(amount: m.getDouble());
@@ -103,6 +108,8 @@ class WidgetSaleDocumentState extends BaseWidgetState<WidgetSaleDocument>
           _model.saleHeader = SaleHeader.fromJson(jsonDecode(jsonStr));
           if (_model.saleHeader!.partner > 0) {
             _model.partner = Lists.findPartner(_model.saleHeader!.partner);
+            _model.partnerTextController.text = _model.partner?.taxname ?? '';
+            getDebt();
           }
           setState(() {});
 
@@ -118,11 +125,13 @@ class WidgetSaleDocumentState extends BaseWidgetState<WidgetSaleDocument>
                 state: 1,
                 goods: _ntData.getRawData(i, 1),
                 qty: _ntData.getRawData(i, 2),
-                price: _ntData.getRawData(i, 3),
-                name: _ntData.getRawData(i, 4));
+                back: _ntData.getRawData(i, 3),
+                price: _ntData.getRawData(i, 4),
+                name: _ntData.getRawData(i, 5));
             _goods.add(s);
           }
           setState(() {});
+          getStock();
           break;
         case SocketMessage.op_check_qty:
           _ntData.readFromSocketMessage(m);
@@ -137,6 +146,20 @@ class WidgetSaleDocumentState extends BaseWidgetState<WidgetSaleDocument>
                 price2: _ntData.getRawData(i, 4)));
           }
           setState(() {});
+          break;
+        case SocketMessage.op_json_stock_all:
+          String json = m.getString();
+          _model.stockItems =
+              StockItemList.fromJson({'list': jsonDecode(json)});
+          setState(() {});
+          break;
+        case SocketMessage.op_json_partner_debt:
+          String json = m.getString();
+          List<dynamic> data = jsonDecode(json);
+          _model.debtController.text = data[0]['debt'].toString();
+          setState(() {
+
+          });
           break;
       }
     }
@@ -240,6 +263,7 @@ class WidgetSaleDocumentState extends BaseWidgetState<WidgetSaleDocument>
                 m.addInt(s.goods);
                 m.addInt(2); //state
                 m.addDouble(s.qty);
+                m.addDouble(s.back);
                 m.addDouble(s.price);
                 sendSocketMessage(m);
               }, () {});
@@ -248,27 +272,63 @@ class WidgetSaleDocumentState extends BaseWidgetState<WidgetSaleDocument>
                 width: 200,
                 padding: const EdgeInsets.all(3),
                 child: Text(s.name)),
-            GestureDetector(
-                onTap: () {
-                  ClassSetQtyDlg.getQty(context, s.name).then((value) {
-                    if (value != null) {
-                      s.qty = value;
-                      SocketMessage m = SocketMessage.dllplugin(
-                          SocketMessage.op_add_goods_to_draft);
-                      m.addString(s.id);
-                      m.addString(widget.saleUuid);
-                      m.addInt(s.goods);
-                      m.addInt(value == -1000 ? 2 : 1); //state
-                      m.addDouble(s.qty);
-                      m.addDouble(s.price);
-                      sendSocketMessage(m);
-                    }
-                  });
-                },
-                child: Container(
-                    padding: const EdgeInsets.all(3),
-                    width: 80,
-                    child: Text(s.qty.toString()))),
+            Container(
+                padding: const EdgeInsets.all(3),
+                width: 80,
+                child: GestureDetector(
+                    onTap: () {
+                      ClassSetQtyDlg.getQty(context, s.name).then((value) {
+                        if (value != null) {
+                          s = s.copyWith(qty: value);
+                          SocketMessage m = SocketMessage.dllplugin(
+                              SocketMessage.op_add_goods_to_draft);
+                          m.addString(s.id);
+                          m.addString(widget.saleUuid);
+                          m.addInt(s.goods);
+                          m.addInt(value == -1000 ? 2 : 1); //state
+                          m.addDouble(s.qty);
+                          m.addDouble(s.back);
+                          m.addDouble(s.price);
+                          sendSocketMessage(m);
+                        }
+                      });
+                    },
+                    child: Text(s.qty.toString(),
+                        style: const TextStyle(
+                            color: Color(0xff07570A),
+                            fontWeight: FontWeight.bold)))),
+            Container(
+                padding: const EdgeInsets.all(3),
+                width: 80,
+                child: GestureDetector(
+                    onTap: () {
+                      ClassSetQtyDlg.getQty(context, s.name).then((value) {
+                        if (value != null) {
+                          s = s.copyWith(back: value);
+                          SocketMessage m = SocketMessage.dllplugin(
+                              SocketMessage.op_add_goods_to_draft);
+                          m.addString(s.id);
+                          m.addString(widget.saleUuid);
+                          m.addInt(s.goods);
+                          m.addInt(value == -1000 ? 2 : 1); //state
+                          m.addDouble(s.qty);
+                          m.addDouble(s.back);
+                          m.addDouble(s.price);
+                          sendSocketMessage(m);
+                        }
+                      });
+                    },
+                    child: Text(s.back.toString(),
+                        style: const TextStyle(
+                            color: Color(0xffff0000),
+                            fontWeight: FontWeight.bold)))),
+            Container(
+                padding: const EdgeInsets.all(3),
+                width: 80,
+                child: Text(_model.stockItems.stockItem(s.goods)?.total().toString() ?? "0",
+                    style: const TextStyle(
+                        color: Color(0xff620185),
+                        fontWeight: FontWeight.bold))),
             Column(children: [
               GestureDetector(
                   onTap: () {},
@@ -304,6 +364,7 @@ class WidgetSaleDocumentState extends BaseWidgetState<WidgetSaleDocument>
             m.addInt(s.goods);
             m.addInt(1); //state
             m.addDouble(1);
+            m.addDouble(0);
             m.addDouble(_model.priceMode.id == 2 ? s.price2 : s.price1);
             sendSocketMessage(m);
           }, "images/plus.png", h: 30, w: 30),
@@ -371,6 +432,7 @@ class WidgetSaleDocumentState extends BaseWidgetState<WidgetSaleDocument>
                               m.addString(widget.saleUuid);
                               m.addInt(e.id);
                               m.addInt(1); //state
+                              m.addDouble(0);
                               m.addDouble(0);
                               m.addDouble(_model.priceMode.id == 2
                                   ? e.price2
@@ -511,9 +573,12 @@ class WidgetSaleDocumentState extends BaseWidgetState<WidgetSaleDocument>
                                 _model.partnerTextController.text = p.taxname;
                                 _model.discountController.text =
                                     '${p.discount * 100}%';
-                                _model.saleHeader = _model.saleHeader!.copyWith(partner: p.id, discount: p.discount);
+                                _model.saleHeader = _model.saleHeader!.copyWith(
+                                    partner: p.id, discount: p.discount);
+                                getDebt();
                               } else {
-                                _model.saleHeader = _model.saleHeader!.copyWith(partner: 0, discount: 0);
+                                _model.saleHeader = _model.saleHeader!
+                                    .copyWith(partner: 0, discount: 0);
                               }
                             });
                           },
@@ -531,6 +596,11 @@ class WidgetSaleDocumentState extends BaseWidgetState<WidgetSaleDocument>
                               height: 36,
                             ))
                       ]),
+                      Text(tr('Credit'), style: const TextStyle()),
+                      TextFormField(
+                        readOnly: true,
+                        controller: _model.debtController,
+                      ),
                       const Divider(
                         height: 10,
                       ),
@@ -548,7 +618,9 @@ class WidgetSaleDocumentState extends BaseWidgetState<WidgetSaleDocument>
                       ),
                       Row(children: [
                         Checkbox(
-                            value:  _model.saleHeader == null ? false : _model.saleHeader!.isdebt == 1,
+                            value: _model.saleHeader == null
+                                ? false
+                                : _model.saleHeader!.isdebt == 1,
                             onChanged: (v) {
                               v ??= false;
                               int debt = v ? 1 : 0;
@@ -563,7 +635,10 @@ class WidgetSaleDocumentState extends BaseWidgetState<WidgetSaleDocument>
                       ),
                       Row(
                         children: [
-                          Expanded(child: ClassOutlinedButton.createTextAndImage((){sd(tr('Access denied'));}, tr('Write order'), 'images/printer.png'))
+                          Expanded(
+                              child: ClassOutlinedButton.createTextAndImage(() {
+                            sd(tr('Access denied'));
+                          }, tr('Write order'), 'images/printer.png'))
                         ],
                       )
                     ],
@@ -590,5 +665,16 @@ class WidgetSaleDocumentState extends BaseWidgetState<WidgetSaleDocument>
         _search();
       }
     });
+  }
+
+  void getStock() {
+    SocketMessage m = SocketMessage.dllplugin(SocketMessage.op_json_stock_all);
+    sendSocketMessage(m);
+  }
+
+  void getDebt() {
+    SocketMessage m = SocketMessage.dllplugin(SocketMessage.op_json_partner_debt);
+    m.addInt(_model.partner?.id ?? 0);
+    sendSocketMessage(m);
   }
 }

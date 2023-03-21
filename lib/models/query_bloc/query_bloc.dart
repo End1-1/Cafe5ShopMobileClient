@@ -13,27 +13,9 @@ class QueryBloc extends Bloc<QueryAction, QueryState>
     implements SocketInterface {
   QueryBloc(super.initialState) {
     ClientSocket.socket.addInterface(this);
-  }
-
-  Future<void> eventToState(QueryAction a) async {
-    emit(const QueryStateProgress());
-    if (a is QueryActionLoad) {
-      SocketMessage m = SocketMessage.dllplugin(a.op);
-      if (a.optional != null) {
-        for (var o in a.optional!) {
-          if (o is int) {
-            m.addInt(o);
-          } else if (o is String) {
-            m.addString(o);
-          } else if (o is double) {
-            m.addDouble(o);
-          }
-        }
-      }
-      ClientSocket.send(m);
-    } else if (a is QueryActionFilter) {
-      emit(QueryStateFilter(filter: a.filter));
-    }
+    on<QueryActionLoad>((event, emit) => _actionLoad(event));
+    on<QueryActionFilter>((event, emit) => emit(QueryStateFilter(filter: event.filter)));
+    on<QueryActionShowFilter>((event, emit) => emit(QueryStateShowFilter()));
   }
 
   @override
@@ -68,6 +50,31 @@ class QueryBloc extends Bloc<QueryAction, QueryState>
       }
       String json = m.getString();
       emit(QueryStateReady(op: op, data: json));
+    }
+  }
+
+  void _actionLoad(QueryAction a) {
+    if (a is QueryActionShowFilter) {
+      emit(QueryStateShowFilter());
+      return;
+    }
+    emit(const QueryStateProgress());
+    if (a is QueryActionLoad) {
+      SocketMessage m = SocketMessage.dllplugin(a.op);
+      if (a.optional != null) {
+        for (var o in a.optional!) {
+          if (o is int) {
+            m.addInt(o);
+          } else if (o is String) {
+            m.addString(o);
+          } else if (o is double) {
+            m.addDouble(o);
+          }
+        }
+      }
+      ClientSocket.send(m);
+    } else if (a is QueryActionFilter) {
+      emit(QueryStateFilter(filter: a.filter));
     }
   }
 }

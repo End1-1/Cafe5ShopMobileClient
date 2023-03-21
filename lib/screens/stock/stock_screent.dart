@@ -49,7 +49,7 @@ class StockScreen extends StatelessWidget {
                                         StorageNamesPopupScreen()
                                       ],);
                                     }).then((s) {
-                                      BlocProvider.of<QueryBloc>(context).eventToState(QueryActionLoad(op: SocketMessage.op_json_stock, optional: [s.id]));
+                                      BlocProvider.of<QueryBloc>(context).add(QueryActionLoad(op: SocketMessage.op_json_stock, optional: [s.id]));
                                     });
                                   }, 'images/menu.png')
                             ]),
@@ -90,13 +90,13 @@ class StockScreen extends StatelessWidget {
                       contentPadding: EdgeInsets.zero,
                       border: InputBorder.none),
                   onChanged: (text) {
-                    BlocProvider.of<QueryBloc>(context).eventToState(QueryActionFilter(filter: _model.filterController.text));
+                    BlocProvider.of<QueryBloc>(context).add(QueryActionFilter(filter: _model.filterController.text));
                   },
                 )),
                 Padding(
                     padding: AppTable.cellPadding, child: InkWell(onTap: () {
                   _model.filterController.clear();
-                  BlocProvider.of<QueryBloc>(context).eventToState(QueryActionFilter(filter: _model.filterController.text));
+                  BlocProvider.of<QueryBloc>(context).add(QueryActionFilter(filter: _model.filterController.text));
                 },
                     child: Image.asset(
                       'images/cancel.png', height: 30, width: 30,)))

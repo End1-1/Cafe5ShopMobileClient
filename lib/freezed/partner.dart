@@ -16,6 +16,11 @@ class Partner with _$Partner {
 
 @freezed
 class Partners with _$Partners {
+  const Partners._();
   const factory Partners({required List<Partner> partners}) = _Partners;
   factory Partners.fromJson(Map<String,dynamic> json) => _$PartnersFromJson(json);
+
+  Partner? findById(int id) {
+    return partners.where((element) => element.id == id).first;
+  }
 }
