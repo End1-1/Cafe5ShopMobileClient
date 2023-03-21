@@ -22,6 +22,7 @@ import 'package:sqflite/sqflite.dart';
 
 import 'freezed/goods.dart';
 import 'freezed/partner.dart';
+import 'freezed/route.dart';
 import 'freezed/storagename.dart';
 
 class WidgetHome extends StatefulWidget {
@@ -192,6 +193,13 @@ class WidgetHomeState extends BaseWidgetState with TickerProviderStateMixin {
         case SocketMessage.op_json_storage_names:
           String json = m.getString();
           Lists.storageNames = StorageNames.fromJson({'storages': jsonDecode(json)});
+
+          m = SocketMessage.dllplugin(SocketMessage.op_json_route);
+          sendSocketMessage(m);
+          break;
+        case SocketMessage.op_json_route:
+          String json = m.getString();
+          Lists.route = RoutePointList.fromJson({'list': jsonDecode(json)});
 
           m = SocketMessage.dllplugin(SocketMessage.op_data_currency_list);
           sendSocketMessage(m);
