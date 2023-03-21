@@ -10,7 +10,6 @@ class Lists {
   static late Partners partners;
   static late RoutePointList route;
   static PriceModeList priceModeList = PriceModeList(list: [PriceMode(id: 1, name: tr('Retail')), PriceMode(id: 2, name: tr('Whosale'))]);
-  static late RoutePointList route;
 
   static Partner? findPartner(int id) {
     for (var p in partners.partners) {

@@ -5,6 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cafe5_shop_mobile_client/socket_message.dart';
 import '../../class_outlinedbutton.dart';
+import '../../freezed/route.dart';
 import '../../models/lists.dart';
 import '../../models/query_bloc/query_action.dart';
 import '../../models/query_bloc/query_bloc.dart';
@@ -104,7 +105,7 @@ class RouteScreen extends StatelessWidget {
       rows.add(InkWell(onTap:(){}, child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Checkbox(value: e.action == 1, onChanged: (v){}),
+          ActionCheckBox(point: e),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -114,7 +115,7 @@ class RouteScreen extends StatelessWidget {
                   width: 300,
                   decoration:
                   i % 2 == 0 ? AppTable.tableCellEven : AppTable.tableCellOdd,
-                  child: Text(e.address, maxLines: 1, style: AppFonts.tableRowText)),
+                  child: Text(e.address ?? "", maxLines: 1, style: AppFonts.tableRowText)),
               Container(
                   padding: AppTable.cellPadding,
                   height: 30,
@@ -132,7 +133,7 @@ class RouteScreen extends StatelessWidget {
               width: 80,
               decoration:
               i % 2 == 0 ? AppTable.tableCellEven : AppTable.tableCellOdd,
-              child: Text(e.taxcode,
+              child: Text(e.taxcode ?? "",
                   maxLines: 1, style: AppFonts.tableRowText)),
         ],
       )));
@@ -146,4 +147,22 @@ class RouteScreen extends StatelessWidget {
     BlocProvider.of<QueryBloc>(context).eventToState(
         const QueryActionFilter(filter: ''));
   }
+}
+
+class ActionCheckBox extends StatefulWidget {
+  final RoutePoint point;
+  ActionCheckBox({required this.point});
+  @override
+  State<StatefulWidget> createState() => _ActionCheckBox();
+}
+
+class _ActionCheckBox extends State<ActionCheckBox> {
+  @override
+  Widget build(BuildContext context) {
+    return Checkbox(value: widget.point.action == 1, onChanged: (v){setState(() {
+      int index = Lists.route.list.indexOf(widget.point);
+      Lists.route.list[index] = widget.point.copyWith(action: v ?? false ? 1 : 0);});
+    });
+  }
+
 }
