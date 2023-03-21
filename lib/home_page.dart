@@ -196,6 +196,13 @@ class WidgetHomeState extends BaseWidgetState with TickerProviderStateMixin {
           m = SocketMessage.dllplugin(SocketMessage.op_data_currency_list);
           sendSocketMessage(m);
           break;
+        case SocketMessage.op_json_route:
+          String json = m.getString();
+          Lists.storageNames = StorageNames.fromJson({'storages': jsonDecode(json)});
+
+          m = SocketMessage.dllplugin(SocketMessage.op_data_currency_list);
+          sendSocketMessage(m);
+          break;
       }
     }
   }
