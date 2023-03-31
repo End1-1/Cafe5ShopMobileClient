@@ -18,7 +18,19 @@ class RoutePoint with _$RoutePoint {
 
 @JsonSerializable()
 class RoutePointList extends Object {
+  RoutePointList._();
   late List<RoutePoint> list;
   RoutePointList({required this.list});
   factory RoutePointList.fromJson(Map<String,dynamic> json) => _$RoutePointListFromJson(json);
+
+  bool makeAction(int partner, int action) {
+    for (int i = 0; i < list.length; i++) {
+      final e = list[i];
+      if (e.partner == partner) {
+        list[i] = e.copyWith(action: action);
+        return true;
+      }
+    }
+    return false;
+  }
 }

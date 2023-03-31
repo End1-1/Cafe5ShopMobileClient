@@ -1,21 +1,15 @@
-import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:cafe5_shop_mobile_client/base_widget.dart';
-import 'package:cafe5_shop_mobile_client/class_currency.dart';
 import 'package:cafe5_shop_mobile_client/class_outlinedbutton.dart';
-import 'package:cafe5_shop_mobile_client/class_sale_goods.dart';
-import 'package:cafe5_shop_mobile_client/config.dart';
 import 'package:cafe5_shop_mobile_client/network_table.dart';
+import 'package:cafe5_shop_mobile_client/screens/sale/sale_screen.dart';
 import 'package:cafe5_shop_mobile_client/socket_message.dart';
 import 'package:cafe5_shop_mobile_client/translator.dart';
 import 'package:cafe5_shop_mobile_client/widget_datatable.dart';
-import 'package:cafe5_shop_mobile_client/screens/sale/sale_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 class WidgetSaleDrafts extends StatefulWidget {
-
   const WidgetSaleDrafts({super.key});
 
   @override
@@ -24,7 +18,8 @@ class WidgetSaleDrafts extends StatefulWidget {
   }
 }
 
-class WidgetSaleDraftsSate extends BaseWidgetState<WidgetSaleDrafts> implements WidgetNetDataTableRowClick {
+class WidgetSaleDraftsSate extends BaseWidgetState<WidgetSaleDrafts>
+    implements WidgetNetDataTableRowClick {
   final NetworkTable _ntData = NetworkTable();
   final List<double> _columnWidths = [0, 100, 100, 200, 100];
 
@@ -56,7 +51,8 @@ class WidgetSaleDraftsSate extends BaseWidgetState<WidgetSaleDrafts> implements 
   @override
   void initState() {
     super.initState();
-    SocketMessage m = SocketMessage.dllplugin(SocketMessage.op_show_drafts_sale_list);
+    SocketMessage m =
+        SocketMessage.dllplugin(SocketMessage.op_show_drafts_sale_list);
     sendSocketMessage(m);
   }
 
@@ -64,7 +60,8 @@ class WidgetSaleDraftsSate extends BaseWidgetState<WidgetSaleDrafts> implements 
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.resumed:
-        SocketMessage m = SocketMessage.dllplugin(SocketMessage.op_show_drafts_sale_list);
+        SocketMessage m =
+            SocketMessage.dllplugin(SocketMessage.op_show_drafts_sale_list);
         sendSocketMessage(m);
         break;
       case AppLifecycleState.inactive:
@@ -82,24 +79,43 @@ class WidgetSaleDraftsSate extends BaseWidgetState<WidgetSaleDrafts> implements 
   Widget build(BuildContext context) {
     return Scaffold(
         body: SafeArea(
-            minimum: const EdgeInsets.only(left: 5, right: 5, bottom: 5, top: 35),
-            child: Stack(children: [Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Row(children: [
-                ClassOutlinedButton.createTextAndImage(() {
-                  Navigator.pop(context);
-                }, tr("Drafts"), "images/back.png", w: 300),
-                Expanded(child: Container()),
-                // ClassOutlinedButton.createImage(_showAppendGoods, "images/plus.png"),
-                // ClassOutlinedButton.createImage(_showMainMenu, "images/menu.png")
-              ]),
-              const Divider(height: 20, thickness: 2, color: Colors.black26),
-              WidgetNetworkDataTable(networkTable: _ntData, columnWidths: _columnWidths, onRowClick: this,)
-              ])
+            minimum:
+                const EdgeInsets.only(left: 5, right: 5, bottom: 5, top: 35),
+            child: Stack(children: [
+              Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(children: [
+                      ClassOutlinedButton.createTextAndImage(() {
+                        Navigator.pop(context);
+                      }, tr("Drafts"), "images/back.png", w: 300),
+                      Expanded(child: Container()),
+                      // ClassOutlinedButton.createImage(_showAppendGoods, "images/plus.png"),
+                      // ClassOutlinedButton.createImage(_showMainMenu, "images/menu.png")
+                    ]),
+                    const Divider(
+                        height: 20, thickness: 2, color: Colors.black26),
+                    WidgetNetworkDataTable(
+                      networkTable: _ntData,
+                      columnWidths: _columnWidths,
+                      onRowClick: this,
+                    )
+                  ])
             ])));
   }
 
   @override
   void onRowClick(data) {
-    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => SaleScreen(saleUuid: data)));
+    Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) =>
+                    SaleScreen(saleUuid: data, partner: null, routeId: 0)))
+        .then((value) {
+      SocketMessage m =
+          SocketMessage.dllplugin(SocketMessage.op_show_drafts_sale_list);
+      sendSocketMessage(m);
+    });
   }
 }

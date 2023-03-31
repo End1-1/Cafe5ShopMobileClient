@@ -92,7 +92,7 @@ abstract class BaseWidgetState<T extends StatefulWidget> extends State<T> with W
           content: SingleChildScrollView(
             child: ListBody(
               children: [
-                Text(msg),
+                Text(tr(msg)),
               ],
             ),
           ),

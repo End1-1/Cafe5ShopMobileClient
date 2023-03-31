@@ -20,4 +20,7 @@ class SaleModel {
   StockItemList stockItems = StockItemList(list: []);
 
   static late GoodsList predefinedGoodsList;
+
+  int routeId = 0;
+  int routeChecked = 0;
 }

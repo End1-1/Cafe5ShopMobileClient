@@ -34,7 +34,19 @@ const Map<String, String> vals = {
   'route list is empty':'Երթուղին բացակայում է',
   'route':'Երթուղի',
   'access denied':'Իրավասությունների բացակայություն',
-  'write order':'Գրանցել պատվերը'
+  'write order':'Գրանցել պատվերը',
+  'goods not needed':'Ապրանք պետք չէ',
+  'shop closed':'Խանութը փակ է',
+  'taxname':'Կազմակերպության անվանում',
+  'tax code':'ՀՎՀՀ',
+  'phone':'Հեռախոս',
+  'contact':'Կոնտակտ',
+  'current credit':'Ընդացիկ պարտք',
+  'confirm, that goods not needed':'Հաստատեք, որ ապրանք պետք չէ',
+  'confirm, that shop was closed':'Հաստատեք, որ խանութը փակ էր',
+  'not visited':'Չեմ այցելել',
+  'confirm, that not visited':'Հաստատեք, որ չեկ այցելել',
+  'blocked':'Արգելափակված է'
 };
 
 String tr(String s) {

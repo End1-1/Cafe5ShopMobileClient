@@ -1,3 +1,4 @@
+import 'package:cafe5_shop_mobile_client/screens/partners/partners_screen.dart';
 import 'package:cafe5_shop_mobile_client/screens/route/route_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -11,13 +12,16 @@ import '../../models/lists.dart';
 import '../../models/query_bloc/query_action.dart';
 import '../../models/query_bloc/query_bloc.dart';
 import '../../models/query_bloc/query_state.dart';
+import '../../partner_cart/partner_cart_screen.dart';
 import '../../translator.dart';
 import '../../utils/app_fonts.dart';
 import '../../utils/app_table.dart';
+import '../../widgets/app_dialog.dart';
 import '../sale/sale_screen.dart';
 
 class RouteScreen extends StatelessWidget {
   final RouteModel _model = RouteModel();
+  final FocusNode _searchFocus = FocusNode();
 
   RouteScreen({super.key});
 
@@ -51,20 +55,39 @@ class RouteScreen extends StatelessWidget {
                               current is QueryStateShowFilter,
                           builder: (context, state) {
                             return AnimatedContainer(
+                                onEnd: () {
+                                  _model.showFilter
+                                      ? _searchFocus.requestFocus()
+                                      : _searchFocus.unfocus();
+                                },
                                 constraints: BoxConstraints(
                                     minWidth:
                                         MediaQuery.of(context).size.width * 0.9,
                                     maxWidth:
                                         MediaQuery.of(context).size.width *
-                                            0.9),
+                                            0.99),
                                 height: _model.showFilter ? 50 : 0,
                                 duration: const Duration(milliseconds: 300),
                                 child: Row(
                                   children: [
                                     Expanded(
-                                        child: ClipRect(child: TextFormField(
-                                          autofocus: true,
-                                          decoration: const InputDecoration(border: InputBorder.none, filled: true, fillColor: Colors.red),
+                                        child: ClipRect(
+                                            child: TextFormField(
+                                      focusNode: _searchFocus,
+                                      textAlignVertical:
+                                          TextAlignVertical.center,
+                                      decoration: InputDecoration(
+                                          contentPadding: EdgeInsets.zero,
+                                          prefixIcon: Padding(
+                                              padding: const EdgeInsets.all(4),
+                                              child: Image.asset(
+                                                'images/search.png',
+                                                height: 10,
+                                                width: 10,
+                                              )),
+                                          border: InputBorder.none,
+                                          filled: true,
+                                          fillColor: const Color(0xfff5cbba)),
                                       controller: _model.filterController,
                                       onChanged: (text) {
                                         bloc.add(
@@ -74,8 +97,6 @@ class RouteScreen extends StatelessWidget {
                                   ],
                                 ));
                           }),
-                      const Divider(
-                          height: 20, thickness: 1, color: Colors.black26),
                       BlocBuilder<QueryBloc, QueryState>(
                           buildWhen: (previous, current) =>
                               current is QueryStateReady ||
@@ -120,55 +141,84 @@ class RouteScreen extends StatelessWidget {
     List<Widget> rows = [];
     int i = 0;
     for (var e in Lists.route.list) {
-      if (!e.address!.toLowerCase().contains(_model.filterController.text.toLowerCase()) &&
-          !e.taxname!.toLowerCase().contains(_model.filterController.text.toLowerCase()) &&
-          !e.taxcode!.toLowerCase().contains(_model.filterController.text.toLowerCase())) {
+      if (!e.address!
+              .toLowerCase()
+              .contains(_model.filterController.text.toLowerCase()) &&
+          !e.taxname!
+              .toLowerCase()
+              .contains(_model.filterController.text.toLowerCase()) &&
+          !e.taxcode!
+              .toLowerCase()
+              .contains(_model.filterController.text.toLowerCase())) {
         continue;
       }
       i++;
-      rows.add(InkWell(
-          onTap: () {},
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ActionCheckBox(point: e),
-              InkWell(onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context) => SaleScreen(saleUuid: '', partner: Lists.partners.findById(e.partner),)));
-              }, child: Column(
+      rows.add(Container(
+          decoration:
+              i % 2 == 0 ? AppTable.tableCellEven : AppTable.tableCellOdd,
+          child: InkWell(
+              onTap: () {},
+              child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  ActionCheckBox(point: e),
+                  InkWell(
+                      onLongPress: () {
+                        final Partner? p = Lists.partners.findById(e.partner);
+                        if (p == null) {
+                          AppDialog(
+                              context: context,
+                              message: tr(
+                                  'Cannot find partner with id ${e.partner}'));
+                        }
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    PartnerCartScreen(partner: p!)));
+                      },
+                      onTap: () {
+                        if (e.action == 1) {
+                          AppDialog(
+                                  context: context,
+                                  message: tr('This point was close'))
+                              .show();
+                          return;
+                        }
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => SaleScreen(
+                                      saleUuid: '',
+                                      partner:
+                                          Lists.partners.findById(e.partner),
+                                      routeId: e.id,
+                                    ))).then((value) {
+                          BlocProvider.of<QueryBloc>(context)
+                              .add(const QueryActionFilter(filter: ''));
+                        });
+                      },
+                      child: Container(
+                          padding: AppTable.cellPadding,
+                          width: 300,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(e.address ?? "",
+                                  maxLines: 1, style: AppFonts.tableRowText),
+                              Text('${e.taxname}, ${e.taxcode}',
+                                  maxLines: 1, style: AppFonts.tableRowText)
+                            ],
+                          ))),
                   Container(
                       padding: AppTable.cellPadding,
-                      height: 30,
-                      width: 300,
-                      decoration: i % 2 == 0
-                          ? AppTable.tableCellEven
-                          : AppTable.tableCellOdd,
-                      child: Text(e.address ?? "",
+                      width: 80,
+                      child: Text(e.taxcode ?? "",
                           maxLines: 1, style: AppFonts.tableRowText)),
-                  Container(
-                      padding: AppTable.cellPadding,
-                      height: 30,
-                      width: 300,
-                      decoration: i % 2 == 0
-                          ? AppTable.tableCellEven
-                          : AppTable.tableCellOdd,
-                      child: Text('${e.taxname}, ${e.taxcode}',
-                          maxLines: 1, style: AppFonts.tableRowText))
                 ],
-              )),
-              Container(
-                  padding: AppTable.cellPadding,
-                  height: 60,
-                  width: 80,
-                  decoration: i % 2 == 0
-                      ? AppTable.tableCellEven
-                      : AppTable.tableCellOdd,
-                  child: Text(e.taxcode ?? "",
-                      maxLines: 1, style: AppFonts.tableRowText)),
-            ],
-          )));
+              ))));
     }
+
     return SingleChildScrollView(
         child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -197,14 +247,14 @@ class _ActionCheckBox extends State<ActionCheckBox> {
     return Checkbox(
         value: widget.point.action == 1,
         onChanged: (v) {
-          setState(() {
-            int index = Lists.route.list.indexOf(widget.point);
-            widget.point = widget.point.copyWith(action: v ?? false ? 1 : 0);
-            Lists.route.list[index] = widget.point;
-            BlocProvider.of<QueryBloc>(context).add(QueryActionLoad(
-                op: SocketMessage.op_json_route_update,
-                optional: [widget.point.id, widget.point.action]));
-          });
+          // setState(() {
+          //   int index = Lists.route.list.indexOf(widget.point);
+          //   widget.point = widget.point.copyWith(action: v ?? false ? 1 : 0);
+          //   Lists.route.list[index] = widget.point;
+          //   BlocProvider.of<QueryBloc>(context).add(QueryActionLoad(
+          //       op: SocketMessage.op_json_route_update,
+          //       optional: [widget.point.id, widget.point.action]));
+          // });
         });
   }
 }

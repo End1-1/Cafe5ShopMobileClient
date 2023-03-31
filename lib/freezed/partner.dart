@@ -6,6 +6,7 @@ part 'partner.g.dart';
 @freezed
 class Partner with _$Partner {
   const factory Partner({required int id,
+    required String address,
   required String taxname,
   required String taxcode,
   required String contact,

@@ -13,20 +13,31 @@ import 'package:cafe5_shop_mobile_client/screens/partners/partners_screen.dart';
 import 'package:cafe5_shop_mobile_client/screens/sale/sale_model.dart';
 import 'package:cafe5_shop_mobile_client/socket_message.dart';
 import 'package:cafe5_shop_mobile_client/translator.dart';
+import 'package:cafe5_shop_mobile_client/widgets/app_dialog.dart';
+import 'package:cafe5_shop_mobile_client/widgets/app_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 import '../../freezed/partner.dart';
 import '../../freezed/sale.dart';
 import '../../models/lists.dart';
+import '../../partner_cart/partner_cart_screen.dart';
 import '../../utils/app_fonts.dart';
 import '../pricemode/price_mode_popup_screen.dart';
 
 class SaleScreen extends StatefulWidget {
   String saleUuid;
-  Partner? partner;
+  final SaleModel model = SaleModel();
 
-  SaleScreen({super.key, required this.saleUuid, this.partner});
+  SaleScreen(
+      {super.key,
+      required this.saleUuid,
+      Partner? partner,
+      required int routeId}) {
+    model.partner = partner;
+    model.routeId = routeId;
+    model.partnerTextController.text = partner?.taxname ?? '-';
+  }
 
   @override
   State<StatefulWidget> createState() {
@@ -45,7 +56,6 @@ class SaleScreenState extends BaseWidgetState<SaleScreen>
   late AnimationController _animationController2;
   late Animation<double> _animation2;
   List<SaleGoods> _indexOfGoods = [];
-  final SaleModel _model = SaleModel();
 
   @override
   void handler(Uint8List data) async {
@@ -59,14 +69,19 @@ class SaleScreenState extends BaseWidgetState<SaleScreen>
       int op = m.getInt();
       int dllok = m.getByte();
       if (dllok == 0) {
-        sd(m.getString());
+        String msg = m.getString();
+        sd(msg).then((value) {
+          if (msg.toLowerCase() == 'blocked') {
+            Navigator.pop(context);
+          }
+        });
         return;
       }
       switch (op) {
         case SocketMessage.op_create_empty_sale:
           widget.saleUuid = m.getString();
           String jsonStr = m.getString();
-          _model.saleHeader = SaleHeader.fromJson(jsonDecode(jsonStr));
+          widget.model.saleHeader = SaleHeader.fromJson(jsonDecode(jsonStr));
           setState(() {});
           getStock();
           break;
@@ -79,8 +94,8 @@ class SaleScreenState extends BaseWidgetState<SaleScreen>
               qty: m.getDouble(),
               back: m.getDouble(),
               price: m.getDouble());
-          _model.saleHeader =
-              _model.saleHeader!.copyWith(amount: m.getDouble());
+          widget.model.saleHeader =
+              widget.model.saleHeader!.copyWith(amount: m.getDouble());
           if (s.state == 2) {
             for (int i = 0; i < _goods.length; i++) {
               if (_goods[i].id == s.id) {
@@ -105,10 +120,12 @@ class SaleScreenState extends BaseWidgetState<SaleScreen>
           break;
         case SocketMessage.op_open_sale_draft_document:
           String jsonStr = m.getString();
-          _model.saleHeader = SaleHeader.fromJson(jsonDecode(jsonStr));
-          if (_model.saleHeader!.partner > 0) {
-            _model.partner = Lists.findPartner(_model.saleHeader!.partner);
-            _model.partnerTextController.text = _model.partner?.taxname ?? '';
+          widget.model.saleHeader = SaleHeader.fromJson(jsonDecode(jsonStr));
+          if (widget.model.saleHeader!.partner > 0) {
+            widget.model.partner =
+                Lists.findPartner(widget.model.saleHeader!.partner);
+            widget.model.partnerTextController.text =
+                widget.model.partner?.taxname ?? '';
             getDebt();
           }
           setState(() {});
@@ -149,17 +166,22 @@ class SaleScreenState extends BaseWidgetState<SaleScreen>
           break;
         case SocketMessage.op_json_stock_all:
           String json = m.getString();
-          _model.stockItems =
+          widget.model.stockItems =
               StockItemList.fromJson({'list': jsonDecode(json)});
           setState(() {});
           break;
         case SocketMessage.op_json_partner_debt:
           String json = m.getString();
           List<dynamic> data = jsonDecode(json);
-          _model.debtController.text = data[0]['debt'].toString();
-          setState(() {
-
-          });
+          widget.model.debtController.text = data[0]['debt'].toString();
+          setState(() {});
+          break;
+        case SocketMessage.op_json_route_update:
+          String json = m.getString();
+          Map<String, dynamic> result = jsonDecode(json);
+          int partner = result['partner'];
+          Lists.route.makeAction(partner, 1);
+          Navigator.pop(context);
           break;
       }
     }
@@ -207,20 +229,52 @@ class SaleScreenState extends BaseWidgetState<SaleScreen>
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(children: [
-                      ClassOutlinedButton.createTextAndImage(() {
-                        Navigator.pop(context);
-                      }, tr("Sale document"), "images/back.png", w: 280),
-                      Expanded(child: Container()),
-                      ClassOutlinedButton.createImage(
-                          _showAppendGoods, "images/plus.png"),
-                      ClassOutlinedButton.createImage(
-                          _showMainMenu, "images/menu.png")
-                    ]),
-                    const Divider(
-                        height: 20, thickness: 2, color: Colors.black26),
+                    AppHeader(
+                      title: 'Sale document',
+                      widgets: [
+                        Expanded(child: Container()),
+                        ClassOutlinedButton.createImage(
+                            _showAppendGoods, "images/plus.png"),
+                        ClassOutlinedButton.createImage(
+                            _showMainMenu, "images/menu.png")
+                      ],
+                    ),
                     _appendMenu(),
-                    const Divider(),
+                    Row(children: [
+                      Expanded(
+                          child: InkWell(
+                              onTap: () {
+                                if (widget.model.partner == null) {
+                                  AppDialog(
+                                          context: context,
+                                          message:
+                                              tr('Partner is not selected'))
+                                      .show();
+                                  return;
+                                }
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => PartnerCartScreen(
+                                              partner: widget.model.partner!,
+                                            )));
+                              },
+                              child: Container(
+                                  padding: const EdgeInsets.all(5),
+                                  decoration: const BoxDecoration(
+                                      gradient: LinearGradient(
+                                    colors: [
+                                      Color(0xff277df8),
+                                      Color(0xff448df8)
+                                    ],
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                  )),
+                                  child: Text(
+                                      '${widget.model.partner?.address ?? '-'}, ${widget.model.partner?.taxname ?? '-'}',
+                                      style: const TextStyle(
+                                          fontSize: 16, color: Colors.white)))))
+                    ]),
                     Expanded(
                         child: SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
@@ -236,9 +290,9 @@ class SaleScreenState extends BaseWidgetState<SaleScreen>
                       children: [
                         Text(tr("Total")),
                         const VerticalDivider(width: 5),
-                        _model.saleHeader == null
+                        widget.model.saleHeader == null
                             ? Container()
-                            : Text(_model.saleHeader!.amount.toString())
+                            : Text(widget.model.saleHeader!.amount.toString())
                       ],
                     )
                   ]),
@@ -325,7 +379,12 @@ class SaleScreenState extends BaseWidgetState<SaleScreen>
             Container(
                 padding: const EdgeInsets.all(3),
                 width: 80,
-                child: Text(_model.stockItems.stockItem(s.goods)?.total().toString() ?? "0",
+                child: Text(
+                    widget.model.stockItems
+                            .stockItem(s.goods)
+                            ?.total()
+                            .toString() ??
+                        "0",
                     style: const TextStyle(
                         color: Color(0xff620185),
                         fontWeight: FontWeight.bold))),
@@ -365,7 +424,7 @@ class SaleScreenState extends BaseWidgetState<SaleScreen>
             m.addInt(1); //state
             m.addDouble(1);
             m.addDouble(0);
-            m.addDouble(_model.priceMode.id == 2 ? s.price2 : s.price1);
+            m.addDouble(widget.model.priceMode.id == 2 ? s.price2 : s.price1);
             sendSocketMessage(m);
           }, "images/plus.png", h: 30, w: 30),
           const VerticalDivider(width: 5),
@@ -434,7 +493,7 @@ class SaleScreenState extends BaseWidgetState<SaleScreen>
                               m.addInt(1); //state
                               m.addDouble(0);
                               m.addDouble(0);
-                              m.addDouble(_model.priceMode.id == 2
+                              m.addDouble(widget.model.priceMode.id == 2
                                   ? e.price2
                                   : e.price1);
                               sendSocketMessage(m);
@@ -453,15 +512,17 @@ class SaleScreenState extends BaseWidgetState<SaleScreen>
     } else {
       _animationController2.animateBack(0,
           duration: const Duration(milliseconds: 300));
-      SocketMessage m =
-          SocketMessage.dllplugin(SocketMessage.op_update_draft_header);
-      m.addString(jsonEncode(_model.saleHeader!.toJson()));
-      sendSocketMessage(m);
+      if (widget.model.saleHeader != null) {
+        SocketMessage m =
+            SocketMessage.dllplugin(SocketMessage.op_update_draft_header);
+        m.addString(jsonEncode(widget.model.saleHeader!.toJson()));
+        sendSocketMessage(m);
+      }
     }
   }
 
   Widget _appendMenu() {
-    _model.priceModeController.text = _model.priceMode.name;
+    widget.model.priceModeController.text = widget.model.priceMode.name;
     return SizeTransition(
         sizeFactor: _animation,
         axis: Axis.vertical,
@@ -502,8 +563,8 @@ class SaleScreenState extends BaseWidgetState<SaleScreen>
   }
 
   Widget _showMenu() {
-    _model.discountController.text =
-        '${_model.partner != null ? _model.partner!.discount * 100 : 0}%';
+    widget.model.discountController.text =
+        '${widget.model.partner != null ? widget.model.partner!.discount * 100 : 0}%';
     return SizeTransition(
         sizeFactor: _animation2,
         axis: Axis.horizontal,
@@ -534,7 +595,7 @@ class SaleScreenState extends BaseWidgetState<SaleScreen>
                         Expanded(
                             child: TextFormField(
                           readOnly: true,
-                          controller: _model.priceModeController,
+                          controller: widget.model.priceModeController,
                           onTap: () {
                             showDialog(
                                 context: context,
@@ -542,8 +603,8 @@ class SaleScreenState extends BaseWidgetState<SaleScreen>
                                   return PriceModePopupScreen();
                                 }).then((pricemode) {
                               if (pricemode != null) {
-                                _model.priceMode = pricemode;
-                                _model.priceModeController.text =
+                                widget.model.priceMode = pricemode;
+                                widget.model.priceModeController.text =
                                     pricemode.name;
                               }
                             });
@@ -557,7 +618,7 @@ class SaleScreenState extends BaseWidgetState<SaleScreen>
                       Row(children: [
                         Expanded(
                             child: TextFormField(
-                          controller: _model.partnerTextController,
+                          controller: widget.model.partnerTextController,
                           onTap: () {
                             showDialog(
                                 context: context,
@@ -569,15 +630,18 @@ class SaleScreenState extends BaseWidgetState<SaleScreen>
                                   );
                                 }).then((p) {
                               if (p != null) {
-                                _model.partner = p;
-                                _model.partnerTextController.text = p.taxname;
-                                _model.discountController.text =
+                                widget.model.partner = p;
+                                widget.model.partnerTextController.text =
+                                    p.taxname;
+                                widget.model.discountController.text =
                                     '${p.discount * 100}%';
-                                _model.saleHeader = _model.saleHeader!.copyWith(
-                                    partner: p.id, discount: p.discount);
+                                widget.model.saleHeader =
+                                    widget.model.saleHeader!.copyWith(
+                                        partner: p.id, discount: p.discount);
                                 getDebt();
                               } else {
-                                _model.saleHeader = _model.saleHeader!
+                                widget.model.saleHeader = widget
+                                    .model.saleHeader!
                                     .copyWith(partner: 0, discount: 0);
                               }
                             });
@@ -587,8 +651,8 @@ class SaleScreenState extends BaseWidgetState<SaleScreen>
                         )),
                         InkWell(
                             onTap: () {
-                              _model.partnerTextController.clear();
-                              _model.partner = null;
+                              widget.model.partnerTextController.clear();
+                              widget.model.partner = null;
                             },
                             child: Image.asset(
                               'images/cancel.png',
@@ -599,7 +663,7 @@ class SaleScreenState extends BaseWidgetState<SaleScreen>
                       Text(tr('Credit'), style: const TextStyle()),
                       TextFormField(
                         readOnly: true,
-                        controller: _model.debtController,
+                        controller: widget.model.debtController,
                       ),
                       const Divider(
                         height: 10,
@@ -610,7 +674,7 @@ class SaleScreenState extends BaseWidgetState<SaleScreen>
                         Expanded(
                             child: TextFormField(
                           readOnly: true,
-                          controller: _model.discountController,
+                          controller: widget.model.discountController,
                         ))
                       ]),
                       const Divider(
@@ -618,29 +682,83 @@ class SaleScreenState extends BaseWidgetState<SaleScreen>
                       ),
                       Row(children: [
                         Checkbox(
-                            value: _model.saleHeader == null
+                            value: widget.model.saleHeader == null
                                 ? false
-                                : _model.saleHeader!.isdebt == 1,
+                                : widget.model.saleHeader!.isdebt == 1,
                             onChanged: (v) {
                               v ??= false;
                               int debt = v ? 1 : 0;
-                              _model.saleHeader =
-                                  _model.saleHeader!.copyWith(isdebt: debt);
+                              widget.model.saleHeader = widget.model.saleHeader!
+                                  .copyWith(isdebt: debt);
                               setState(() {});
                             }),
                         Text(tr('Debt'), style: AppFonts.standardText)
                       ]),
                       const Divider(
-                        height: 30,
+                        height: 20,
                       ),
                       Row(
                         children: [
                           Expanded(
                               child: ClassOutlinedButton.createTextAndImage(() {
-                            sd(tr('Access denied'));
+                            SocketMessage m = SocketMessage.dllplugin(
+                                SocketMessage.op_json_route_update);
+                            m.addInt(widget.model.routeId);
+                            m.addInt(widget.model.partner?.id ?? 0);
+                            m.addInt(1);
+                            m.addString(tr('Write order'));
+                            m.addString(widget.model.saleHeader?.uuid ?? '');
+                            sendSocketMessage(m);
                           }, tr('Write order'), 'images/printer.png'))
                         ],
-                      )
+                      ),
+                      const Divider(height: 20),
+                      Row(children: [
+                        Expanded(
+                            child: ClassOutlinedButton.createTextAndImage(() {
+                          sq(tr('Confirm, that goods not needed'), () {
+                            SocketMessage m = SocketMessage.dllplugin(
+                                SocketMessage.op_json_route_update);
+                            m.addInt(widget.model.routeId);
+                            m.addInt(widget.model.partner?.id ?? 0);
+                            m.addInt(1);
+                            m.addString(tr('Goods not needed'));
+                            m.addString(widget.model.saleHeader?.uuid ?? '');
+                            sendSocketMessage(m);
+                          }, () {});
+                        }, tr('Goods not needed'), 'images/goodsfull.png'))
+                      ]),
+                      const Divider(height: 20),
+                      Row(children: [
+                        Expanded(
+                            child: ClassOutlinedButton.createTextAndImage(() {
+                          sq(tr('Confirm, that shop was closed'), () {
+                            SocketMessage m = SocketMessage.dllplugin(
+                                SocketMessage.op_json_route_update);
+                            m.addInt(widget.model.routeId);
+                            m.addInt(widget.model.partner?.id ?? 0);
+                            m.addInt(1);
+                            m.addString(tr('Shop closed'));
+                            m.addString(widget.model.saleHeader?.uuid ?? '');
+                            sendSocketMessage(m);
+                          }, () {});
+                        }, tr('Shop closed'), 'images/goodsfull.png'))
+                      ]),
+                      const Divider(height: 20),
+                      Row(children: [
+                        Expanded(
+                            child: ClassOutlinedButton.createTextAndImage(() {
+                          sq(tr('Confirm, that shop was closed'), () {
+                            SocketMessage m = SocketMessage.dllplugin(
+                                SocketMessage.op_json_route_update);
+                            m.addInt(widget.model.routeId);
+                            m.addInt(widget.model.partner?.id ?? 0);
+                            m.addInt(1);
+                            m.addString(tr('Shop closed'));
+                            sendSocketMessage(m);
+                          }, () {});
+                        }, tr('Not visited'), 'images/goodsfull.png'))
+                      ]),
                     ],
                   )
                 ])));
@@ -673,8 +791,9 @@ class SaleScreenState extends BaseWidgetState<SaleScreen>
   }
 
   void getDebt() {
-    SocketMessage m = SocketMessage.dllplugin(SocketMessage.op_json_partner_debt);
-    m.addInt(_model.partner?.id ?? 0);
+    SocketMessage m =
+        SocketMessage.dllplugin(SocketMessage.op_json_partner_debt);
+    m.addInt(widget.model.partner?.id ?? 0);
     sendSocketMessage(m);
   }
 }
