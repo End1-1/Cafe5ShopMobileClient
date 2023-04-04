@@ -3,6 +3,7 @@ import 'package:cafe5_shop_mobile_client/config.dart';
 import 'package:cafe5_shop_mobile_client/db.dart';
 import 'package:cafe5_shop_mobile_client/local_notification_service.dart';
 import 'package:cafe5_shop_mobile_client/widget_choose_settings.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 
 // @pragma('vm:entry-point')
