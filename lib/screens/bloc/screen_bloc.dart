@@ -24,7 +24,20 @@ class ScreenBloc extends Bloc<ScreenEvent, ScreenState> {
       );
       String s = utf8.decode(response.bodyBytes);
       print(s);
-      emit(SSData(data: jsonDecode(s)));
+      if (response.statusCode < 299) {
+        Map<String, dynamic> responseData = jsonDecode(s);
+        if (!responseData.containsKey('ok'))  {
+          emit(SSError(error: s));
+          return;
+        }
+        if (responseData['ok'] == 0) {
+          emit(SSError(error: responseData['message']));
+          return;
+        }
+        emit(SSData(data: responseData));
+      } else {
+        emit(SSError(error: s));
+      }
     } catch (e) {
       print(e.toString());
       emit(SSError(error: e.toString()));

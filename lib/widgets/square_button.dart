@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 Widget squareButton(VoidCallback onPressed, String text) {
-  return SizedBox(height: 72, width: 72, child: OutlinedButton(
+  return Container(padding: const EdgeInsets.all(3), height: 72, width: 72, child: OutlinedButton(
       onPressed: onPressed,
       style: OutlinedButton.styleFrom(
         padding: const EdgeInsets.all(2),
@@ -13,7 +13,7 @@ Widget squareButton(VoidCallback onPressed, String text) {
 }
 
 Widget squareImageButton(VoidCallback onPressed, String assetPath) {
-  return SizedBox(height: 72, width: 72, child: OutlinedButton(
+  return Container(padding: const EdgeInsets.all(3), height: 72, width: 72, child: OutlinedButton(
       onPressed: onPressed,
       style: OutlinedButton.styleFrom(
         padding: const EdgeInsets.all(2),

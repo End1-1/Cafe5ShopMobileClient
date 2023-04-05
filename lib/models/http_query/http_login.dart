@@ -1,6 +1,9 @@
+import 'package:cafe5_shop_mobile_client/utils/prefs.dart';
+
 import 'http_query.dart';
 
 class HttpLogin extends HttpQuery  {
-  final String pin;
-  HttpLogin({required this.pin});
+  HttpLogin({required String pin}) {
+    makeJson({'pin': pin, 'action' : hqLogin});
+  }
 }

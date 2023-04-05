@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cafe5_shop_mobile_client/screens/login/login_screen.dart';
 import 'package:cafe5_shop_mobile_client/screens/register_device/register_device_screen.dart';
 import 'package:cafe5_shop_mobile_client/utils/app_theme.dart';
 import 'package:cafe5_shop_mobile_client/utils/prefs.dart';
@@ -36,6 +37,8 @@ class _SplashScreen extends State<SplashScreen> {
             Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
                 builder: (context) => RegisterDeviceScreen()), (
                 route) => false);
+          } else {
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => LoginScreen()), (route) => false);
           }
         }
       });
