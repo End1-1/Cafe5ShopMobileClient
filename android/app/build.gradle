@@ -47,7 +47,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.breezedevs.cafe5_shop_mobile_client"
+        applicationId "com.magnit.cafe5_shop_mobile_client"
         minSdkVersion localProperties.getProperty('flutter.minSdkVersion').toInteger()
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()

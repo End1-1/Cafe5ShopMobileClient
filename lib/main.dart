@@ -1,10 +1,11 @@
-import 'package:cafe5_shop_mobile_client/client_socket.dart';
-import 'package:cafe5_shop_mobile_client/config.dart';
-import 'package:cafe5_shop_mobile_client/db.dart';
+import 'dart:io';
+
 import 'package:cafe5_shop_mobile_client/local_notification_service.dart';
-import 'package:cafe5_shop_mobile_client/widget_choose_settings.dart';
-import 'package:firebase_remote_config/firebase_remote_config.dart';
+import 'package:cafe5_shop_mobile_client/screens/splash/splash_screen.dart';
+import 'package:cafe5_shop_mobile_client/utils/http_overrides.dart';
+import 'package:cafe5_shop_mobile_client/utils/prefs.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // @pragma('vm:entry-point')
 // Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -14,11 +15,9 @@ import 'package:flutter/material.dart';
 // }
 
 Future<void> main() async {
+  HttpOverrides.global = MyHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
-  await Config.init();
-  Db.init(dbCreate);
-  ClientSocket.init(Config.getString(key_server_address), int.tryParse(Config.getString(key_server_port)) ?? 0);
-  await ClientSocket.socket.connect(false);
+  prefs = await SharedPreferences.getInstance();
   await LocalNotificationService().setup();
 
   runApp(const MyApp());
@@ -30,12 +29,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Cafe5MobileClient',
+      title: 'ShopMobile',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.indigo,
       ),
       debugShowCheckedModeBanner: false,
-      home: const WidgetChooseSettings(),
+      home: SplashScreen(),
     );
   }
 }

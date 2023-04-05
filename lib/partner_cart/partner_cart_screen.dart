@@ -1,15 +1,14 @@
 import 'dart:convert';
 
-import 'package:cafe5_shop_mobile_client/models/query_bloc/query_action.dart';
-import 'package:cafe5_shop_mobile_client/models/query_bloc/query_bloc.dart';
-import 'package:cafe5_shop_mobile_client/models/query_bloc/query_state.dart';
+import 'package:cafe5_shop_mobile_client/models/http_query/http_partner_cart.dart';
 import 'package:cafe5_shop_mobile_client/partner_cart/partner_cart_model.dart';
-import 'package:cafe5_shop_mobile_client/widgets/app_header.dart';
-import 'package:cafe5_shop_mobile_client/widgets/app_scaffold.dart';
+import 'package:cafe5_shop_mobile_client/screens/bloc/screen_bloc.dart';
+import 'package:cafe5_shop_mobile_client/screens/bloc/screen_event.dart';
+import 'package:cafe5_shop_mobile_client/screens/bloc/screen_state.dart';
+import 'package:cafe5_shop_mobile_client/screens/screen/app_scaffold.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cafe5_shop_mobile_client/socket_message.dart';
 
 import '../freezed/partner.dart';
 import '../translator.dart';
@@ -27,12 +26,11 @@ class PartnerCartScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var bloc = QueryBloc(const QueryStateProgress());
-    bloc.add(QueryActionLoad(op: SocketMessage.op_json_partner_debt, optional: [_model.partner.id]));
-    return BlocProvider<QueryBloc>(
-        create: (_) => bloc,
-        child: AppScaffold(widgets: [
-          AppHeader(title: tr('Partner cart')),
+    return BlocProvider<ScreenBloc>(
+        create: (_) => ScreenBloc(SSInit())..add(SEHttpQuery(query: HttpPartnerCart(partnerId: _model.partner.id))),
+        child: AppScaffold(
+          title: tr('Partner cart'),
+            child: Column(children: [
           Expanded(
               child: SingleChildScrollView(
             child: Wrap(
@@ -51,24 +49,10 @@ class PartnerCartScreen extends StatelessWidget {
                 Text(tr('Contact'), style: label),
                 Text(_model.partner.contact),
                 Text(tr('Current credit'), style: label),
-                BlocBuilder<QueryBloc, QueryState>(builder: (context, state) {
-                  if (state is QueryStateProgress) {
-                    return const SizedBox(height: 30, width: 30, child: CircularProgressIndicator());
-                  } else if (state is QueryStateReady){
-                    late String s;
-                    try {
-                      List<dynamic> l = jsonDecode(state.data);
-                      s = l[0]['debt'].toString();
-                    } catch (e) {
-                      s = e.toString();
-                    }
-                    return Text(s, style: text);
-                  }
-                  return Container();
-                })
+                Text('${_model.partner.debt ?? '0'}', style: text)
               ],
             ),
-          ))
-        ]));
+          ))])
+        ));
   }
 }
