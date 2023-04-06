@@ -20,3 +20,12 @@ Widget squareImageButton(VoidCallback onPressed, String assetPath) {
       ),
       child:  Image.asset(assetPath, width: 64, height: 64)));
 }
+
+Widget smallSquareImageButton(VoidCallback onPressed, String assetPath) {
+  return Container(padding: const EdgeInsets.all(3), height: 36, width: 36, child: OutlinedButton(
+      onPressed: onPressed,
+      style: OutlinedButton.styleFrom(
+        padding: const EdgeInsets.all(2),
+      ),
+      child:  Image.asset(assetPath)));
+}
