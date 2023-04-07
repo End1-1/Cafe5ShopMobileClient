@@ -4,6 +4,6 @@ import 'http_query.dart';
 
 class HttpLogin extends HttpQuery  {
   HttpLogin({required String pin}) {
-    makeJson({'pin': pin, 'action' : hqLogin});
+    makeJson({'pin': pin, pkAction : hqLogin});
   }
 }

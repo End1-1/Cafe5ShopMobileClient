@@ -1,28 +1,39 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'partner.freezed.dart';
+
 part 'partner.g.dart';
 
 @freezed
 class Partner with _$Partner {
-  const factory Partner({required int id,
-    required String address,
-  required String taxname,
-  required String taxcode,
-  required String contact,
-  required String phone,
-  required double discount,
-  required double? debt}) = _Partner;
-  factory Partner.fromJson(Map<String,dynamic> json) => _$PartnerFromJson(json);
-}
+  Partner._();
 
-@freezed
-class Partners with _$Partners {
-  const Partners._();
-  const factory Partners({required List<Partner> partners}) = _Partners;
-  factory Partners.fromJson(Map<String,dynamic> json) => _$PartnersFromJson(json);
+  const factory Partner(
+      {required int id,
+      required String category,
+      required String group,
+      required String status,
+      required String name,
+      required String address,
+      required String taxname,
+      required String taxcode,
+      required String contact,
+      required String phonenumber,
+      required double discount}) = _Partner;
 
-  Partner? findById(int id) {
-    return partners.where((element) => element.id == id).first;
-  }
+  factory Partner.empty() => const Partner(
+      id: 0,
+      category: '',
+      group: '',
+      status: '',
+      name: '',
+      address: '',
+      taxname: '',
+      taxcode: '',
+      contact: '',
+      phonenumber: '',
+      discount: 0);
+
+  factory Partner.fromJson(Map<String, Object?> json) =>
+      _$PartnerFromJson(json);
 }

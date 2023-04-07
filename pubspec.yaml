@@ -28,6 +28,8 @@ dependencies:
   flutter_bloc: ^8.1.2
   firebase_remote_config: ^4.0.0
   firebase_messaging: ^14.4.0
+  path_provider: ^2.0.14
+  permission_handler: ^10.2.0
 
 dev_dependencies:
   flutter_test:

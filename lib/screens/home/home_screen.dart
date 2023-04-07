@@ -1,6 +1,9 @@
+import 'package:cafe5_shop_mobile_client/models/lists.dart';
+import 'package:cafe5_shop_mobile_client/screens/data_download/data_download_screen.dart';
 import 'package:cafe5_shop_mobile_client/screens/order/order_screen.dart';
 import 'package:cafe5_shop_mobile_client/screens/screen/app_scaffold.dart';
 import 'package:cafe5_shop_mobile_client/translator.dart';
+import 'package:cafe5_shop_mobile_client/utils/dialogs.dart';
 import 'package:cafe5_shop_mobile_client/widgets/rect_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -11,10 +14,17 @@ class HomeScreen extends StatelessWidget {
     return AppScaffold(title: 'Home', showBackButton: false, child: Column(
       children: [
         Wrap(
+          direction: Axis.vertical,
+          spacing: 10,
           children: [
             RectButton(onTap: (){
               Navigator.push(context, MaterialPageRoute(builder: (context) => OrderScreen()));
-            }, title: tr('New order'), assetPath: 'assets/images/order.png')
+            }, title: tr('New order'), assetPath: 'assets/images/order.png'),
+            RectButton(onTap: (){
+              appDialogQuestion(context, tr('Refresh data?'), () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const DataDownloadScreen(pop: true,)));
+              }, null);
+            }, title: tr('Refresh data'), assetPath: 'assets/images/refresh.png')
           ],
         )
       ],

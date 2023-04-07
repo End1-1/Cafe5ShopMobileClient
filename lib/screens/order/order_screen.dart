@@ -1,26 +1,64 @@
+import 'package:cafe5_shop_mobile_client/freezed/partner.dart';
+import 'package:cafe5_shop_mobile_client/screens/partner_screen/partner_screen.dart';
 import 'package:cafe5_shop_mobile_client/screens/screen/app_scaffold.dart';
 import 'package:cafe5_shop_mobile_client/widgets/square_button.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 import 'order_model.dart';
 
 class OrderScreen extends StatelessWidget {
   final OrderModel model = OrderModel();
+
   OrderScreen({super.key});
+
+  Stream<Partner> partnerStream;
 
   @override
   Widget build(BuildContext context) {
-    return AppScaffold(title: 'Order', child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
+    return AppScaffold(
+        title: 'Order',
+        headerWidgets: [
+          smallSquareImageButton(() async {
+            var result = await Navigator.push(context, MaterialPageRoute(builder: (context) => PartnerScreen(selectMode: true,)));
+            if (result != null) {
+              model.partner = result;
+            }
+          }, 'assets/images/edit.png')
+        ],
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(child: Text('POS\r\nPOS')),
-            smallSquareImageButton(() { }, 'assets/images/edit.png')
+            Row(
+              children: [
+                Expanded(child:
+                StreamBuilder<Partner>(
+                stream: partnerStream,
+                    builder: (context, snapshot) {return Container(
+                    margin: const EdgeInsets.fromLTRB(0, 5, 5, 0),
+                    padding: const EdgeInsets.fromLTRB(5, 5, 5, 5),
+                    decoration: const BoxDecoration(
+                        border: Border.fromBorderSide(BorderSide(color: Colors.black12))
+                    ),
+                    child:
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                            children: [
+                              Text(model.partner.name),
+                              Expanded(child: Container()),
+                              Text(model.partner.taxcode),
+                            ]
+                        ),
+                        Row(children: [
+                          Flexible(child: Text(model.partner.address))
+                        ],)
+                      ],
+                    ));})),
+              ],
+            )
           ],
-        )
-      ],
-    ));
+        ));
   }
-
 }

@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:cafe5_shop_mobile_client/models/http_query/http_check_pass_hash.dart';
+import 'package:cafe5_shop_mobile_client/screens/home/home_screen.dart';
 import 'package:cafe5_shop_mobile_client/screens/login/login_screen.dart';
 import 'package:cafe5_shop_mobile_client/screens/register_device/register_device_screen.dart';
 import 'package:cafe5_shop_mobile_client/utils/app_theme.dart';
@@ -7,6 +9,7 @@ import 'package:cafe5_shop_mobile_client/utils/prefs.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -19,6 +22,11 @@ class _SplashScreen extends State<SplashScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       Firebase.initializeApp().then((app) async {
+        Map<Permission, PermissionStatus> statuses = await  [
+          Permission.storage,
+          Permission.manageExternalStorage
+        ].request();
+
         final FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.instance;
         remoteConfig.setConfigSettings(RemoteConfigSettings(
           fetchTimeout: const Duration(seconds: 20),
@@ -38,7 +46,16 @@ class _SplashScreen extends State<SplashScreen> {
                 builder: (context) => RegisterDeviceScreen()), (
                 route) => false);
           } else {
-            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => LoginScreen()), (route) => false);
+            bool isSignIn = await CheckPassHash.checkPassHash();
+            if (isSignIn) {
+              Navigator.pushAndRemoveUntil(context,
+                  MaterialPageRoute(builder: (context) => HomeScreen()), (
+                      route) => false);
+            } else {
+              Navigator.pushAndRemoveUntil(context,
+                  MaterialPageRoute(builder: (context) => LoginScreen()), (
+                      route) => false);
+            }
           }
         }
       });

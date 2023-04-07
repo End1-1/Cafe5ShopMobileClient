@@ -8,6 +8,8 @@ const pkFcmToken = 'pkFcmToken';
 const pkPassHash = 'pkPassHash';
 const pkFirstName = 'pkFirstName';
 const pkLastName = 'pkLastName';
+const pkDataLoaded = 'pkDataLoaded';
+const pkAction = 'pkAction';
 
 const rcServerList = 'serverList';
 
@@ -17,3 +19,4 @@ late final SharedPreferences prefs;
 const hqRegisterDevice = 1;
 const hqLogin = 2;
 const hqDownloadData = 3;
+const hqCheckPassHash = 4;

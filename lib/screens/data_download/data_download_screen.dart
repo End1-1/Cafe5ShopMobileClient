@@ -1,5 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
-
+import 'package:cafe5_shop_mobile_client/models/lists.dart';
+import 'package:cafe5_shop_mobile_client/utils/prefs.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:cafe5_shop_mobile_client/models/http_query/http_download_data.dart';
 import 'package:cafe5_shop_mobile_client/screens/bloc/screen_bloc.dart';
 import 'package:cafe5_shop_mobile_client/screens/bloc/screen_event.dart';
@@ -14,7 +17,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DataDownloadScreen extends StatelessWidget {
-  const DataDownloadScreen({super.key});
+  final bool pop;
+  const DataDownloadScreen({super.key, required this.pop});
 
   @override
   Widget build(BuildContext context) {
@@ -24,14 +28,28 @@ class DataDownloadScreen extends StatelessWidget {
         child: BlocProvider<ScreenBloc>(
             create: (_) => ScreenBloc(SSInit())..add(SEHttpQuery(query: HttpDownloadData())),
             child: BlocListener<ScreenBloc, ScreenState>(
-                listener: (context, state) {
+                listener: (context, state) async {
                   if (state is SSError) {
                     appDialog(context, state.error).then((value) {
                       Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => LoginScreen()), (route) => false);
                     });
                   }
                   if (state is SSData) {
-                    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomeScreen()), (route) => false);
+                    String s = jsonEncode(state.data);
+                    final dir = await getApplicationDocumentsDirectory();
+                    await Directory('${dir.path}/Magnit').create(recursive: true);
+                    await Directory('${dir.path}/Magnit/orders').create(recursive: true);
+                    File file = File('${dir.path}/magnitdata.json');
+                    await file.writeAsString(s);
+                    await Lists.load();
+                    prefs.setBool(pkDataLoaded, true);
+                    if (pop) {
+                      Navigator.pop(context);
+                    } else {
+                      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
+                          builder: (context) => HomeScreen()), (
+                          route) => false);
+                    }
                   }
                 },
                 child: Column(

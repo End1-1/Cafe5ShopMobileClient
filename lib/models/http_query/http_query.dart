@@ -6,8 +6,8 @@ abstract class HttpQuery {
   Map<String, dynamic> data = {};
 
   void makeJson(Map<String, Object?> other) {
-    data['serverAPIKey'] = prefs.getString(pkServerAPIKey);
-    data['fcmToken'] = prefs.getString(pkFcmToken);
+    data[pkServerAPIKey] = prefs.getString(pkServerAPIKey);
+    data[pkFcmToken] = prefs.getString(pkFcmToken);
     data.addAll(other);
   }
   

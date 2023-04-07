@@ -1,6 +1,7 @@
 import 'package:cafe5_shop_mobile_client/screens/bloc/screen_bloc.dart';
 import 'package:cafe5_shop_mobile_client/screens/bloc/screen_state.dart';
 import 'package:cafe5_shop_mobile_client/screens/data_download/data_download_screen.dart';
+import 'package:cafe5_shop_mobile_client/screens/home/home_screen.dart';
 import 'package:cafe5_shop_mobile_client/screens/login/pin_form.dart';
 import 'package:cafe5_shop_mobile_client/screens/screen/app_scaffold.dart';
 import 'package:cafe5_shop_mobile_client/translator.dart';
@@ -29,7 +30,13 @@ class LoginScreen extends StatelessWidget {
                   prefs.setString(pkFirstName, state.data[pkFirstName]);
                   prefs.setString(pkPassHash, state.data[pkPassHash]);
                   appDialog(context, '${tr('Welcome')}, ${state.data[pkLastName]} ${state.data[pkLastName]}').then((value) {
-                    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const DataDownloadScreen()), (route) => false);
+                    if (prefs.getBool(pkDataLoaded) ?? false) {
+                      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomeScreen()), (route) => false);
+                    } else {
+                      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
+                          builder: (context) => const DataDownloadScreen(pop: false)), (
+                          route) => false);
+                    }
                   });
                 }
               },

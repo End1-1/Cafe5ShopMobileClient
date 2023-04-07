@@ -12,9 +12,9 @@ class HttpRegisterDevice extends HttpQuery {
   Future<String> body() async {
     final fcmToken = await FirebaseMessaging.instance.getToken() ?? '';
     prefs.setString(pkFcmToken, fcmToken);
-    data['action'] = hqRegisterDevice;
-    data['serverAPIKey'] = serverAPIKey;
-    data['fcmToken'] = fcmToken;
+    data[pkAction] = hqRegisterDevice;
+    data[pkServerAPIKey] = serverAPIKey;
+    data[pkFcmToken] = fcmToken;
     return jsonEncode(data);
   }
 }
