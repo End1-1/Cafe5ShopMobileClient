@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cafe5_shop_mobile_client/freezed/goods.dart';
 import 'package:cafe5_shop_mobile_client/freezed/partner.dart';
+import 'package:cafe5_shop_mobile_client/utils/dir.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 
@@ -9,20 +10,31 @@ import 'dart:io';
 class Lists {
 
   static Map<int, Goods> goods = {};
+  static List<String> goodsGroup = [];
   static Map<int, Partner> partners = {};
 
   static Future<void> load() async {
     goods.clear();
+    goodsGroup.clear();
     partners.clear();
-    final dir = await getApplicationDocumentsDirectory();
-    File file = File('${dir.path}/magnitdata.json');
-    String s = await file.readAsString();
-    Map<String, dynamic> data = jsonDecode(s);
-    for (var e in data['goods']) {
-      goods[e['id']] = Goods.fromJson(e);
-    }
-    for (var e in data['partners']) {
-      partners[e['id']] = Partner.fromJson(e);
+    File file = File(await Dir.dataFile());
+    try {
+      String s = await file.readAsString();
+      Map<String, dynamic> data = jsonDecode(s);
+      for (var e in data['goods']) {
+        goods[e['id']] = Goods.fromJson(e);
+        if (!goodsGroup.contains(e['groupname'])) {
+          goodsGroup.add(e['groupname']);
+        }
+      }
+      for (var e in data['partners']) {
+        partners[e['id']] = Partner.fromJson(e);
+      }
+    } catch (e) {
+      if (!e.toString().contains('Cannot open file')) {
+        file.delete();
+      }
+      print(e.toString());
     }
   }
 
@@ -37,6 +49,14 @@ class Lists {
         l.add(value);
       }
     });
+    return l;
+  }
+
+  static List<Goods> filteredGoods(String? filter) {
+    final List<Goods> l = [];
+    if (filter == null) {
+      l.addAll(goods.values.where((element) => element.groupname == (filter ?? '')).toList());
+    }
     return l;
   }
 }

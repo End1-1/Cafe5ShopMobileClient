@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:cafe5_shop_mobile_client/models/lists.dart';
+import 'package:cafe5_shop_mobile_client/utils/dir.dart';
 import 'package:cafe5_shop_mobile_client/utils/prefs.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:cafe5_shop_mobile_client/models/http_query/http_download_data.dart';
@@ -36,10 +37,9 @@ class DataDownloadScreen extends StatelessWidget {
                   }
                   if (state is SSData) {
                     String s = jsonEncode(state.data);
-                    final dir = await getApplicationDocumentsDirectory();
-                    await Directory('${dir.path}/Magnit').create(recursive: true);
-                    await Directory('${dir.path}/Magnit/orders').create(recursive: true);
-                    File file = File('${dir.path}/magnitdata.json');
+                    final dir = await Dir.appPath();
+                    await Directory(dir).create(recursive: true);
+                    File file = File(await Dir.dataFile());
                     await file.writeAsString(s);
                     await Lists.load();
                     prefs.setBool(pkDataLoaded, true);

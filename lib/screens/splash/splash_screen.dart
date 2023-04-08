@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cafe5_shop_mobile_client/models/http_query/http_check_pass_hash.dart';
+import 'package:cafe5_shop_mobile_client/models/lists.dart';
 import 'package:cafe5_shop_mobile_client/screens/home/home_screen.dart';
 import 'package:cafe5_shop_mobile_client/screens/login/login_screen.dart';
 import 'package:cafe5_shop_mobile_client/screens/register_device/register_device_screen.dart';
@@ -48,6 +49,7 @@ class _SplashScreen extends State<SplashScreen> {
           } else {
             bool isSignIn = await CheckPassHash.checkPassHash();
             if (isSignIn) {
+              await Lists.load();
               Navigator.pushAndRemoveUntil(context,
                   MaterialPageRoute(builder: (context) => HomeScreen()), (
                       route) => false);

@@ -6,7 +6,7 @@ part 'partner.g.dart';
 
 @freezed
 class Partner with _$Partner {
-  Partner._();
+  const Partner._();
 
   const factory Partner(
       {required int id,
@@ -19,7 +19,8 @@ class Partner with _$Partner {
       required String taxcode,
       required String contact,
       required String phonenumber,
-      required double discount}) = _Partner;
+      required double discount,
+      required int pricepolitic}) = _Partner;
 
   factory Partner.empty() => const Partner(
       id: 0,
@@ -32,7 +33,9 @@ class Partner with _$Partner {
       taxcode: '',
       contact: '',
       phonenumber: '',
-      discount: 0);
+      discount: 0,
+    pricepolitic: 1
+  );
 
   factory Partner.fromJson(Map<String, Object?> json) =>
       _$PartnerFromJson(json);
