@@ -47,7 +47,10 @@ const Map<String, String> vals = {
   'not visited':'Չեմ այցելել',
   'confirm, that not visited':'Հաստատեք, որ չեկ այցելել',
   'blocked':'Արգելափակված է',
-  'refresh data?':'Թարմացնել՞ տվյալները'
+  'refresh data?':'Թարմացնել՞ տվյալները',
+  'refresh data': 'Տվյալների թարմացում',
+  'downloading data...': 'Տվյալների բեռնում․․․',
+  'goods list':'Ապրանքների ցանկ',
 };
 
 String tr(String s) {

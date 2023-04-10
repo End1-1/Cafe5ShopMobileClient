@@ -20,3 +20,6 @@ const hqRegisterDevice = 1;
 const hqLogin = 2;
 const hqDownloadData = 3;
 const hqCheckPassHash = 4;
+const hqStock = 5;
+const hqSaveOrder = 6;
+const hqPreorders = 7;

@@ -17,14 +17,16 @@ class RectButton extends StatelessWidget {
           color: Colors.indigo,
           border: Border.fromBorderSide(BorderSide(color: Colors.yellow))
         ),
-        height: 70,
+        height: 90,
         width: 150,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(assetPath, width: 30, height: 40,),
-            Text(title.toUpperCase(), textAlign: TextAlign.center, style: const TextStyle(color: Colors.white))
+            Expanded(child: Container()),
+            Text(title.toUpperCase(), textAlign: TextAlign.center, style: const TextStyle(color: Colors.white)),
+            Expanded(child: Container()),
           ],
         )
       )

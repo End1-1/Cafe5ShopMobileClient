@@ -94,13 +94,13 @@ class PinForm extends StatelessWidget {
                                 SEHttpQuery(
                                     query:
                                         HttpLogin(pin: _pinController.text)));
-                          }, 'assets/images/user.png'),
+                          }, 'assets/images/user.png', height: 72),
                           squareButton(() {
                             _pinController.text += '0';
                           }, '0'),
                           squareImageButton(() {
                             _pinController.clear();
-                          }, 'assets/images/cancel.png'),
+                          }, 'assets/images/cancel.png', height: 72),
                         ],
                       ))
                 ],

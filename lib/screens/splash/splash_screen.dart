@@ -13,6 +13,8 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
   @override
   State<StatefulWidget> createState() => _SplashScreen();
 }
@@ -38,25 +40,36 @@ class _SplashScreen extends State<SplashScreen> {
         List<dynamic> listServers =
             jsonDecode(json);
         servers.clear();
-        listServers.forEach((e) {
+        for (var e in listServers) {
           e.keys.forEach((k) => servers.add({k: e[k]}));
-        });
+        }
         if (mounted) {
-          if (prefs.getString(pkServerAPIKey) == null) {
-            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
-                builder: (context) => RegisterDeviceScreen()), (
-                route) => false);
-          } else {
-            bool isSignIn = await CheckPassHash.checkPassHash();
-            if (isSignIn) {
-              await Lists.load();
-              Navigator.pushAndRemoveUntil(context,
-                  MaterialPageRoute(builder: (context) => HomeScreen()), (
-                      route) => false);
+          bool httpOk = false;
+          while (!httpOk) {
+            if (prefs.getString(pkServerAPIKey) == null) {
+              httpOk = true;
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
+                  builder: (context) => RegisterDeviceScreen()), (
+                  route) => false);
             } else {
-              Navigator.pushAndRemoveUntil(context,
-                  MaterialPageRoute(builder: (context) => LoginScreen()), (
-                      route) => false);
+              int isSignIn = await CheckPassHash().request({});
+              switch (isSignIn) {
+                case 0:
+                  httpOk = true;
+                  Navigator.pushAndRemoveUntil(context,
+                      MaterialPageRoute(builder: (context) => LoginScreen()), (
+                          route) => false);
+                  break;
+                case 1:
+                  httpOk = true;
+                  await Lists.load();
+                  Navigator.pushAndRemoveUntil(context,
+                      MaterialPageRoute(builder: (context) => HomeScreen()), (
+                          route) => false);
+                  break;
+                case 2:
+                  break;
+              }
             }
           }
         }

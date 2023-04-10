@@ -55,12 +55,6 @@ Future<void> appDialogQuestion(
               TextButton(
                   onPressed: () {
                     Navigator.pop(context);
-                  },
-                  child: Text(tr('Cancel'))),
-              const SizedBox(width: 20),
-              TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
                     if (no != null) {
                       no();
                     }

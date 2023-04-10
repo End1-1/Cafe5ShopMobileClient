@@ -6,12 +6,13 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 
 class HttpRegisterDevice extends HttpQuery {
   final String serverAPIKey;
-  HttpRegisterDevice(this.serverAPIKey) ;
+  HttpRegisterDevice(this.serverAPIKey) : super(0) ;
 
   @override
   Future<String> body() async {
     final fcmToken = await FirebaseMessaging.instance.getToken() ?? '';
     prefs.setString(pkFcmToken, fcmToken);
+    data.clear();
     data[pkAction] = hqRegisterDevice;
     data[pkServerAPIKey] = serverAPIKey;
     data[pkFcmToken] = fcmToken;
