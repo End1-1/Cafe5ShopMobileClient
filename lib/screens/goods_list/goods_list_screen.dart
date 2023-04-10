@@ -4,7 +4,7 @@ import 'package:cafe5_shop_mobile_client/freezed/goods.dart';
 import 'package:cafe5_shop_mobile_client/models/lists.dart';
 import 'package:cafe5_shop_mobile_client/models/model.dart';
 import 'package:cafe5_shop_mobile_client/screens/screen/app_scaffold.dart';
-import 'package:cafe5_shop_mobile_client/translator.dart';
+import 'package:cafe5_shop_mobile_client/utils/translator.dart';
 import 'package:cafe5_shop_mobile_client/widgets/square_button.dart';
 import 'package:flutter/material.dart';
 
@@ -14,18 +14,24 @@ class GoodsListScreen extends StatelessWidget {
   final StreamController<List<Goods>> goodsController = StreamController();
   final StreamController<dynamic?> totalController = StreamController();
   final int pricePolitic;
+  final int partnerId;
   double totalSaleQty = 0.0;
   double totalBackQty = 0.0;
   double totalAmount = 0.0;
 
   GoodsListScreen(
-      {super.key, required this.pricePolitic, required double discount}) {
+      {super.key, required this.pricePolitic, required double discount, required this.partnerId}) {
     goods.addAll(Lists.goods.values.map((e) {
       double price = pricePolitic == mdPriceRetail ? e.price1 : e.price2;
       if (discount > 0) {
         discount /= 100;
       }
       price -= price * discount;
+      if (Lists.specialPrices.containsKey(this.partnerId)) {
+        if (Lists.specialPrices[this.partnerId]!.containsKey(e.id)) {
+          price = Lists.specialPrices[this.partnerId]![e.id]!;
+        }
+      }
       Goods g = e.copyWith(price: price);
       return g;
     }));

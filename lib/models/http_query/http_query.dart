@@ -9,8 +9,9 @@ const hrNetworkError = 2;
 class HttpQuery {
   Map<String, dynamic> data = {};
 
-  HttpQuery(int action) {
+  HttpQuery(int action, {Map<String, dynamic> initData = const {}}) {
     data[pkAction] = action;
+    data.addAll(initData);
   }
 
   void makeJson(Map<String, Object?> other) {

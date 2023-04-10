@@ -5,7 +5,7 @@ import 'package:cafe5_shop_mobile_client/screens/bloc/screen_event.dart';
 import 'package:cafe5_shop_mobile_client/screens/bloc/screen_state.dart';
 import 'package:cafe5_shop_mobile_client/screens/partner_cart/partner_cart_model.dart';
 import 'package:cafe5_shop_mobile_client/screens/screen/app_scaffold.dart';
-import 'package:cafe5_shop_mobile_client/translator.dart';
+import 'package:cafe5_shop_mobile_client/utils/translator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

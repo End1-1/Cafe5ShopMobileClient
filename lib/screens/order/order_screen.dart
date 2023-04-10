@@ -1,11 +1,13 @@
 import 'package:cafe5_shop_mobile_client/freezed/goods.dart';
+import 'package:cafe5_shop_mobile_client/freezed/goods_special_price.dart';
 import 'package:cafe5_shop_mobile_client/freezed/partner.dart';
 import 'package:cafe5_shop_mobile_client/models/http_query/http_query.dart';
+import 'package:cafe5_shop_mobile_client/models/lists.dart';
 import 'package:cafe5_shop_mobile_client/models/model.dart';
 import 'package:cafe5_shop_mobile_client/screens/goods_list/goods_list_screen.dart';
 import 'package:cafe5_shop_mobile_client/screens/partner_screen/partner_screen.dart';
 import 'package:cafe5_shop_mobile_client/screens/screen/app_scaffold.dart';
-import 'package:cafe5_shop_mobile_client/translator.dart';
+import 'package:cafe5_shop_mobile_client/utils/translator.dart';
 import 'package:cafe5_shop_mobile_client/utils/dialogs.dart';
 import 'package:cafe5_shop_mobile_client/utils/prefs.dart';
 import 'package:cafe5_shop_mobile_client/widgets/square_button.dart';
@@ -40,7 +42,7 @@ class OrderScreen extends StatelessWidget {
                       MaterialPageRoute(
                           builder: (context) => GoodsListScreen(
                               pricePolitic: model.pricePolitic,
-                              discount: model.partner.discount)));
+                              discount: model.partner.discount, partnerId: model.partner.id,)));
                   if (result != null && result.isNotEmpty) {
                     model.goods.addAll(result);
                     model.goodsController.add(model.goods);
@@ -66,10 +68,17 @@ class OrderScreen extends StatelessWidget {
                     model.partnerController.add(model.partner);
                     if (model.goods.isNotEmpty) {
                       for (int i = 0; i < model.goods.length; i++) {
+                        double price = model.pricePolitic == mdPriceRetail
+                            ? model.goods[i].price1
+                            : model.goods[i].price2;
+                        price -= price * model.partner.discount;
+                        if (Lists.specialPrices.containsKey(model.partner.id)) {
+                          if (Lists.specialPrices[model.partner.id]!.containsKey(model.goods[i].id)) {
+                            price = Lists.specialPrices[model.partner.id]![model.goods[i].id]!;
+                          }
+                        }
                         model.goods[i] = model.goods[i].copyWith(
-                            price: model.pricePolitic == mdPriceRetail
-                                ? model.goods[i].price1
-                                : model.goods[i].price2);
+                            price: price);
                       }
                       if (model.partner.discount > 0) {
                         for (int i = 0; i < model.goods.length; i++) {
@@ -82,6 +91,19 @@ class OrderScreen extends StatelessWidget {
                       model.goodsController.add(model.goods);
                       model.inputDataChanged(null);
                     }
+                    Map<String, Object?> httpData = {};
+                    model.debtController.add(0);
+                    HttpQuery(hqDebts, initData: {'partner': model.partner.id}).request(httpData).then((value) {
+                      if (value == hrOk) {
+                        if ((httpData[pkData]! as List<dynamic>).isNotEmpty) {
+                          model.debtController.add(double.tryParse((httpData[pkData]! as List<dynamic>)[0]['amount'].toString()) ?? -1);
+                        } else {
+                          model.debtController.add(-1);
+                        }
+                      } else {
+                        model.debtController.add(0.0);
+                      }
+                    });
                   }
                 }),
             //Upload order
@@ -136,6 +158,7 @@ class OrderScreen extends StatelessWidget {
                         appDialog(_scaffoldKey.currentContext!, requiestMap['message'].toString());
                         return;
                       case hrOk:
+                        Navigator.of(_scaffoldKey.currentContext!).pop();
                         break;
                       case hrNetworkError:
                         appDialog(_scaffoldKey.currentContext!, requiestMap['message'].toString());
@@ -191,7 +214,7 @@ class OrderScreen extends StatelessWidget {
               children: [
                 Expanded(
                     child:  Container(
-                              height: 60,
+                              height: 75,
                               margin: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                               padding: const EdgeInsets.fromLTRB(5, 5, 5, 5),
                               decoration: const BoxDecoration(
@@ -208,7 +231,18 @@ class OrderScreen extends StatelessWidget {
                                   Row(
                                     children: [
                                       Flexible(
-                                          child: Text(model.partner.address))
+                                          child: Text(model.partner.address)),
+                                      Expanded(child: Container()),
+                                      StreamBuilder<double>(
+                                        stream: model.debtController.stream,
+                                          builder: (context, snapshot) {
+                                        if (snapshot.data == null || snapshot.data! == 0 || model.partner.id == 0) {
+                                          return const SizedBox(height: 16, width: 16, child: CircularProgressIndicator());
+                                        } else if (snapshot.data! < 0) {
+                                          return Container();
+                                        }
+                                        return Text('${mdFormatDouble(snapshot.data)}', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.red));
+                                      })
                                     ],
                                   ),
                                 ],

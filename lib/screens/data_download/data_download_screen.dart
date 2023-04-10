@@ -11,7 +11,7 @@ import 'package:cafe5_shop_mobile_client/screens/bloc/screen_state.dart';
 import 'package:cafe5_shop_mobile_client/screens/home/home_screen.dart';
 import 'package:cafe5_shop_mobile_client/screens/login/login_screen.dart';
 import 'package:cafe5_shop_mobile_client/screens/screen/app_scaffold.dart';
-import 'package:cafe5_shop_mobile_client/translator.dart';
+import 'package:cafe5_shop_mobile_client/utils/translator.dart';
 import 'package:cafe5_shop_mobile_client/utils/dialogs.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

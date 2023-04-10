@@ -7,7 +7,7 @@ import 'package:cafe5_shop_mobile_client/widgets/square_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../translator.dart';
+import '../../utils/translator.dart';
 
 class PinForm extends StatelessWidget {
   static final TextEditingController _pinController = TextEditingController();

@@ -1,4 +1,4 @@
-import 'package:cafe5_shop_mobile_client/translator.dart';
+import 'package:cafe5_shop_mobile_client/utils/translator.dart';
 import 'package:intl/intl.dart';
 
 const mdPriceRetail = 1;

@@ -51,6 +51,22 @@ const Map<String, String> vals = {
   'refresh data': 'Տվյալների թարմացում',
   'downloading data...': 'Տվյալների բեռնում․․․',
   'goods list':'Ապրանքների ցանկ',
+  'preorders':'Պատվերներ',
+  'retail sale':'Մանրածախ վաճառք',
+  'whosale sale':'Մեծածախ վաճառք',
+  'total':'Ընդամենը',
+  'set partner':'Նշել գործընկերոջը',
+  'complete order':'Գրանցել պատվերը',
+  'exit':'Ելք',
+  'confirm to quit without saving':'Հաստատեք ելքը առանձ պատվերը գրանցելու',
+  'select partner':'Նշեք գործընկերոջը',
+  'goods list is empty':'Ապրանքացանկը դատարկ է',
+  'list':'Ցանկ',
+  'check quantity of rows':'Ստուգեք տողերի քանակությունները',
+  'partners':'Գործընկերներ',
+  'confirm to save order and quit':'Հաստատեք պատվերի գրանցումը',
+  'saving...':'Պահպանում',
+  'pending preorders':'Չմշակված պատվերներ',
 };
 
 String tr(String s) {

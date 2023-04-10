@@ -4,7 +4,7 @@ import 'package:cafe5_shop_mobile_client/screens/data_download/data_download_scr
 import 'package:cafe5_shop_mobile_client/screens/home/home_screen.dart';
 import 'package:cafe5_shop_mobile_client/screens/login/pin_form.dart';
 import 'package:cafe5_shop_mobile_client/screens/screen/app_scaffold.dart';
-import 'package:cafe5_shop_mobile_client/translator.dart';
+import 'package:cafe5_shop_mobile_client/utils/translator.dart';
 import 'package:cafe5_shop_mobile_client/utils/dialogs.dart';
 import 'package:cafe5_shop_mobile_client/utils/prefs.dart';
 import 'package:cafe5_shop_mobile_client/widgets/loading.dart';

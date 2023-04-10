@@ -1,4 +1,4 @@
-import 'package:cafe5_shop_mobile_client/translator.dart';
+import 'package:cafe5_shop_mobile_client/utils/translator.dart';
 import 'package:cafe5_shop_mobile_client/utils/app_theme.dart';
 import 'package:flutter/material.dart';
 
@@ -23,7 +23,9 @@ class AppScaffold extends StatelessWidget {
         backgroundColor: appBgColor,
         body: SafeArea(
             minimum: const EdgeInsets.fromLTRB(5, 35, 5, 5),
-            child: Column(children: [
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
               Row(children: [
                 showBackButton
                     ? Expanded(

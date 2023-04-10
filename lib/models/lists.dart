@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cafe5_shop_mobile_client/freezed/goods.dart';
+import 'package:cafe5_shop_mobile_client/freezed/goods_special_price.dart';
 import 'package:cafe5_shop_mobile_client/freezed/partner.dart';
 import 'package:cafe5_shop_mobile_client/utils/dir.dart';
 import 'package:path_provider/path_provider.dart';
@@ -12,6 +13,7 @@ class Lists {
   static Map<int, Goods> goods = {};
   static List<String> goodsGroup = [];
   static Map<int, Partner> partners = {};
+  static Map<int, Map<int, double>> specialPrices = {};
 
   static Future<void> load() async {
     goods.clear();
@@ -29,6 +31,13 @@ class Lists {
       }
       for (var e in data['partners']) {
         partners[e['id']] = Partner.fromJson(e);
+      }
+      for (var e in data['specialprices']) {
+        GoodsSpecialPrice gsp = GoodsSpecialPrice.fromJson(e);
+        if (!specialPrices.containsKey(gsp.partner)) {
+          specialPrices[gsp.partner] = {};
+        }
+        specialPrices[gsp.partner]![gsp.goods] = gsp.price;
       }
     } catch (e) {
       if (!e.toString().contains('Cannot open file')) {

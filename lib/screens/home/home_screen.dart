@@ -4,7 +4,7 @@ import 'package:cafe5_shop_mobile_client/screens/data_download/data_download_scr
 import 'package:cafe5_shop_mobile_client/screens/order/order_screen.dart';
 import 'package:cafe5_shop_mobile_client/screens/preorders/preorders_screen.dart';
 import 'package:cafe5_shop_mobile_client/screens/screen/app_scaffold.dart';
-import 'package:cafe5_shop_mobile_client/translator.dart';
+import 'package:cafe5_shop_mobile_client/utils/translator.dart';
 import 'package:cafe5_shop_mobile_client/utils/dialogs.dart';
 import 'package:cafe5_shop_mobile_client/utils/prefs.dart';
 import 'package:cafe5_shop_mobile_client/widgets/rect_button.dart';
@@ -25,7 +25,11 @@ class HomeScreen extends StatelessWidget {
             }, title: tr('New order'), assetPath: 'assets/images/order.png'),
 
             RectButton(onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => PreordersScreen()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => PreordersScreen(state: 1)));
+            }, title: tr('Pending preorders'), assetPath: 'assets/images/preorders.png'),
+
+            RectButton(onTap: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context) => PreordersScreen(state: 2)));
             }, title: tr('Preorders'), assetPath: 'assets/images/preorders.png'),
 
             RectButton(onTap: (){

@@ -10,6 +10,7 @@ const pkFirstName = 'pkFirstName';
 const pkLastName = 'pkLastName';
 const pkDataLoaded = 'pkDataLoaded';
 const pkAction = 'pkAction';
+const pkData = 'pkData';
 
 const rcServerList = 'serverList';
 
@@ -23,3 +24,5 @@ const hqCheckPassHash = 4;
 const hqStock = 5;
 const hqSaveOrder = 6;
 const hqPreorders = 7;
+const hqPreorderDetails = 8;
+const hqDebts = 9;

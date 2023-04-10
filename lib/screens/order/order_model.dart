@@ -8,6 +8,7 @@ class OrderModel {
   final StreamController<Partner> partnerController = StreamController();
   final StreamController<List<Goods>> goodsController = StreamController();
   final StreamController totalController = StreamController();
+  final StreamController<double> debtController = StreamController();
 
   Partner partner = Partner.empty();
   late int pricePolitic;
