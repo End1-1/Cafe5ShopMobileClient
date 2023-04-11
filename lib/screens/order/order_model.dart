@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:cafe5_shop_mobile_client/freezed/data_types.dart';
 import 'package:cafe5_shop_mobile_client/freezed/goods.dart';
 import 'package:cafe5_shop_mobile_client/freezed/partner.dart';
+import 'package:cafe5_shop_mobile_client/models/lists.dart';
 
 class OrderModel {
   final StreamController<Partner> partnerController = StreamController();
@@ -12,10 +14,16 @@ class OrderModel {
 
   Partner partner = Partner.empty();
   late int pricePolitic;
+  late int storage;
+  int paymentType = PaymentTypes.defaultType();
   final List<Goods> goods = [];
   double totalSaleQty = 0.0;
   double totalBackQty = 0.0;
   double totalAmount = 0.0;
+
+  OrderModel() {
+    storage = Lists.config.storage;
+  }
 
   void inputDataChanged(Goods? g) {
     if (g != null) {
@@ -53,6 +61,13 @@ class OrderModel {
     order['partner'] = partner.toJson();
     order['goods'] = <Object?>[];
     order['goods'].addAll(goods.map((e) => e.toJson()));
+    order['storage'] = storage;
+    order['paymenttype'] = paymentType;
     return order;
+  }
+
+  String storageName() {
+    Storage? s = Lists.storages[storage] ?? const Storage(id: 0, name: 'undefined');
+    return s.name;
   }
 }

@@ -67,6 +67,11 @@ const Map<String, String> vals = {
   'confirm to save order and quit':'Հաստատեք պատվերի գրանցումը',
   'saving...':'Պահպանում',
   'pending preorders':'Չմշակված պատվերներ',
+  'bank transfer':'Փոխանցում',
+  'cash':'Կանխիկ',
+  'payment type':'Վճարման եղանակ',
+  'storage':'Պահեստ',
+  'stock':'Ապրանքների առկայություն',
 };
 
 String tr(String s) {

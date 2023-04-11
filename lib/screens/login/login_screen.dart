@@ -29,7 +29,7 @@ class LoginScreen extends StatelessWidget {
                   prefs.setString(pkLastName, state.data[pkLastName]);
                   prefs.setString(pkFirstName, state.data[pkFirstName]);
                   prefs.setString(pkPassHash, state.data[pkPassHash]);
-                  appDialog(context, '${tr('Welcome')}, ${state.data[pkLastName]} ${state.data[pkLastName]}').then((value) {
+                  appDialog(context, '${tr('Welcome')}, ${state.data[pkLastName]} ${state.data[pkFirstName]}').then((value) {
                     if (prefs.getBool(pkDataLoaded) ?? false) {
                       Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomeScreen()), (route) => false);
                     } else {

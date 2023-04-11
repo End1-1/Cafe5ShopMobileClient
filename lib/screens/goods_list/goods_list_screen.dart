@@ -80,9 +80,9 @@ class GoodsListScreen extends StatelessWidget {
                         return DropdownButton<String>(
                             isExpanded: true,
                             value: snapshot.data,
-                            items: Lists.goodsGroup.map((e) {
+                            items: Lists.goodsGroup.values.map((e) {
                               return DropdownMenuItem<String>(
-                                  value: e, child: Text(e));
+                                  value: e.name, child: Text(e.name));
                             }).toList(),
                             onChanged: (text) {
                               goodsGroupController.add(text);

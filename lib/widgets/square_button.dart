@@ -13,12 +13,12 @@ Widget squareButton(VoidCallback onPressed, String text) {
 }
 
 Widget squareImageButton(VoidCallback onPressed, String assetPath, {double height = 50}) {
-  return Container(padding: const EdgeInsets.all(3), height: height, width: height, child: OutlinedButton(
+  return Container(padding: const EdgeInsets.all(0), height: height, width: height, child: OutlinedButton(
       onPressed: onPressed,
       style: OutlinedButton.styleFrom(
-        padding: const EdgeInsets.all(0),
+        padding: const EdgeInsets.all(3),
       ),
-      child:  Image.asset(assetPath, width: height - 8, height: height - 8)));
+      child:  Image.asset(assetPath)));
 }
 
 Widget smallSquareImageButton(VoidCallback onPressed, String assetPath) {

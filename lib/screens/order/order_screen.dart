@@ -1,5 +1,5 @@
+import 'package:cafe5_shop_mobile_client/freezed/data_types.dart';
 import 'package:cafe5_shop_mobile_client/freezed/goods.dart';
-import 'package:cafe5_shop_mobile_client/freezed/goods_special_price.dart';
 import 'package:cafe5_shop_mobile_client/freezed/partner.dart';
 import 'package:cafe5_shop_mobile_client/models/http_query/http_query.dart';
 import 'package:cafe5_shop_mobile_client/models/lists.dart';
@@ -7,9 +7,9 @@ import 'package:cafe5_shop_mobile_client/models/model.dart';
 import 'package:cafe5_shop_mobile_client/screens/goods_list/goods_list_screen.dart';
 import 'package:cafe5_shop_mobile_client/screens/partner_screen/partner_screen.dart';
 import 'package:cafe5_shop_mobile_client/screens/screen/app_scaffold.dart';
-import 'package:cafe5_shop_mobile_client/utils/translator.dart';
 import 'package:cafe5_shop_mobile_client/utils/dialogs.dart';
 import 'package:cafe5_shop_mobile_client/utils/prefs.dart';
+import 'package:cafe5_shop_mobile_client/utils/translator.dart';
 import 'package:cafe5_shop_mobile_client/widgets/square_button.dart';
 import 'package:flutter/material.dart';
 
@@ -30,6 +30,69 @@ class OrderScreen extends StatelessWidget {
       builder: (context) {
         return SimpleDialog(
           children: [
+            //Payment type
+            ListTile(
+                dense: false,
+                title: Text(tr('Payment type')),
+                leading: Image.asset('assets/images/payment.png'),
+                onTap: () async {
+                  Navigator.pop(context);
+                  showDialog(context: _scaffoldKey.currentContext!, builder: (BuildContext context) {
+                    return SimpleDialog(
+                      children: [
+                        InkWell(onTap: (){
+                          Navigator.pop(context, 1);
+                        }, child: Container(
+                          margin: const EdgeInsets.fromLTRB(30, 30, 30, 0),
+                          height: 60, width: 200, child: Text(tr('Cash'), style: const TextStyle(fontSize: 18))
+                        )),
+                      InkWell(onTap: (){
+                        Navigator.pop(context, 2);
+                      },child: Container(
+                            margin: const EdgeInsets.fromLTRB(30, 0, 30, 0),
+                            height: 60, width: 200, child: Text(tr('Bank transfer'), style: const TextStyle(fontSize: 18))
+                        ))
+                      ],
+                    );
+                  },
+
+                  ).then((value) {
+                    if (value != null) {
+                      model.paymentType = value;
+                      model.partnerController.add(model.partner);
+                    }
+                  });
+                }),
+            //Storage
+            ListTile(
+                dense: false,
+                title: Text(tr('Storage')),
+                leading: Image.asset('assets/images/stock.png'),
+                onTap: () async {
+                  Navigator.pop(context);
+                  showDialog(context: _scaffoldKey.currentContext!,
+                    builder: (context) {
+                      return SimpleDialog(
+                        children: [
+                          for (var e in Lists.storages.values)...[
+                            InkWell(onTap: (){
+                              Navigator.pop(context, e.id);
+                            },child: Container(
+                                margin: const EdgeInsets.fromLTRB(30, 0, 30, 0),
+                                height: 60, width: 200, child: Text(e.name, style: const TextStyle(fontSize: 18))
+                            )),
+                            const Divider(height: 4, color: Colors.black12)
+                          ]
+                        ],
+                      );
+                    }
+                  ).then((value) {
+                    if (value !=  null) {
+                      model.storage = value;
+                      model.partnerController.add(model.partner);
+                    }
+                  });
+                }),
             //Goods list
             ListTile(
                 dense: false,
@@ -41,8 +104,10 @@ class OrderScreen extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                           builder: (context) => GoodsListScreen(
-                              pricePolitic: model.pricePolitic,
-                              discount: model.partner.discount, partnerId: model.partner.id,)));
+                                pricePolitic: model.pricePolitic,
+                                discount: model.partner.discount,
+                                partnerId: model.partner.id,
+                              )));
                   if (result != null && result.isNotEmpty) {
                     model.goods.addAll(result);
                     model.goodsController.add(model.goods);
@@ -73,12 +138,13 @@ class OrderScreen extends StatelessWidget {
                             : model.goods[i].price2;
                         price -= price * model.partner.discount;
                         if (Lists.specialPrices.containsKey(model.partner.id)) {
-                          if (Lists.specialPrices[model.partner.id]!.containsKey(model.goods[i].id)) {
-                            price = Lists.specialPrices[model.partner.id]![model.goods[i].id]!;
+                          if (Lists.specialPrices[model.partner.id]!
+                              .containsKey(model.goods[i].id)) {
+                            price = Lists.specialPrices[model.partner.id]![
+                                model.goods[i].id]!;
                           }
                         }
-                        model.goods[i] = model.goods[i].copyWith(
-                            price: price);
+                        model.goods[i] = model.goods[i].copyWith(price: price);
                       }
                       if (model.partner.discount > 0) {
                         for (int i = 0; i < model.goods.length; i++) {
@@ -92,16 +158,22 @@ class OrderScreen extends StatelessWidget {
                       model.inputDataChanged(null);
                     }
                     Map<String, Object?> httpData = {};
-                    model.debtController.add(0);
-                    HttpQuery(hqDebts, initData: {'partner': model.partner.id}).request(httpData).then((value) {
+                    model.debtController.add(-1);
+                    HttpQuery(hqDebts, initData: {'partner': model.partner.id})
+                        .request(httpData)
+                        .then((value) {
                       if (value == hrOk) {
                         if ((httpData[pkData]! as List<dynamic>).isNotEmpty) {
-                          model.debtController.add(double.tryParse((httpData[pkData]! as List<dynamic>)[0]['amount'].toString()) ?? -1);
+                          model.debtController.add(double.tryParse(
+                                  (httpData[pkData]! as List<dynamic>)[0]
+                                          ['amount']
+                                      .toString()) ??
+                              0);
                         } else {
-                          model.debtController.add(-1);
+                          model.debtController.add(0);
                         }
                       } else {
-                        model.debtController.add(0.0);
+                        model.debtController.add(-2);
                       }
                     });
                   }
@@ -131,7 +203,8 @@ class OrderScreen extends StatelessWidget {
                     return;
                   }
 
-                  appDialogQuestion(_scaffoldKey.currentContext!, tr('Confirm to save order and quit'), () async {
+                  appDialogQuestion(_scaffoldKey.currentContext!,
+                      tr('Confirm to save order and quit'), () async {
                     BuildContext dialogContext = _scaffoldKey.currentContext!;
                     showDialog(
                       context: _scaffoldKey.currentContext!,
@@ -155,13 +228,15 @@ class OrderScreen extends StatelessWidget {
                     Navigator.pop(dialogContext);
                     switch (r) {
                       case hrFail:
-                        appDialog(_scaffoldKey.currentContext!, requiestMap['message'].toString());
+                        appDialog(_scaffoldKey.currentContext!,
+                            requiestMap['message'].toString());
                         return;
                       case hrOk:
                         Navigator.of(_scaffoldKey.currentContext!).pop();
                         break;
                       case hrNetworkError:
-                        appDialog(_scaffoldKey.currentContext!, requiestMap['message'].toString());
+                        appDialog(_scaffoldKey.currentContext!,
+                            requiestMap['message'].toString());
                         return;
                     }
                   }, null);
@@ -174,7 +249,8 @@ class OrderScreen extends StatelessWidget {
                 leading: Image.asset('assets/images/exit.png'),
                 onTap: () async {
                   Navigator.pop(context);
-                  appDialogQuestion(context, tr('Confirm to quit without saving'), (){
+                  appDialogQuestion(
+                      context, tr('Confirm to quit without saving'), () {
                     Navigator.pop(_scaffoldKey.currentContext!);
                   }, null);
                 }),
@@ -187,134 +263,177 @@ class OrderScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-    onWillPop: () async => false,
+        onWillPop: () async => false,
         child: AppScaffold(
-      key: _scaffoldKey,
-        title: 'Order',
-        showBackButton: false,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-        StreamBuilder<Partner>(
-        stream: model.partnerController.stream,
-        builder: (context, snapshot) {
-      return Column(children: [Row(
+            key: _scaffoldKey,
+            title: 'Order',
+            showBackButton: false,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(saleTypeName(model.pricePolitic).toUpperCase(), style: const TextStyle(color: Color(
-                    0xff01036b), fontWeight: FontWeight.bold)),
-                Expanded(child: Container()),
-                model.partner.discount > 0
-                    ? Text(
-                        '${tr('Discount')}: ${mdFormatDouble(model.partner.discount)}%', style: const TextStyle(color: Color(
-                    0xff01036b), fontWeight: FontWeight.bold))
-                    : Container()
-              ],
-            ),
-            Row(
-              children: [
-                Expanded(
-                    child:  Container(
-                              height: 75,
-                              margin: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                              padding: const EdgeInsets.fromLTRB(5, 5, 5, 5),
-                              decoration: const BoxDecoration(
-                                  border: Border.fromBorderSide(
-                                      BorderSide(color: Colors.black12))),
-                              child: Column(
+                StreamBuilder<Partner>(
+                    stream: model.partnerController.stream,
+                    builder: (context, snapshot) {
+                      return Column(children: [
+                        Row(
+                          children: [
+                            Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Row(children: [
-                                    Text(model.partner.name),
-                                    Expanded(child: Container()),
-                                    Text(model.partner.taxcode),
-                                  ]),
-                                  Row(
-                                    children: [
-                                      Flexible(
-                                          child: Text(model.partner.address)),
-                                      Expanded(child: Container()),
-                                      StreamBuilder<double>(
-                                        stream: model.debtController.stream,
-                                          builder: (context, snapshot) {
-                                        if (snapshot.data == null || snapshot.data! == 0 || model.partner.id == 0) {
-                                          return const SizedBox(height: 16, width: 16, child: CircularProgressIndicator());
-                                        } else if (snapshot.data! < 0) {
-                                          return Container();
-                                        }
-                                        return Text('${mdFormatDouble(snapshot.data)}', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.red));
-                                      })
-                                    ],
-                                  ),
-                                ],
-                              ))
-                ),
-                squareImageButton(() {
-                  popupMenu(context);
-                }, 'assets/images/menu.png', height: 60)
-              ])
-      ]);
-                        }),
-            const SizedBox(height: 20),
-            Expanded(
-                child: SingleChildScrollView(
-                    child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: StreamBuilder<List<Goods>?>(
-                            stream: model.goodsController.stream,
-                            builder: (context, snapshot) {
-                              return Wrap(
-                                spacing: 5,
-                                direction: Axis.vertical,
-                                crossAxisAlignment: WrapCrossAlignment.start,
+                                  Text(model.storageName(),
+                                      style: const TextStyle(
+                                          color: Color(0xff01036b),
+                                          fontWeight: FontWeight.bold)),
+                                  Text(
+                                      saleTypeName(model.pricePolitic)
+                                          .toUpperCase(),
+                                      style: const TextStyle(
+                                          color: Color(0xff01036b),
+                                          fontWeight: FontWeight.bold))
+                                ]),
+                            Expanded(child: Container()),
+                            Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  for (var e in snapshot.data ?? []) ...[
-                                    _GoodsRow(
-                                        goods: e,
-                                        inputDataChanged:
-                                            model.inputDataChanged,
-                                    removeGoods: model.removeGoods,)
-                                  ]
-                                ],
-                              );
-                            })))),
-            StreamBuilder(
-                stream: model.totalController.stream,
-                builder: (context, snashot) {
-                  return Container(
-                      alignment: Alignment.center,
-                      padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-                      decoration: const BoxDecoration(color: Color(0xffbeffff)),
-                      height: 50,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Text(tr('Total'),
-                              style: const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold)),
-                          Expanded(child: Container()),
-                          Text('[${mdFormatDouble(model.totalSaleQty)}]',
-                              style: const TextStyle(
-                                  color: Colors.green,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold)),
-                          Text('[${mdFormatDouble(model.totalBackQty)}]',
-                              style: const TextStyle(
-                                  color: Colors.red,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold)),
-                          Text('[${mdFormatDouble(model.totalAmount)}]',
-                              style: const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold))
-                        ],
-                      ));
-                })
-          ],
-        )));
+                                  Text(PaymentTypes.name(model.paymentType),
+                                      style: const TextStyle(
+                                          color: Color(0xff01036b),
+                                          fontWeight: FontWeight.bold)),
+                                  model.partner.discount > 0
+                                      ? Text(
+                                          '${tr('Discount')}: ${mdFormatDouble(model.partner.discount)}%',
+                                          style: const TextStyle(
+                                              color: Color(0xff01036b),
+                                              fontWeight: FontWeight.bold))
+                                      : Container()
+                                ]),
+                            squareImageButton(() {
+                              popupMenu(context);
+                            }, 'assets/images/menu.png',
+                                height: 50)
+                          ],
+                        ),
+                        Row(children: [
+                          Expanded(
+                              child: Container(
+                                  height: 75,
+                                  margin: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                  padding:
+                                      const EdgeInsets.fromLTRB(5, 5, 5, 5),
+                                  decoration: const BoxDecoration(
+                                      border: Border.fromBorderSide(
+                                          BorderSide(color: Colors.black12))),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(children: [
+                                        Text(model.partner.name),
+                                        Expanded(child: Container()),
+                                        Text(model.partner.taxcode),
+                                      ]),
+                                      Row(
+                                        children: [
+                                          Flexible(
+                                              child:
+                                                  Text(model.partner.address)),
+                                          Expanded(child: Container()),
+                                          StreamBuilder<double>(
+                                              stream:
+                                                  model.debtController.stream,
+                                              builder: (context, snapshot) {
+                                                if (snapshot.data == null ||
+                                                    snapshot.data! == 0 ||
+                                                    model.partner.id == 0) {
+                                                  return Container();
+                                                } else if (snapshot.data! == -1) {
+                                                  return const SizedBox(
+                                                      height: 16,
+                                                      width: 16,
+                                                      child:
+                                                      CircularProgressIndicator());
+                                                } else if (snapshot.data! == -2) {
+                                                  return const Text('Err');
+                                                }
+                                                return Text(
+                                                    mdFormatDouble(snapshot.data),
+                                                    style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.red));
+                                              })
+                                        ],
+                                      ),
+                                    ],
+                                  )))
+                        ])
+                      ]);
+                    }),
+                const SizedBox(height: 20),
+                Expanded(
+                    child: SingleChildScrollView(
+                        child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: StreamBuilder<List<Goods>?>(
+                                stream: model.goodsController.stream,
+                                builder: (context, snapshot) {
+                                  return Wrap(
+                                    spacing: 5,
+                                    direction: Axis.vertical,
+                                    crossAxisAlignment:
+                                        WrapCrossAlignment.start,
+                                    children: [
+                                      for (var e in snapshot.data ?? []) ...[
+                                        _GoodsRow(
+                                          goods: e,
+                                          inputDataChanged:
+                                              model.inputDataChanged,
+                                          removeGoods: model.removeGoods,
+                                        )
+                                      ]
+                                    ],
+                                  );
+                                })))),
+                StreamBuilder(
+                    stream: model.totalController.stream,
+                    builder: (context, snashot) {
+                      return Container(
+                          alignment: Alignment.center,
+                          padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+                          decoration:
+                              const BoxDecoration(color: Color(0xffbeffff)),
+                          height: 50,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(tr('Total'),
+                                  style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold)),
+                              Expanded(child: Container()),
+                              Text('[${mdFormatDouble(model.totalSaleQty)}]',
+                                  style: const TextStyle(
+                                      color: Colors.green,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold)),
+                              Text('[${mdFormatDouble(model.totalBackQty)}]',
+                                  style: const TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold)),
+                              Text('[${mdFormatDouble(model.totalAmount)}]',
+                                  style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold))
+                            ],
+                          ));
+                    })
+              ],
+            )));
   }
 }
 
@@ -326,7 +445,10 @@ class _GoodsRow extends StatelessWidget {
   final Function(Goods) inputDataChanged;
   final Function(Goods) removeGoods;
 
-  _GoodsRow({required this.goods, required this.inputDataChanged, required this.removeGoods});
+  _GoodsRow(
+      {required this.goods,
+      required this.inputDataChanged,
+      required this.removeGoods});
 
   @override
   Widget build(BuildContext context) {
@@ -416,7 +538,7 @@ class _GoodsRow extends StatelessWidget {
             Container(
               height: 55,
               child: squareImageButton(() {
-
+                removeGoods(goods);
               }, 'assets/images/trash.png'),
             )
           ],

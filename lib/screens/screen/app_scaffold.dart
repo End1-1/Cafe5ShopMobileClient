@@ -45,7 +45,7 @@ class AppScaffold extends StatelessWidget {
                                     child:
                                         Image.asset('assets/images/back.png'))),
                             const SizedBox(width: 10,),
-                            Text(tr(title), style: const TextStyle(color: Colors.white)),
+                            Text(tr(title), style: const TextStyle(color: Colors.blueAccent, fontWeight: FontWeight.bold)),
                             Expanded(child: Container()),
                             for (var e in headerWidgets) ...[
                               e,
