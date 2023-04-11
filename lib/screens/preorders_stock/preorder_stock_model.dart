@@ -5,7 +5,7 @@ import 'package:cafe5_shop_mobile_client/models/lists.dart';
 import 'package:cafe5_shop_mobile_client/utils/data_types.dart';
 import 'package:cafe5_shop_mobile_client/utils/prefs.dart';
 
-class StockModel {
+class PreordersStockModel {
   final StreamController filterController = StreamController();
   List<StockItem> stock = [];
   int goodsGroup = 0;
@@ -20,7 +20,7 @@ class StockModel {
   }
 
   HttpQuery stockQuery() {
-    return HttpQuery(hqStock, initData: {
+    return HttpQuery(hqPreorderStock, initData: {
       pkStock: store,
       pkGroup : goodsGroup
     });

@@ -1,12 +1,10 @@
-import 'package:cafe5_shop_mobile_client/freezed/data_types.dart';
-import 'package:cafe5_shop_mobile_client/freezed/goods.dart';
-import 'package:cafe5_shop_mobile_client/freezed/partner.dart';
 import 'package:cafe5_shop_mobile_client/models/http_query/http_query.dart';
 import 'package:cafe5_shop_mobile_client/models/lists.dart';
 import 'package:cafe5_shop_mobile_client/models/model.dart';
 import 'package:cafe5_shop_mobile_client/screens/goods_list/goods_list_screen.dart';
 import 'package:cafe5_shop_mobile_client/screens/partner_screen/partner_screen.dart';
 import 'package:cafe5_shop_mobile_client/screens/screen/app_scaffold.dart';
+import 'package:cafe5_shop_mobile_client/utils/data_types.dart';
 import 'package:cafe5_shop_mobile_client/utils/dialogs.dart';
 import 'package:cafe5_shop_mobile_client/utils/prefs.dart';
 import 'package:cafe5_shop_mobile_client/utils/translator.dart';
@@ -19,8 +17,12 @@ class OrderScreen extends StatelessWidget {
   final OrderModel model = OrderModel();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  OrderScreen({super.key, required pricePolitic}) {
+  OrderScreen({super.key, required pricePolitic, Partner? partner = null}) {
     model.pricePolitic = pricePolitic;
+    if (partner != null) {
+      model.partner = partner;
+      model.pricePolitic = partner.pricepolitic;
+    }
   }
 
   void popupMenu(BuildContext context) {
@@ -46,8 +48,14 @@ class OrderScreen extends StatelessWidget {
                           margin: const EdgeInsets.fromLTRB(30, 30, 30, 0),
                           height: 60, width: 200, child: Text(tr('Cash'), style: const TextStyle(fontSize: 18))
                         )),
+                        InkWell(onTap: (){
+                          Navigator.pop(context, 2);
+                        }, child: Container(
+                            margin: const EdgeInsets.fromLTRB(30, 30, 30, 0),
+                            height: 60, width: 200, child: Text(tr('Cart'), style: const TextStyle(fontSize: 18))
+                        )),
                       InkWell(onTap: (){
-                        Navigator.pop(context, 2);
+                        Navigator.pop(context, 3);
                       },child: Container(
                             margin: const EdgeInsets.fromLTRB(30, 0, 30, 0),
                             height: 60, width: 200, child: Text(tr('Bank transfer'), style: const TextStyle(fontSize: 18))

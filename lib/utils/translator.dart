@@ -72,6 +72,8 @@ const Map<String, String> vals = {
   'payment type':'Վճարման եղանակ',
   'storage':'Պահեստ',
   'stock':'Ապրանքների առկայություն',
+  'quantity of preorders' : 'Անհրաժեշտ ապրանքներ',
+  'goods group':'Ապրանքի խումբ'
 };
 
 String tr(String s) {

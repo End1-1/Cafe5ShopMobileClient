@@ -1,14 +1,17 @@
 import 'dart:async';
 
-import 'package:cafe5_shop_mobile_client/freezed/goods.dart';
 import 'package:cafe5_shop_mobile_client/models/lists.dart';
 import 'package:cafe5_shop_mobile_client/models/model.dart';
 import 'package:cafe5_shop_mobile_client/screens/screen/app_scaffold.dart';
+import 'package:cafe5_shop_mobile_client/utils/data_types.dart';
 import 'package:cafe5_shop_mobile_client/utils/translator.dart';
 import 'package:cafe5_shop_mobile_client/widgets/square_button.dart';
 import 'package:flutter/material.dart';
 
+import 'goods_list_model.dart';
+
 class GoodsListScreen extends StatelessWidget {
+  final model = GoodsListModel();
   final List<Goods> goods = [];
   final StreamController<String?> goodsGroupController = StreamController();
   final StreamController<List<Goods>> goodsController = StreamController();
@@ -108,6 +111,7 @@ class GoodsListScreen extends StatelessWidget {
                                   for (var e in snapshot.data ?? []) ...[
                                     _GoodsRow(
                                         goods: e,
+                                        model: model,
                                         inputDataChanged: inputDataChanged)
                                   ]
                                 ],
@@ -155,18 +159,21 @@ class GoodsListScreen extends StatelessWidget {
 }
 
 class _GoodsRow extends StatelessWidget {
+  final GoodsListModel model;
   late Goods goods;
   final TextEditingController editSale = TextEditingController();
   final TextEditingController editBack = TextEditingController();
   final TextEditingController editPrice = TextEditingController();
+  final TextEditingController editStock = TextEditingController();
   final Function(Goods) inputDataChanged;
 
-  _GoodsRow({required this.goods, required this.inputDataChanged});
+  _GoodsRow({required this.goods, required this.model, required this.inputDataChanged});
 
   @override
   Widget build(BuildContext context) {
     editSale.text = mdFormatDouble(goods.qtySale);
     editBack.text = mdFormatDouble(goods.qtyBack);
+    editStock.text = mdFormatDouble(model.stockQty(goods.id));
     editPrice.text = mdFormatDouble(goods.price);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -230,6 +237,23 @@ class _GoodsRow extends StatelessWidget {
                     editBack.selection = TextSelection(
                         baseOffset: 0, extentOffset: editBack.text.length);
                   },
+                )),
+            //Stock
+            //Quantity back
+            Container(
+                height: 55,
+                decoration: const BoxDecoration(
+                    color: Color(0xffced0fd),
+                    border: Border.fromBorderSide(BorderSide(width: 0.2))),
+                width: 70,
+                child: TextFormField(
+                  readOnly: true,
+                  keyboardType: TextInputType.number,
+                  style: const TextStyle(fontSize: 18),
+                  decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.all(2)),
+                  controller: editStock
                 )),
             //Price
             Container(

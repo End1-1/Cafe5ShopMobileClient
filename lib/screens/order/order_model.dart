@@ -1,10 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:cafe5_shop_mobile_client/freezed/data_types.dart';
-import 'package:cafe5_shop_mobile_client/freezed/goods.dart';
-import 'package:cafe5_shop_mobile_client/freezed/partner.dart';
 import 'package:cafe5_shop_mobile_client/models/lists.dart';
+import 'package:cafe5_shop_mobile_client/utils/data_types.dart';
 
 class OrderModel {
   final StreamController<Partner> partnerController = StreamController();

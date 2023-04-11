@@ -1,10 +1,10 @@
-import 'package:cafe5_shop_mobile_client/freezed/partner.dart';
 import 'package:cafe5_shop_mobile_client/models/http_query/http_partner_cart.dart';
 import 'package:cafe5_shop_mobile_client/screens/bloc/screen_bloc.dart';
 import 'package:cafe5_shop_mobile_client/screens/bloc/screen_event.dart';
 import 'package:cafe5_shop_mobile_client/screens/bloc/screen_state.dart';
 import 'package:cafe5_shop_mobile_client/screens/partner_cart/partner_cart_model.dart';
 import 'package:cafe5_shop_mobile_client/screens/screen/app_scaffold.dart';
+import 'package:cafe5_shop_mobile_client/utils/data_types.dart' show Partner;
 import 'package:cafe5_shop_mobile_client/utils/translator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

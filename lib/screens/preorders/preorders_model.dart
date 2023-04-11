@@ -6,6 +6,7 @@ part 'preorders_model.g.dart';
 @freezed
 class Preorder with _$Preorder {
   const factory Preorder({required String id,
+    required int payment,
   required String date,
   required String partnername,
   required String address,

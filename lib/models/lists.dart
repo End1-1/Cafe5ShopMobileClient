@@ -1,9 +1,6 @@
 import 'dart:convert';
 
-import 'package:cafe5_shop_mobile_client/freezed/data_types.dart';
-import 'package:cafe5_shop_mobile_client/freezed/goods.dart';
-import 'package:cafe5_shop_mobile_client/freezed/goods_special_price.dart';
-import 'package:cafe5_shop_mobile_client/freezed/partner.dart';
+import 'package:cafe5_shop_mobile_client/utils/data_types.dart';
 import 'package:cafe5_shop_mobile_client/utils/dir.dart';
 import 'dart:io';
 
@@ -73,5 +70,9 @@ class Lists {
       l.addAll(goods.values.where((element) => element.groupname == (filter ?? '')).toList());
     }
     return l;
+  }
+
+  static Partner? findPartner(int id) {
+    return partners.containsKey(id) ? partners[id] : null;
   }
 }

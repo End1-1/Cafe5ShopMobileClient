@@ -3,6 +3,8 @@ import 'package:cafe5_shop_mobile_client/models/model.dart';
 import 'package:cafe5_shop_mobile_client/screens/data_download/data_download_screen.dart';
 import 'package:cafe5_shop_mobile_client/screens/order/order_screen.dart';
 import 'package:cafe5_shop_mobile_client/screens/preorders/preorders_screen.dart';
+import 'package:cafe5_shop_mobile_client/screens/preorders_stock/preorder_stock_screen.dart';
+import 'package:cafe5_shop_mobile_client/screens/route/route_screen.dart';
 import 'package:cafe5_shop_mobile_client/screens/screen/app_scaffold.dart';
 import 'package:cafe5_shop_mobile_client/screens/stock/stock_screen.dart';
 import 'package:cafe5_shop_mobile_client/utils/translator.dart';
@@ -19,7 +21,7 @@ class HomeScreen extends StatelessWidget {
       children: [ Expanded(child:
         Wrap(
           crossAxisAlignment: WrapCrossAlignment.center,
-          alignment: WrapAlignment.center,
+          alignment: WrapAlignment.start,
           direction: Axis.horizontal,
           spacing: 10,
           runSpacing: 10,
@@ -31,6 +33,14 @@ class HomeScreen extends StatelessWidget {
             RectButton(onTap: (){
               Navigator.push(context, MaterialPageRoute(builder: (context) => StockScreen()));
             }, title: tr('Stock'), assetPath: 'assets/images/stock.png'),
+
+            RectButton(onTap: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context) => PreordersStockScreen()));
+            }, title: tr('Quantity of preorders'), assetPath: 'assets/images/stock.png'),
+
+            RectButton(onTap: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context) => RouteScreen()));
+            }, title: tr('Route'), assetPath: 'assets/images/route.png'),
 
             RectButton(onTap: (){
               Navigator.push(context, MaterialPageRoute(builder: (context) => PreordersScreen(state: 1)));

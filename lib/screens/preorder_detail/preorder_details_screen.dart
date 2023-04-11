@@ -8,6 +8,7 @@ import 'package:cafe5_shop_mobile_client/screens/bloc/screen_state.dart';
 import 'package:cafe5_shop_mobile_client/screens/preorder_detail/preorder_details_model.dart';
 import 'package:cafe5_shop_mobile_client/screens/preorders/preorders_model.dart';
 import 'package:cafe5_shop_mobile_client/screens/screen/app_scaffold.dart';
+import 'package:cafe5_shop_mobile_client/utils/data_types.dart';
 import 'package:cafe5_shop_mobile_client/utils/translator.dart';
 import 'package:cafe5_shop_mobile_client/utils/dialogs.dart';
 import 'package:cafe5_shop_mobile_client/utils/prefs.dart';
@@ -71,13 +72,23 @@ class PreorderDetailsScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
                         Container(
-                            height: 50,
+                            height: 30,
                             child: Text(
                                 '${preorder.partnername}, ${preorder.address}',
                                 style: const TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.indigo)))
+                                    color: Colors.indigo))),
+                            Container(
+                                height: 30,
+                                child: Text(
+                                    '${PaymentTypes.name(preorder.payment)}',
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.indigo)))])
                       ]),
                       for (var e in model.data) ...[
                         Container(

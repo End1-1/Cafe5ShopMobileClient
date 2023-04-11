@@ -12,6 +12,8 @@ const pkDataLoaded = 'pkDataLoaded';
 const pkAction = 'pkAction';
 const pkData = 'pkData';
 const pkStorageName = 'pkStorageName';
+const pkStock = 'pkStock';
+const pkGroup = 'pkGroup';
 
 const rcServerList = 'serverList';
 
@@ -27,5 +29,7 @@ const hqSaveOrder = 6;
 const hqPreorders = 7;
 const hqPreorderDetails = 8;
 const hqDebts = 9;
+const hqRoute = 10;
+const hqPreorderStock = 11;
 
 const prStorage = 14;
