@@ -12,7 +12,7 @@ class OrderModel {
 
   Partner partner = Partner.empty();
   late int pricePolitic;
-  late int storage;
+  int storage = Lists.config.storage;
   int paymentType = PaymentTypes.defaultType();
   final List<Goods> goods = [];
   double totalSaleQty = 0.0;
@@ -23,15 +23,9 @@ class OrderModel {
     storage = Lists.config.storage;
   }
 
-  void inputDataChanged(Goods? g) {
-    if (g != null) {
-      if (goods.where((element) => element.id == g.id).isEmpty) {
-        goods.add(g);
-      } else {
-        Goods gg = goods.firstWhere((element) => element.id == g.id);
-        int index = goods.indexOf(gg);
-        goods[index] = g;
-      }
+  void inputDataChanged(Goods? g, int index) {
+    if (index > -1) {
+        goods[index] = g!;
     }
     totalSaleQty = 0;
     totalBackQty = 0;
@@ -47,7 +41,7 @@ class OrderModel {
   void removeGoods(Goods g) {
     goods.remove(g);
     goodsController.add(goods);
-    inputDataChanged(null);
+    inputDataChanged(null, -1);
   }
 
   String toJson() {
