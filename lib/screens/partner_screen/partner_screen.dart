@@ -9,12 +9,14 @@ class PartnerScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppScaffold(title: 'Partners', child: PartnersList(selectMode: selectMode));
+    return AppScaffold(
+        title: 'Partners', child: PartnersList(selectMode: selectMode));
   }
 }
 
 class PartnersList extends StatefulWidget {
   final bool selectMode;
+
   const PartnersList({super.key, required this.selectMode});
 
   @override
@@ -30,7 +32,18 @@ class _PartnersList extends State<PartnersList> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(children: [
-          Expanded(child: TextFormField(
+          Expanded(
+              child: TextFormField(
+                autofocus: true,
+            style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
+            decoration: InputDecoration(
+                iconColor: Colors.black12,
+                isDense: true,
+                contentPadding: const EdgeInsets.all(10),
+                prefixIcon: Container(
+                  margin: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+                    child: Image.asset('assets/images/search.png',
+                        height: 30, width: 30))),
             controller: editSearch,
             onChanged: (text) {
               setState(() {});
@@ -41,33 +54,31 @@ class _PartnersList extends State<PartnersList> {
             child: SingleChildScrollView(
                 child: Column(children: [
           for (var e in Lists.filteredPartners(editSearch.text)) ...[
-            InkWell(onTap:(){
-              if (widget.selectMode) {
-                Navigator.pop(context, e);
-              }
-            }, child:
-            Container(
-                margin: const EdgeInsets.fromLTRB(0, 5, 5, 0),
-              padding: const EdgeInsets.fromLTRB(5, 5, 5, 5),
-              decoration: const BoxDecoration(
-                border: Border.fromBorderSide(BorderSide(color: Colors.black12))
-              ),
-                child:
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(e.name),
-                    Expanded(child: Container()),
-                    Text(e.taxcode),
-                  ]
-                ),
-                Row(children: [
-                  Flexible(child: Text(e.address))
-                ],)
-              ],
-            )))
+            InkWell(
+                onTap: () {
+                  if (widget.selectMode) {
+                    Navigator.pop(context, e);
+                  }
+                },
+                child: Container(
+                    margin: const EdgeInsets.fromLTRB(0, 5, 5, 0),
+                    padding: const EdgeInsets.fromLTRB(5, 5, 5, 5),
+                    decoration: const BoxDecoration(
+                        border: Border.fromBorderSide(
+                            BorderSide(color: Colors.black12))),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(children: [
+                          Text(e.name),
+                          Expanded(child: Container()),
+                          Text(e.taxcode),
+                        ]),
+                        Row(
+                          children: [Flexible(child: Text(e.address))],
+                        )
+                      ],
+                    )))
           ]
         ])))
       ],

@@ -31,5 +31,6 @@ const hqPreorderDetails = 8;
 const hqDebts = 9;
 const hqRoute = 10;
 const hqPreorderStock = 11;
+const hqOpenOrder = 12;
 
 const prStorage = 14;

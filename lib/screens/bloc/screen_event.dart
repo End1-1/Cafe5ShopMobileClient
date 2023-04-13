@@ -5,6 +5,8 @@ part 'screen_event.freezed.dart';
 
 abstract class ScreenEvent {}
 
+class SEIdle extends ScreenEvent {}
+
 @freezed
 class SEHttpQuery extends ScreenEvent with _$SEHttpQuery {
   const factory SEHttpQuery({required HttpQuery query}) = _SEHttpQuery;

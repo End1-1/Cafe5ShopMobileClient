@@ -3,13 +3,17 @@ import 'dart:convert';
 
 import 'package:cafe5_shop_mobile_client/models/lists.dart';
 import 'package:cafe5_shop_mobile_client/utils/data_types.dart';
+import 'package:flutter/cupertino.dart';
 
 class OrderModel {
   final StreamController<Partner> partnerController = StreamController();
   final StreamController<List<Goods>> goodsController = StreamController();
   final StreamController totalController = StreamController();
   final StreamController<double> debtController = StreamController();
+  final editComment = TextEditingController();
 
+  String orderId = '';
+  bool editable = true;
   Partner partner = Partner.empty();
   late int pricePolitic;
   int storage = Lists.config.storage;
@@ -40,6 +44,24 @@ class OrderModel {
 
   void removeGoods(Goods g) {
     goods.remove(g);
+    goodsController.add(goods);
+    inputDataChanged(null, -1);
+  }
+
+  void gift(Goods g) {
+    double totalGiftAmount = 0, totalGiftQty = g.qtySale!;
+    for (int i = 0; i < goods.length; i++) {
+      if (g.id == goods[i].id && goods[i].intUid != g.intUid) {
+        totalGiftAmount += goods[i].price! * goods[i].qtySale!;
+        totalGiftQty += goods[i].qtySale!;
+      }
+    }
+    double newprice = totalGiftAmount / (totalGiftQty > 0 ? totalGiftQty : 1);
+    for (int i = 0; i < goods.length; i++) {
+      if (g.id == goods[i].id) {
+        goods[i] = goods[i].copyWith(price: newprice);
+      }
+    }
     goodsController.add(goods);
     inputDataChanged(null, -1);
   }

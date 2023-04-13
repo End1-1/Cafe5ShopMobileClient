@@ -7,6 +7,7 @@ import 'package:cafe5_shop_mobile_client/utils/data_types.dart';
 import 'package:cafe5_shop_mobile_client/utils/translator.dart';
 import 'package:cafe5_shop_mobile_client/widgets/square_button.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 
 import 'goods_list_model.dart';
 
@@ -35,7 +36,7 @@ class GoodsListScreen extends StatelessWidget {
           price = Lists.specialPrices[this.partnerId]![e.id]!;
         }
       }
-      Goods g = e.copyWith(price: price);
+      Goods g = e.copyWith(intUid: Uuid().v1(), price: price);
       return g;
     }));
   }

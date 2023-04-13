@@ -5,6 +5,7 @@ import 'package:cafe5_shop_mobile_client/models/model.dart';
 import 'package:cafe5_shop_mobile_client/screens/bloc/screen_bloc.dart';
 import 'package:cafe5_shop_mobile_client/screens/bloc/screen_event.dart';
 import 'package:cafe5_shop_mobile_client/screens/bloc/screen_state.dart';
+import 'package:cafe5_shop_mobile_client/screens/order/order_screen.dart';
 import 'package:cafe5_shop_mobile_client/screens/preorder_detail/preorder_details_model.dart';
 import 'package:cafe5_shop_mobile_client/screens/preorders/preorders_model.dart';
 import 'package:cafe5_shop_mobile_client/screens/screen/app_scaffold.dart';
@@ -13,9 +14,11 @@ import 'package:cafe5_shop_mobile_client/utils/translator.dart';
 import 'package:cafe5_shop_mobile_client/utils/dialogs.dart';
 import 'package:cafe5_shop_mobile_client/utils/prefs.dart';
 import 'package:cafe5_shop_mobile_client/widgets/loading.dart';
+import 'package:cafe5_shop_mobile_client/widgets/square_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_launcher_icons/constants.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class PreorderDetailsScreen extends StatelessWidget {
@@ -42,14 +45,25 @@ class PreorderDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppScaffold(
+    return BlocProvider<ScreenBloc>(
+        create: (_) => ScreenBloc(SSInit())
+          ..add(SEHttpQuery(
+              query: HttpQuery(hqPreorderDetails,
+                  initData: {'id': preorder.id}))),
+        child: AppScaffold(
+        headerWidgets: [
+          squareImageButton(() {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => OrderScreen(pricePolitic: 1, orderId: preorder.id))).then((value) {
+              if (value != null) {
+                BlocProvider.of<ScreenBloc>(context).add(SEHttpQuery(
+                    query: HttpQuery(hqPreorderDetails,
+                        initData: {'id': preorder.id})));
+              }
+            });
+          }, 'assets/images/edit.png', height: 40)
+        ],
         title: 'Preorder details',
-        child: BlocProvider<ScreenBloc>(
-            create: (_) => ScreenBloc(SSInit())
-              ..add(SEHttpQuery(
-                  query: HttpQuery(hqPreorderDetails,
-                      initData: {'id': preorder.id}))),
-            child: BlocListener<ScreenBloc, ScreenState>(listener:
+        child:  BlocListener<ScreenBloc, ScreenState>(listener:
                 (context, state) {
               if (state is SSError) {
                 appDialog(context, state.error).then((value) {

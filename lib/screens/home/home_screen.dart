@@ -1,6 +1,7 @@
 import 'package:cafe5_shop_mobile_client/models/lists.dart';
 import 'package:cafe5_shop_mobile_client/models/model.dart';
 import 'package:cafe5_shop_mobile_client/screens/data_download/data_download_screen.dart';
+import 'package:cafe5_shop_mobile_client/screens/login/login_screen.dart';
 import 'package:cafe5_shop_mobile_client/screens/order/order_screen.dart';
 import 'package:cafe5_shop_mobile_client/screens/preorders/preorders_screen.dart';
 import 'package:cafe5_shop_mobile_client/screens/preorders_stock/preorder_stock_screen.dart';
@@ -56,6 +57,13 @@ class HomeScreen extends StatelessWidget {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => const DataDownloadScreen(pop: true,)));
               }, null);
             }, title: tr('Refresh data'), assetPath: 'assets/images/refresh.png'),
+
+            RectButton(onTap: (){
+              appDialogQuestion(context, tr('Confirm to logout'), () {
+                prefs.setBool(pkDataLoaded, false);
+                Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => LoginScreen()), (route) => false);
+              }, null);
+            }, title: tr('Logout'), assetPath: 'assets/images/exit.png'),
 
           ],
         ))

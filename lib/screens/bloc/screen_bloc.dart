@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class ScreenBloc extends Bloc<ScreenEvent, ScreenState> {
   ScreenBloc(super.initialState) {
     on<SEHttpQuery>((event, emit) => _httpQuery(event.query));
+    on<SEIdle>((event, emit) => emit(SSInit()));
   }
 
   Future<void> _httpQuery(HttpQuery query) async {

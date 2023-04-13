@@ -17,6 +17,7 @@ class Storage with _$Storage {
 class Goods with _$Goods {
   const factory Goods(
       {required int id,
+        required String? intUid,
         required String groupname,
         required String goodsname,
         required double? price,
