@@ -163,7 +163,7 @@ class OrderScreen extends StatelessWidget {
                     err += '${tr('Goods list is empty')}\r\n';
                   }
                   for (var e in model.goods) {
-                    if ((e.qtySale ?? 0) == 0 && (e.qtyBack ?? 0) == 0) {
+                    if ((e.qtysale ?? 0) == 0 && (e.qtyback ?? 0) == 0) {
                       err += '${tr('Check quantity of rows')}\r\n';
                       break;
                     }
@@ -241,12 +241,29 @@ class OrderScreen extends StatelessWidget {
                       HttpQuery(hqOpenOrder, initData: {'id': model.orderId}))),
         child: BlocListener<ScreenBloc, ScreenState>(listener: (context, state) {
           if (state is SSError) {
-            appDialog(context, state.error);
-            Navigator.pop(context);
+            appDialog(context, state.error).then((value) {
+              Navigator.pop(context);
+            });
           }
         } , child:  BlocBuilder<ScreenBloc, ScreenState>(
-            buildWhen: (previouse, current) => current is SSData,
-            builder: (context, data) {
+            builder: (context, state) {
+              if (state is SSData) {
+                Map<String, dynamic> data = state.data;
+                model.partner =
+                    Partner.fromJson(data['partner'] );
+                model.pricePolitic = model.partner.pricepolitic;
+                model.paymentType = data['order']['paymenttype'];
+                model.editComment.text = data['order']['comment'] ;
+                for (var e in data['goods']) {
+                  model.goods.add(Goods.fromJson(e));
+                }
+                if (model.goods.length > 0) {
+                  model.storage = model.goods.first.storage!;
+                }
+                model.partnerController.add(model.partner);
+                model.goodsController.add(model.goods);
+                model.inputDataChanged(null, -1);
+              }
               return WillPopScope(
                   onWillPop: () async => false,
                   child: AppScaffold(
@@ -640,8 +657,8 @@ class _GoodsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    editSale.text = mdFormatDouble(goods.qtySale);
-    editBack.text = mdFormatDouble(goods.qtyBack);
+    editSale.text = mdFormatDouble(goods.qtysale);
+    editBack.text = mdFormatDouble(goods.qtyback);
     editPrice.text = mdFormatDouble(goods.price);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -674,7 +691,7 @@ class _GoodsRow extends StatelessWidget {
                   controller: editSale
                     ..addListener(() {
                       goods = goods.copyWith(
-                          qtySale: double.tryParse(editSale.text));
+                          qtysale: double.tryParse(editSale.text));
                       inputDataChanged(goods, index);
                     }),
                   onTap: () {
@@ -698,7 +715,7 @@ class _GoodsRow extends StatelessWidget {
                   controller: editBack
                     ..addListener(() {
                       goods = goods.copyWith(
-                          qtyBack: double.tryParse(editBack.text));
+                          qtyback: double.tryParse(editBack.text));
                       inputDataChanged(goods, index);
                     }),
                   onTap: () {

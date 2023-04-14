@@ -35,9 +35,9 @@ class OrderModel {
     totalBackQty = 0;
     totalAmount = 0;
     for (var e in goods) {
-      totalSaleQty += e.qtySale ?? 0;
-      totalBackQty += e.qtyBack ?? 0;
-      totalAmount += (e.qtySale ?? 0) * (e.price ?? 0);
+      totalSaleQty += e.qtysale ?? 0;
+      totalBackQty += e.qtyback ?? 0;
+      totalAmount += (e.qtysale ?? 0) * (e.price ?? 0);
     }
     totalController.add(null);
   }
@@ -49,11 +49,11 @@ class OrderModel {
   }
 
   void gift(Goods g) {
-    double totalGiftAmount = 0, totalGiftQty = g.qtySale!;
+    double totalGiftAmount = 0, totalGiftQty = g.qtysale!;
     for (int i = 0; i < goods.length; i++) {
-      if (g.id == goods[i].id && goods[i].intUid != g.intUid) {
-        totalGiftAmount += goods[i].price! * goods[i].qtySale!;
-        totalGiftQty += goods[i].qtySale!;
+      if (g.id == goods[i].id && goods[i].intuuid != g.intuuid) {
+        totalGiftAmount += goods[i].price! * goods[i].qtysale!;
+        totalGiftQty += goods[i].qtysale!;
       }
     }
     double newprice = totalGiftAmount / (totalGiftQty > 0 ? totalGiftQty : 1);

@@ -36,7 +36,7 @@ class GoodsListScreen extends StatelessWidget {
           price = Lists.specialPrices[this.partnerId]![e.id]!;
         }
       }
-      Goods g = e.copyWith(intUid: Uuid().v1(), price: price);
+      Goods g = e.copyWith(intuuid: Uuid().v1(), price: price);
       return g;
     }));
   }
@@ -49,9 +49,9 @@ class GoodsListScreen extends StatelessWidget {
     totalBackQty = 0;
     totalAmount = 0;
     for (var e in goods) {
-      totalSaleQty += e.qtySale ?? 0;
-      totalBackQty += e.qtyBack ?? 0;
-      totalAmount += (e.qtySale ?? 0) * (e.price ?? 0);
+      totalSaleQty += e.qtysale ?? 0;
+      totalBackQty += e.qtyback ?? 0;
+      totalAmount += (e.qtysale ?? 0) * (e.price ?? 0);
     }
     totalController.add(null);
   }
@@ -64,7 +64,7 @@ class GoodsListScreen extends StatelessWidget {
           smallSquareImageButton(() {
             final List<Goods> list = [];
             for (var e in goods) {
-              if ((e.qtySale ?? 0) > 0 || (e.qtyBack ?? 0) > 0) {
+              if ((e.qtysale ?? 0) > 0 || (e.qtyback ?? 0) > 0) {
                 list.add(e);
               }
             }
@@ -172,8 +172,8 @@ class _GoodsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    editSale.text = mdFormatDouble(goods.qtySale);
-    editBack.text = mdFormatDouble(goods.qtyBack);
+    editSale.text = mdFormatDouble(goods.qtysale);
+    editBack.text = mdFormatDouble(goods.qtyback);
     editStock.text = mdFormatDouble(model.stockQty(goods.id));
     editPrice.text = mdFormatDouble(goods.price);
     return Column(
@@ -207,7 +207,7 @@ class _GoodsRow extends StatelessWidget {
                   controller: editSale
                     ..addListener(() {
                       goods = goods.copyWith(
-                          qtySale: double.tryParse(editSale.text));
+                          qtysale: double.tryParse(editSale.text));
                       inputDataChanged(goods);
                     }),
                   onTap: () {
@@ -231,7 +231,7 @@ class _GoodsRow extends StatelessWidget {
                   controller: editBack
                     ..addListener(() {
                       goods = goods.copyWith(
-                          qtyBack: double.tryParse(editBack.text));
+                          qtyback: double.tryParse(editBack.text));
                       inputDataChanged(goods);
                     }),
                   onTap: () {

@@ -17,14 +17,16 @@ class Storage with _$Storage {
 class Goods with _$Goods {
   const factory Goods(
       {required int id,
-        required String? intUid,
+        required String? intuuid,
         required String groupname,
         required String goodsname,
+        required String? dbuuid,
+        required int? storage,
         required double? price,
         required double price1,
         required double price2,
-        required double? qtySale,
-        required double? qtyBack}) = _Goods;
+        required double? qtysale,
+        required double? qtyback}) = _Goods;
 
   factory Goods.fromJson(Map<String, Object?> json) => _$GoodsFromJson(json);
 }
