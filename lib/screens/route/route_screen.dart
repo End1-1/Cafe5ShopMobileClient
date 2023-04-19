@@ -63,6 +63,7 @@ class RouteScreen extends StatelessWidget {
                 return Loading(tr('Load routes'));
               }
               if (state is SSData) {
+                model.route.clear();
                 for (var e in state.data[pkData]) {
                   model.route.add(RouteItem.fromJson(e));
                 }

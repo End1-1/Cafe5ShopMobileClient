@@ -30,10 +30,13 @@ class RouteModel {
 
   RouteModel() {
     date = DateTime.now();
+    date = DateTime(date.year, date.month, date.day);
   }
 
   void previousDate() {
-    if (date.add(const Duration(days: -1)).compareTo(DateTime.now()) < 0) {
+    DateTime now = DateTime.now();
+    now = DateTime(now.year, now.month, now.day);
+    if (date.add(const Duration(days: -1)).compareTo(now) < 0) {
       return;
     }
     date = date.add(const Duration(days: -1));
@@ -48,8 +51,8 @@ class RouteModel {
   SEHttpQuery query(int driver) {
     return SEHttpQuery(
         query: HttpQuery(hqRoute, initData: {
-      'date': DateFormat('dd/MM/yyyy').format(date),
-      'driver': driver
+      pkDate: DateFormat('dd/MM/yyyy').format(date),
+      pkDriver: driver
     }));
   }
 }
