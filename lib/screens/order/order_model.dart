@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:cafe5_shop_mobile_client/models/http_query/http_query.dart';
 import 'package:cafe5_shop_mobile_client/models/lists.dart';
 import 'package:cafe5_shop_mobile_client/utils/data_types.dart';
+import 'package:cafe5_shop_mobile_client/utils/prefs.dart';
 import 'package:flutter/cupertino.dart';
 
 class OrderModel {
@@ -43,9 +45,20 @@ class OrderModel {
   }
 
   void removeGoods(Goods g) {
-    goods.remove(g);
-    goodsController.add(goods);
-    inputDataChanged(null, -1);
+    if (g.dbuuid == null) {
+      goods.remove(g);
+      goodsController.add(goods);
+      inputDataChanged(null, -1);
+    } else {
+      Map<String, Object?> data = {'dbuuid': g.dbuuid};
+      HttpQuery(hqRemoveOrderRow).request(data).then((value) {
+        if (value == hrOk) {
+          goods.remove(g);
+          goodsController.add(goods);
+          inputDataChanged(null, -1);
+        }
+      });
+    }
   }
 
   void gift(Goods g) {
@@ -72,6 +85,7 @@ class OrderModel {
 
   Map<String, Object?> toMap() {
     Map<String, dynamic> order = {};
+    order['orderid'] = orderId;
     order['partner'] = partner.toJson();
     order['goods'] = <Object?>[];
     order['goods'].addAll(goods.map((e) => e.toJson()));
