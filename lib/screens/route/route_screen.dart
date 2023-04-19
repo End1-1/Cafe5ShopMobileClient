@@ -43,7 +43,7 @@ class RouteScreen extends StatelessWidget {
               }, 'assets/images/right.png'),
               squareImageButton(() {
                 showDialog(context: _scaffoldKey.currentContext!, builder: (context) {
-                  return DriverListScreen();
+                  return SimpleDialog(children: [DriverListScreen()]);
                 }).then((value) {
                   if (value != null) {
                     model.driver = value;

@@ -24,7 +24,10 @@ class GoodsListScreen extends StatelessWidget {
   double totalAmount = 0.0;
 
   GoodsListScreen(
-      {super.key, required this.pricePolitic, required double discount, required this.partnerId}) {
+      {super.key,
+      required this.pricePolitic,
+      required double discount,
+      required this.partnerId}) {
     if (discount > 0) {
       discount /= 100;
     }
@@ -168,7 +171,10 @@ class _GoodsRow extends StatelessWidget {
   final TextEditingController editStock = TextEditingController();
   final Function(Goods) inputDataChanged;
 
-  _GoodsRow({required this.goods, required this.model, required this.inputDataChanged});
+  _GoodsRow(
+      {required this.goods,
+      required this.model,
+      required this.inputDataChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -248,14 +254,13 @@ class _GoodsRow extends StatelessWidget {
                     border: Border.fromBorderSide(BorderSide(width: 0.2))),
                 width: 70,
                 child: TextFormField(
-                  readOnly: true,
-                  keyboardType: TextInputType.number,
-                  style: const TextStyle(fontSize: 18),
-                  decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.all(2)),
-                  controller: editStock
-                )),
+                    readOnly: true,
+                    keyboardType: TextInputType.number,
+                    style: const TextStyle(fontSize: 18),
+                    decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.all(2)),
+                    controller: editStock)),
             //Price
             Container(
                 height: 55,

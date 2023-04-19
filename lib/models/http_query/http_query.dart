@@ -37,7 +37,7 @@ class HttpQuery {
             'Content-Type': 'application/json',
             'Content-Length': '${utf8.encode(strBody).length}'
           },
-          body: utf8.encode(strBody)).timeout(const Duration(seconds: 5), onTimeout: (){return http.Response('Timeout', 408);});
+          body: utf8.encode(strBody)).timeout(const Duration(seconds: 10), onTimeout: (){return http.Response('Timeout', 408);});
       String s = utf8.decode(response.bodyBytes);
       print(s);
       if (response.statusCode < 299) {

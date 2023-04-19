@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class Loading extends StatelessWidget {
   final String text;
-  static const ts = TextStyle(fontSize: 12, color: Colors.black, backgroundColor: Colors.white);
+  static const ts = TextStyle(fontSize: 12, color: Colors.black);
 
   const Loading(this.text, {super.key});
 
@@ -11,7 +11,7 @@ class Loading extends StatelessWidget {
     return Center(
         child: Container(
           width: 150, height: 150,
-            color: Colors.white, child: Flex(
+            child: Flex(
           direction: Axis.vertical,
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
