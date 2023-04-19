@@ -47,9 +47,10 @@ class AppScaffold extends StatelessWidget {
                             const SizedBox(width: 10,),
                             Text(tr(title), style: const TextStyle(color: Colors.blueAccent, fontWeight: FontWeight.bold)),
                             Expanded(child: Container()),
+                            Wrap(spacing: 5, crossAxisAlignment: WrapCrossAlignment.center, children: [
                             for (var e in headerWidgets) ...[
                               e,
-                            ]
+                            ]])
                           ]))
                     : Container()
               ]),

@@ -14,6 +14,8 @@ const pkData = 'pkData';
 const pkStorageName = 'pkStorageName';
 const pkStock = 'pkStock';
 const pkGroup = 'pkGroup';
+const pkAppVersion = 'pkAppVersion';
+const pkDriver = "pkDriver";
 
 const rcServerList = 'serverList';
 
@@ -32,5 +34,8 @@ const hqDebts = 9;
 const hqRoute = 10;
 const hqPreorderStock = 11;
 const hqOpenOrder = 12;
+const hqRemoveOrderRow = 13;
+const hqExportToAS = 14;
+const hqDriverList = 15;
 
 const prStorage = 14;

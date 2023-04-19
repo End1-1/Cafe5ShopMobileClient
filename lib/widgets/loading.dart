@@ -2,21 +2,25 @@ import 'package:flutter/material.dart';
 
 class Loading extends StatelessWidget {
   final String text;
+  static const ts = TextStyle(fontSize: 12, color: Colors.black, backgroundColor: Colors.white);
 
   const Loading(this.text, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return Center(
-        child: Column(
+        child: Container(
+          width: 150, height: 150,
+            color: Colors.white, child: Flex(
+          direction: Axis.vertical,
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         const SizedBox(
             height: 30, width: 30, child: CircularProgressIndicator()),
         const SizedBox(height: 20),
-        Text(text)
+        Text(text, style: ts)
       ],
-    ));
+    )));
   }
 }

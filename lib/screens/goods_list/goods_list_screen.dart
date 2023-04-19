@@ -25,11 +25,11 @@ class GoodsListScreen extends StatelessWidget {
 
   GoodsListScreen(
       {super.key, required this.pricePolitic, required double discount, required this.partnerId}) {
+    if (discount > 0) {
+      discount /= 100;
+    }
     goods.addAll(Lists.goods.values.map((e) {
       double price = pricePolitic == mdPriceRetail ? e.price1 : e.price2;
-      if (discount > 0) {
-        discount /= 100;
-      }
       price -= price * discount;
       if (Lists.specialPrices.containsKey(this.partnerId)) {
         if (Lists.specialPrices[this.partnerId]!.containsKey(e.id)) {

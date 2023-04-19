@@ -3,7 +3,7 @@ description: Cafe5ShopMobileClient
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.1+2
+version: 1.0.1+3
 
 environment:
   sdk: '>=2.17.0 <3.0.0'
@@ -19,7 +19,7 @@ dependencies:
   url_launcher: ^6.1.5
   flutter_barcode_scanner: ^2.0.0
   flutter_local_notifications: ^12.0.2
-  package_info_plus: ^3.0.0
+  package_info_plus: ^3.1.0
   flutter_launcher_icons: ^0.10.0
   freezed_annotation: ^2.2.0
   json_annotation: ^4.8.0
