@@ -26,6 +26,7 @@ class LoginScreen extends StatelessWidget {
                   return;
                 }
                 if (state is SSData) {
+                  prefs.setInt(pkDriver, state.data[pkDriver]);
                   prefs.setString(pkLastName, state.data[pkLastName]);
                   prefs.setString(pkFirstName, state.data[pkFirstName]);
                   prefs.setString(pkPassHash, state.data[pkPassHash]);

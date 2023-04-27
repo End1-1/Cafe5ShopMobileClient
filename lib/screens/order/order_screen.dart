@@ -4,6 +4,8 @@ import 'package:cafe5_shop_mobile_client/models/model.dart';
 import 'package:cafe5_shop_mobile_client/screens/bloc/screen_event.dart';
 import 'package:cafe5_shop_mobile_client/screens/bloc/screen_state.dart';
 import 'package:cafe5_shop_mobile_client/screens/goods_list/goods_list_screen.dart';
+import 'package:cafe5_shop_mobile_client/screens/order/order_decor.dart';
+import 'package:cafe5_shop_mobile_client/screens/order/order_popup.dart';
 import 'package:cafe5_shop_mobile_client/screens/partner_screen/partner_screen.dart';
 import 'package:cafe5_shop_mobile_client/screens/screen/app_scaffold.dart';
 import 'package:cafe5_shop_mobile_client/utils/data_types.dart';
@@ -15,13 +17,15 @@ import 'package:cafe5_shop_mobile_client/widgets/scrolls.dart';
 import 'package:cafe5_shop_mobile_client/widgets/square_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:intl/intl.dart';
 
 import '../bloc/screen_bloc.dart';
 import 'order_model.dart';
 
 class OrderScreen extends StatelessWidget {
   final OrderModel model = OrderModel();
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   OrderScreen(
       {super.key, required pricePolitic, Partner? partner, String? orderId}) {
@@ -31,202 +35,6 @@ class OrderScreen extends StatelessWidget {
       model.partner = partner;
       model.pricePolitic = partner.pricepolitic;
     }
-  }
-
-  void popupMenu(BuildContext context) {
-    showDialog(
-      useRootNavigator: false,
-      context: context,
-      builder: (context) {
-        return SimpleDialog(
-          children: [
-            //Payment type
-            ListTile(
-                dense: false,
-                title: Text(tr('Payment type')),
-                leading: Image.asset('assets/images/payment.png'),
-                onTap: () async {
-                  Navigator.pop(context);
-                  showDialog(
-                    context: _scaffoldKey.currentContext!,
-                    builder: (BuildContext context) {
-                      return SimpleDialog(
-                        children: [
-                          InkWell(
-                              onTap: () {
-                                Navigator.pop(context, 1);
-                              },
-                              child: Container(
-                                  margin:
-                                      const EdgeInsets.fromLTRB(30, 30, 30, 0),
-                                  height: 60,
-                                  width: 200,
-                                  child: Text(tr('Cash'),
-                                      style: const TextStyle(fontSize: 18)))),
-                          InkWell(
-                              onTap: () {
-                                Navigator.pop(context, 2);
-                              },
-                              child: Container(
-                                  margin:
-                                      const EdgeInsets.fromLTRB(30, 30, 30, 0),
-                                  height: 60,
-                                  width: 200,
-                                  child: Text(tr('Cart'),
-                                      style: const TextStyle(fontSize: 18)))),
-                          InkWell(
-                              onTap: () {
-                                Navigator.pop(context, 3);
-                              },
-                              child: Container(
-                                  margin:
-                                      const EdgeInsets.fromLTRB(30, 0, 30, 0),
-                                  height: 60,
-                                  width: 200,
-                                  child: Text(tr('Bank transfer'),
-                                      style: const TextStyle(fontSize: 18))))
-                        ],
-                      );
-                    },
-                  ).then((value) {
-                    if (value != null) {
-                      model.paymentType = value;
-                      model.partnerController.add(model.partner);
-                    }
-                  });
-                }),
-            //Visit
-            ListTile(
-                dense: false,
-                title: Text(tr('Visit')),
-                leading: Image.asset('assets/images/visit.png'),
-                onTap: () {
-                  Navigator.pop(context);
-                  if (model.partner.id == 0) {
-                    appDialog(
-                        _scaffoldKey.currentContext!, tr('Select partner'));
-                    return;
-                  }
-                  _visitScreen(context);
-                }),
-            const SizedBox(height: 10),
-            //Storage
-            ListTile(
-                dense: false,
-                title: Text(tr('Storage')),
-                leading: Image.asset('assets/images/stock.png'),
-                onTap: () async {
-                  Navigator.pop(context);
-                  showDialog(
-                      context: _scaffoldKey.currentContext!,
-                      builder: (context) {
-                        return SimpleDialog(
-                          children: [
-                            for (var e in Lists.storages.values) ...[
-                              InkWell(
-                                  onTap: () {
-                                    Navigator.pop(context, e.id);
-                                  },
-                                  child: Container(
-                                      margin: const EdgeInsets.fromLTRB(
-                                          30, 0, 30, 0),
-                                      height: 60,
-                                      width: 200,
-                                      child: Text(e.name,
-                                          style:
-                                              const TextStyle(fontSize: 18)))),
-                              const Divider(height: 4, color: Colors.black12)
-                            ]
-                          ],
-                        );
-                      }).then((value) {
-                    if (value != null) {
-                      model.storage = value;
-                      model.partnerController.add(model.partner);
-                    }
-                  });
-                }),
-            const SizedBox(height: 10),
-            //Upload order
-            ListTile(
-                dense: false,
-                title: Text(tr('Complete order')),
-                leading: Image.asset('assets/images/upload.png'),
-                onTap: () async {
-                  Navigator.pop(context);
-                  String err = '';
-                  if (model.partner.id == 0) {
-                    err += '${tr('Select partner')}\r\n';
-                  }
-                  if (model.goods.isEmpty) {
-                    err += '${tr('Goods list is empty')}\r\n';
-                  }
-                  for (var e in model.goods) {
-                    if ((e.qtysale ?? 0) == 0 && (e.qtyback ?? 0) == 0) {
-                      err += '${tr('Check quantity of rows')}\r\n';
-                      break;
-                    }
-                  }
-                  if (err.isNotEmpty) {
-                    appDialog(_scaffoldKey.currentContext!, err);
-                    return;
-                  }
-
-                  appDialogQuestion(_scaffoldKey.currentContext!,
-                      tr('Confirm to save order and quit'), () async {
-                    BuildContext dialogContext = _scaffoldKey.currentContext!;
-                    showDialog(
-                      context: _scaffoldKey.currentContext!,
-                      barrierDismissible: false,
-                      builder: (BuildContext context) {
-                        dialogContext = context;
-                        return Dialog(
-                          child: new Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              new CircularProgressIndicator(),
-                              new Text(tr('Saving')),
-                            ],
-                          ),
-                        );
-                      },
-                    );
-
-                    Map<String, Object?> requiestMap = model.toMap();
-                    int r = await HttpQuery(hqSaveOrder).request(requiestMap);
-                    Navigator.pop(dialogContext);
-                    switch (r) {
-                      case hrFail:
-                        appDialog(_scaffoldKey.currentContext!,
-                            requiestMap['message'].toString());
-                        return;
-                      case hrOk:
-                        Navigator.of(_scaffoldKey.currentContext!).pop();
-                        break;
-                      case hrNetworkError:
-                        appDialog(_scaffoldKey.currentContext!,
-                            requiestMap['message'].toString());
-                        return;
-                    }
-                  }, null);
-                }),
-            //Exit
-            const SizedBox(height: 40),
-            ListTile(
-                dense: false,
-                title: Text(tr('Exit')),
-                leading: Image.asset('assets/images/exit.png'),
-                onTap: () async {
-                  Navigator.pop(context);
-                  appDialogQuestion(
-                      context, tr('Confirm to quit without saving'), () {
-                    Navigator.pop(_scaffoldKey.currentContext!);
-                  }, null);
-                }),
-          ],
-        );
-      },
-    );
   }
 
   @override
@@ -266,7 +74,7 @@ class OrderScreen extends StatelessWidget {
           return WillPopScope(
               onWillPop: () async => false,
               child: AppScaffold(
-                  key: _scaffoldKey,
+                  key: scaffoldKey,
                   title: 'Order',
                   showBackButton: false,
                   child: Column(
@@ -275,52 +83,18 @@ class OrderScreen extends StatelessWidget {
                       StreamBuilder<Partner>(
                           stream: model.partnerController.stream,
                           builder: (context, snapshot) {
-                            return Column(children: [
+                            return Wrap(runSpacing: 10, children: [
                               _rowStorePayment(context),
-                              for(var e in _rowPartner(context))...[e],
+                              for (var e in _rowPartner(context)) ...[e],
+                              _rowDeliveryDate(context)
                             ]);
                           }),
                       const SizedBox(height: 20),
                       _rowGoodsList(context),
                       StreamBuilder(
                           stream: model.totalController.stream,
-                          builder: (context, snashot) {
-                            return Container(
-                                alignment: Alignment.center,
-                                padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-                                decoration: const BoxDecoration(
-                                    color: Color(0xffbeffff)),
-                                height: 50,
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Text(tr('Total'),
-                                        style: const TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold)),
-                                    Expanded(child: Container()),
-                                    Text(
-                                        '[${mdFormatDouble(model.totalSaleQty)}]',
-                                        style: const TextStyle(
-                                            color: Colors.green,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold)),
-                                    Text(
-                                        '[${mdFormatDouble(model.totalBackQty)}]',
-                                        style: const TextStyle(
-                                            color: Colors.red,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold)),
-                                    Text(
-                                        '[${mdFormatDouble(model.totalAmount)}]',
-                                        style: const TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold))
-                                  ],
-                                ));
+                          builder: (context, snapshot) {
+                            return _rowBottom(context);
                           })
                     ],
                   )));
@@ -332,11 +106,9 @@ class OrderScreen extends StatelessWidget {
       children: [
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(model.storageName(),
-              style: const TextStyle(
-                  color: Color(0xff01036b), fontWeight: FontWeight.bold)),
+              style: OrderDecor.headerDecor),
           Text(saleTypeName(model.pricePolitic).toUpperCase(),
-              style: const TextStyle(
-                  color: Color(0xff01036b), fontWeight: FontWeight.bold))
+              style: OrderDecor.headerDecor)
         ]),
         Expanded(child: Container()),
         Column(
@@ -344,20 +116,28 @@ class OrderScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Text(PaymentTypes.name(model.paymentType),
-                  style: const TextStyle(
-                      color: Color(0xff01036b), fontWeight: FontWeight.bold)),
+                  style: OrderDecor.headerDecor),
               model.partner.discount > 0
                   ? Text(
                       '${tr('Discount')}: ${mdFormatDouble(model.partner.discount)}%',
-                      style: const TextStyle(
-                          color: Color(0xff01036b),
-                          fontWeight: FontWeight.bold))
+                      style: OrderDecor.headerDecor)
                   : Container()
             ]),
         squareImageButton(() {
           popupMenu(context);
         }, 'assets/images/menu.png', height: 50)
       ],
+    );
+  }
+
+  Widget _rowDeliveryDate(BuildContext context) {
+    return Row(
+      children: [InkWell(onTap: () {
+        DatePicker.showDatePicker(context, minTime: DateTime.now(), onConfirm: (date) {
+          model.deliveryDate = date;
+          model.partnerController.add(model.partner);
+        });
+      }, child: Text('${tr('Delivery date')}: ${DateFormat('dd/MM/yyyy').format(model.deliveryDate)}', style: OrderDecor.headerDecor))],
     );
   }
 
@@ -372,24 +152,25 @@ class OrderScreen extends StatelessWidget {
               return;
             }
             showDialog(
-                builder: (context) {
-                  return SimpleDialog(
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 10),
-                    alignment: Alignment.center,
-                    children: [
-                      Text(tr('Comment for order')),
-                      SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.9,
-                          child: TextFormField(
-                              minLines: 10,
-                              maxLines: 10,
-                              controller: model.editComment))
-                    ],
-                  );
-                },
-                context: context).then((value) {
-                  model.partnerController.add(model.partner);
+                    builder: (context) {
+                      return SimpleDialog(
+                        contentPadding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 10),
+                        alignment: Alignment.center,
+                        children: [
+                          Text(tr('Comment for order')),
+                          SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.9,
+                              child: TextFormField(
+                                  minLines: 10,
+                                  maxLines: 10,
+                                  controller: model.editComment))
+                        ],
+                      );
+                    },
+                    context: context)
+                .then((value) {
+              model.partnerController.add(model.partner);
             });
           },
           child: model.partner.id == 0
@@ -500,6 +281,41 @@ class OrderScreen extends StatelessWidget {
     return ScrollVH(w);
   }
 
+  Widget _rowBottom(BuildContext context) {
+    return Container(
+        alignment: Alignment.center,
+        padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+        decoration: const BoxDecoration(color: Color(0xffbeffff)),
+        height: 50,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Text(tr('Total'),
+                style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold)),
+            Expanded(child: Container()),
+            Text('[${mdFormatDouble(model.totalSaleQty)}]',
+                style: const TextStyle(
+                    color: Colors.green,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold)),
+            Text('[${mdFormatDouble(model.totalBackQty)}]',
+                style: const TextStyle(
+                    color: Colors.red,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold)),
+            Text('[${mdFormatDouble(model.totalAmount)}]',
+                style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold))
+          ],
+        ));
+  }
+
   Future<void> _selectPartner(BuildContext context) async {
     var result = await Navigator.push(
         context,
@@ -573,7 +389,7 @@ class OrderScreen extends StatelessWidget {
     }
   }
 
-  void _visitScreen(BuildContext context) {
+  void visitScreen(BuildContext context) {
     showDialog(
         context: context,
         barrierDismissible: false,
@@ -592,10 +408,10 @@ class OrderScreen extends StatelessWidget {
                     };
                     HttpQuery(hqVisit).request(response).then((value) {
                       if (value == hrOk) {
-                        Navigator.pop(_scaffoldKey.currentContext!);
+                        Navigator.pop(scaffoldKey.currentContext!);
                       } else {
                         appDialog(
-                            _scaffoldKey.currentContext!, response['message']);
+                            scaffoldKey.currentContext!, response['message']);
                       }
                     });
                   }),
@@ -612,10 +428,10 @@ class OrderScreen extends StatelessWidget {
                     };
                     HttpQuery(hqVisit).request(response).then((value) {
                       if (value == hrOk) {
-                        Navigator.pop(_scaffoldKey.currentContext!);
+                        Navigator.pop(scaffoldKey.currentContext!);
                       } else {
                         appDialog(
-                            _scaffoldKey.currentContext!, response['message']);
+                            scaffoldKey.currentContext!, response['message']);
                       }
                     });
                   }),

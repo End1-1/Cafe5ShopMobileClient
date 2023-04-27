@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:cafe5_shop_mobile_client/utils/prefs.dart';
 
@@ -29,6 +30,9 @@ class HttpQuery {
     makeJson(other);
     String strBody = await body();
     other.clear();
+    if (kDebugMode) {
+      print(strBody);
+    }
     try {
       var response = await http.post(
           Uri.parse(

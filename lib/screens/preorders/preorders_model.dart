@@ -1,4 +1,11 @@
+import 'dart:async';
+
+import 'package:cafe5_shop_mobile_client/models/http_query/http_query.dart';
+import 'package:cafe5_shop_mobile_client/models/lists.dart';
+import 'package:cafe5_shop_mobile_client/screens/bloc/screen_event.dart';
+import 'package:cafe5_shop_mobile_client/utils/prefs.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:intl/intl.dart';
 
 part 'preorders_model.freezed.dart';
 part 'preorders_model.g.dart';
@@ -17,4 +24,35 @@ class Preorder with _$Preorder {
 
 class PreordersModel {
   final List<Preorder> data = [];
+  final dateStream = StreamController<String>();
+  int driver = prefs.getInt(pkDriver) ?? 0;
+  late DateTime date;
+
+  PreordersModel() {
+    date = DateTime.now();
+    date = DateTime(date.year, date.month, date.day);
+  }
+
+  void previousDate() {
+    DateTime now = DateTime.now();
+    now = DateTime(now.year, now.month, now.day);
+    if (date.add(const Duration(days: -1)).compareTo(now) < 0) {
+      return;
+    }
+    date = date.add(const Duration(days: -1));
+    dateStream.add(DateFormat('dd/MM/yyyy').format(date));
+  }
+
+  void nextDate() {
+    date = date.add(const Duration(days: 1));
+    dateStream.add(DateFormat('dd/MM/yyyy').format(date));
+  }
+
+  SEHttpQuery query(int driver) {
+    return SEHttpQuery(
+        query: HttpQuery(hqPreorders, initData: {
+          pkDate: DateFormat('dd/MM/yyyy').format(date),
+          pkDriver: driver
+        }));
+  }
 }

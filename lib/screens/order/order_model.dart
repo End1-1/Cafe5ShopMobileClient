@@ -6,6 +6,7 @@ import 'package:cafe5_shop_mobile_client/models/lists.dart';
 import 'package:cafe5_shop_mobile_client/utils/data_types.dart';
 import 'package:cafe5_shop_mobile_client/utils/prefs.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
 
 class OrderModel {
   final StreamController<Partner> partnerController = StreamController();
@@ -16,6 +17,8 @@ class OrderModel {
 
   String orderId = '';
   bool editable = true;
+  DateTime deliveryDate =
+      DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
   Partner partner = Partner.empty();
   late int pricePolitic;
   int storage = Lists.config.storage;
@@ -31,7 +34,7 @@ class OrderModel {
 
   void inputDataChanged(Goods? g, int index) {
     if (index > -1) {
-        goods[index] = g!;
+      goods[index] = g!;
     }
     totalSaleQty = 0;
     totalBackQty = 0;
@@ -92,11 +95,13 @@ class OrderModel {
     order['storage'] = storage;
     order['paymenttype'] = paymentType;
     order['comment'] = editComment.text;
+    order['deliverydate'] = DateFormat('dd/MM/yyyy').format(deliveryDate);
     return order;
   }
 
   String storageName() {
-    Storage? s = Lists.storages[storage] ?? const Storage(id: 0, name: 'undefined');
+    Storage? s =
+        Lists.storages[storage] ?? const Storage(id: 0, name: 'undefined');
     return s.name;
   }
 }
