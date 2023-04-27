@@ -38,5 +38,6 @@ const hqOpenOrder = 12;
 const hqRemoveOrderRow = 13;
 const hqExportToAS = 14;
 const hqDriverList = 15;
+const hqVisit = 16;
 
 const prStorage = 14;

@@ -91,6 +91,7 @@ class OrderModel {
     order['goods'].addAll(goods.map((e) => e.toJson()));
     order['storage'] = storage;
     order['paymenttype'] = paymentType;
+    order['comment'] = editComment.text;
     return order;
   }
 
