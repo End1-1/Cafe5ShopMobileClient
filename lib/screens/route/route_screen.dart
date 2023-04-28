@@ -86,18 +86,28 @@ class RouteScreen extends StatelessWidget {
                                       partner: p)));
                         },
                         child: Container(
+                          height: 50,
                             margin: const EdgeInsets.fromLTRB(0, 5, 0, 5),
                             padding: const EdgeInsets.fromLTRB(5, 5, 5, 0),
                             decoration: BoxDecoration(
-                                color: e.orders == 0
-                                    ? Colors.black12
-                                    : const Color(0xffc4ffc4)),
+                                color:  Colors.black12),
                             child: Row(
                               children: [
-                                SizedBox(
-                                    height: 50,
-                                    width: 150,
-                                    child: Text(e.partnername)),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                     Text(e.partnername, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.indigo)),
+                                    Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                      if (e.action == 1) ... [Image.asset('assets/images/goodsnotneeded.png', height: 20, width: 20)],
+                                      if (e.action == 2) ... [Image.asset('assets/images/order.png', height: 20, width: 20)],
+                                      if (e.action == 3) ... [Image.asset('assets/images/visitclosed.png', height: 20, width: 20)],
+                                      if (e.action == 4) ... [Image.asset('assets/images/completedelivery.png', height: 20, width: 20)],
+                                      if (e.orders > 0) ... [Image.asset('assets/images/delivery.png', height: 20, width: 20)],
+                                      //Expanded(child: Container())
+                                    ])
+                                    ]),
                                 const SizedBox(width: 5),
                                 Expanded(
                                     child: SizedBox(
