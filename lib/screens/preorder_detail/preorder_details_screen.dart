@@ -52,7 +52,7 @@ class PreorderDetailsScreen extends StatelessWidget {
                   initData: {'id': preorder.id}))),
         child: AppScaffold(
         headerWidgets: [
-          squareImageButton(() {
+          if (preorder.state == 1) ... [squareImageButton(() {
             Navigator.push(context, MaterialPageRoute(builder: (context) => OrderScreen(pricePolitic: 1, orderId: preorder.id))).then((value) {
               if (value != null) {
                 BlocProvider.of<ScreenBloc>(context).add(SEHttpQuery(
@@ -60,7 +60,7 @@ class PreorderDetailsScreen extends StatelessWidget {
                         initData: {'id': preorder.id})));
               }
             });
-          }, 'assets/images/edit.png', height: 40)
+          }, 'assets/images/edit.png', height: 40)]
         ],
         title: 'Preorder details',
         child:  BlocListener<ScreenBloc, ScreenState>(listener:

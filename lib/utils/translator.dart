@@ -73,7 +73,13 @@ const Map<String, String> vals = {
   'storage':'Պահեստ',
   'stock':'Ապրանքների առկայություն',
   'quantity of preorders' : 'Անհրաժեշտ ապրանքներ',
-  'goods group':'Ապրանքի խումբ'
+  'goods group':'Ապրանքի խումբ',
+  'is delivery complete?':'Առաքումը կատարված՞ է',
+  'delivery date':'Առաքման ամսաթիվ',
+  'visit':'Այց',
+  'visit, goods not needed':'Ապրանք պետք չէ',
+  'visit, closed': 'Խանութը փակ է',
+  'close':'Փակել'
 };
 
 String tr(String s) {

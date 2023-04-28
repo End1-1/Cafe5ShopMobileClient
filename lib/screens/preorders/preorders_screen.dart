@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:cafe5_shop_mobile_client/models/http_query/http_preorders.dart';
+import 'package:cafe5_shop_mobile_client/models/http_query/http_query.dart';
 import 'package:cafe5_shop_mobile_client/models/model.dart';
 import 'package:cafe5_shop_mobile_client/screens/bloc/screen_bloc.dart';
 import 'package:cafe5_shop_mobile_client/screens/bloc/screen_event.dart';
@@ -18,10 +21,11 @@ import 'package:intl/intl.dart';
 
 class PreordersScreen extends StatelessWidget {
   final model = PreordersModel();
-  final int state;
   final _scaffoldKey = GlobalKey();
 
-  PreordersScreen({required this.state});
+  PreordersScreen({super.key, required int state}) {
+    model.state = state;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +73,18 @@ class PreordersScreen extends StatelessWidget {
                                             builder: (context) =>
                                                 PreorderDetailsScreen(
                                                     preorder: e)));
+                                  },
+                                  onLongPress: () {
+                                    appDialogQuestion(context, tr('Is delivery complete?'), (){
+                                      Map<String, dynamic> response = {'id': e.id};
+                                      HttpQuery(hqCompleteDelivery).request(response).then((value) {
+                                        if (value == hrOk) {
+                                          BlocProvider.of<ScreenBloc>(_scaffoldKey.currentContext!).add(model.query(model.driver));
+                                        } else {
+                                          appDialog(context, response[pkData]);
+                                        }
+                                      });
+                                    }, null);
                                   },
                                   child: Row(
                                     crossAxisAlignment:

@@ -13,6 +13,7 @@ part 'preorders_model.g.dart';
 @freezed
 class Preorder with _$Preorder {
   const factory Preorder({required String id,
+    required int state,
     required int payment,
   required String date,
   required String partnername,
@@ -26,6 +27,7 @@ class PreordersModel {
   final List<Preorder> data = [];
   final dateStream = StreamController<String>();
   int driver = prefs.getInt(pkDriver) ?? 0;
+  int state = 1;
   late DateTime date;
 
   PreordersModel() {
@@ -36,9 +38,6 @@ class PreordersModel {
   void previousDate() {
     DateTime now = DateTime.now();
     now = DateTime(now.year, now.month, now.day);
-    if (date.add(const Duration(days: -1)).compareTo(now) < 0) {
-      return;
-    }
     date = date.add(const Duration(days: -1));
     dateStream.add(DateFormat('dd/MM/yyyy').format(date));
   }
@@ -52,7 +51,8 @@ class PreordersModel {
     return SEHttpQuery(
         query: HttpQuery(hqPreorders, initData: {
           pkDate: DateFormat('dd/MM/yyyy').format(date),
-          pkDriver: driver
+          pkDriver: driver,
+          'state': state
         }));
   }
 }
