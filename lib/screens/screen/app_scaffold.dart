@@ -6,7 +6,7 @@ class AppScaffold extends StatelessWidget {
   final String title;
   final Widget child;
   final bool showBackButton;
-  final VoidCallbackAction? onBack;
+  final Function(BuildContext)? onBackTap;
   final List<Widget> headerWidgets;
 
   const AppScaffold(
@@ -15,7 +15,7 @@ class AppScaffold extends StatelessWidget {
       required this.child,
       this.showBackButton = true,
       this.headerWidgets = const [],
-      this.onBack});
+      this.onBackTap});
 
   @override
   Widget build(BuildContext context) {
@@ -35,8 +35,10 @@ class AppScaffold extends StatelessWidget {
                             children: [
                             InkWell(
                                 onTap: () {
-                                  if (onBack == null) {
+                                  if (onBackTap == null) {
                                     Navigator.pop(context);
+                                  } else {
+                                    onBackTap!(context);
                                   }
                                 },
                                 child: SizedBox(

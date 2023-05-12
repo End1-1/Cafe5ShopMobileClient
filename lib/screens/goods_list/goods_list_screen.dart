@@ -6,6 +6,7 @@ import 'package:cafe5_shop_mobile_client/screens/screen/app_scaffold.dart';
 import 'package:cafe5_shop_mobile_client/utils/data_types.dart';
 import 'package:cafe5_shop_mobile_client/utils/translator.dart';
 import 'package:cafe5_shop_mobile_client/widgets/square_button.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
@@ -13,15 +14,17 @@ import 'goods_list_model.dart';
 
 class GoodsListScreen extends StatelessWidget {
   final model = GoodsListModel();
+  final carouselController = CarouselController();
   final List<Goods> goods = [];
-  final StreamController<String?> goodsGroupController = StreamController();
-  final StreamController<List<Goods>> goodsController = StreamController();
+  final StreamController<String?> goodsGroupController = StreamController.broadcast();
+  final StreamController<List<Goods>> goodsController = StreamController.broadcast();
   final StreamController<dynamic?> totalController = StreamController();
   final int pricePolitic;
   final int partnerId;
   double totalSaleQty = 0.0;
   double totalBackQty = 0.0;
   double totalAmount = 0.0;
+  int currentPage = 0;
 
   GoodsListScreen(
       {super.key,
@@ -74,53 +77,53 @@ class GoodsListScreen extends StatelessWidget {
             Navigator.pop(context, list);
           }, 'assets/images/done.png')
         ],
+        onBackTap: _onBackTap,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-              Text(tr('List')),
-              const SizedBox(width: 20),
-              Expanded(
-                  child: StreamBuilder<String?>(
-                      stream: goodsGroupController.stream,
-                      builder: (context, snapshot) {
-                        return DropdownButton<String>(
-                            isExpanded: true,
-                            value: snapshot.data,
-                            items: Lists.goodsGroup.values.map((e) {
-                              return DropdownMenuItem<String>(
-                                  value: e.name, child: Text(e.name));
-                            }).toList(),
-                            onChanged: (text) {
-                              goodsGroupController.add(text);
-                              List<Goods> goodsList = goods
-                                  .where((element) => element.groupname == text)
-                                  .toList();
-                              goodsController.add(goodsList);
-                            });
-                      }))
-            ]),
-            Expanded(
-                child: SingleChildScrollView(
-                    child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: StreamBuilder<List<Goods>?>(
-                            stream: goodsController.stream,
-                            builder: (context, snapshot) {
-                              return Wrap(
-                                spacing: 5,
-                                direction: Axis.vertical,
-                                crossAxisAlignment: WrapCrossAlignment.start,
-                                children: [
-                                  for (var e in snapshot.data ?? []) ...[
-                                    _GoodsRow(
-                                        goods: e,
-                                        model: model,
-                                        inputDataChanged: inputDataChanged)
-                                  ]
-                                ],
-                              );
-                            })))),
+            Expanded(child: CarouselSlider(
+                options: CarouselOptions(height: double.infinity, autoPlay: false, enableInfiniteScroll: false, enlargeCenterPage: true, viewportFraction: 0.99),
+                carouselController: carouselController,
+                items: [1,2].map((e) {
+                  return Builder(builder: (context) {
+                    if (e == 1) {
+                    return SingleChildScrollView(child: Column(children: [
+                      for (var g in Lists.goodsGroup.values) ... [InkWell(onTap:(){
+                        //goodsGroupController.add(g.name);
+                        List<Goods> goodsList = goods
+                            .where((element) => element.groupname == g.name)
+                            .toList();
+                        goodsController.add(goodsList);
+                        currentPage = 1;
+                        carouselController.nextPage(duration: const Duration(milliseconds: 200));
+                      }, child: Container(width: MediaQuery.of(context).size.width, height: 60, child: Text(g.name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold))))]]));
+                    } else {
+                      return SingleChildScrollView(
+                          child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: StreamBuilder<List<Goods>?>(
+                                  stream: goodsController.stream,
+                                  builder: (context, snapshot) {
+                                    return Wrap(
+                                      spacing: 5,
+                                      direction: Axis.vertical,
+                                      crossAxisAlignment: WrapCrossAlignment.start,
+                                      children: [
+                                        for (var e in snapshot.data ?? []) ...[
+                                          _GoodsRow(
+                                              goods: e,
+                                              model: model,
+                                              inputDataChanged: inputDataChanged)
+                                        ]
+                                      ],
+                                    );
+                                  })));
+                    }
+                  });
+                }).toList()
+            )),
+
+
             StreamBuilder<dynamic?>(
                 stream: totalController.stream,
                 builder: (context, snashot) {
@@ -160,6 +163,16 @@ class GoodsListScreen extends StatelessWidget {
           ],
         ));
   }
+
+  _onBackTap(BuildContext context) {
+      if (currentPage == 0) {
+        Navigator.pop(context);
+      } else {
+        carouselController.jumpToPage(0);
+        currentPage = 0;
+      }
+  }
+
 }
 
 class _GoodsRow extends StatelessWidget {

@@ -4,7 +4,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
    <application
-        android:label="Cafe5MobileShop"
+        android:label="Magnit"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon"
        android:requestLegacyExternalStorage="true">
