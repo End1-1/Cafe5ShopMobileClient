@@ -31,18 +31,16 @@ class GoodsListScreen extends StatelessWidget {
       required this.pricePolitic,
       required double discount,
       required this.partnerId}) {
-    if (discount > 0) {
-      discount /= 100;
-    }
     goods.addAll(Lists.goods.values.map((e) {
+      var special = false;
       double price = pricePolitic == mdPriceRetail ? e.price1 : e.price2;
-      price -= price * discount;
       if (Lists.specialPrices.containsKey(this.partnerId)) {
         if (Lists.specialPrices[this.partnerId]!.containsKey(e.id)) {
           price = Lists.specialPrices[this.partnerId]![e.id]!;
+          special = true;
         }
       }
-      Goods g = e.copyWith(intuuid: Uuid().v1(), price: price);
+      Goods g = e.copyWith(intuuid: const Uuid().v1(), price: price, discount: special ? 0 : discount, qtyback: 0, qtysale: 0, specialflag: special ? 1 : 0);
       return g;
     }));
   }
@@ -57,7 +55,9 @@ class GoodsListScreen extends StatelessWidget {
     for (var e in goods) {
       totalSaleQty += e.qtysale ?? 0;
       totalBackQty += e.qtyback ?? 0;
-      totalAmount += (e.qtysale ?? 0) * (e.price ?? 0);
+      double totalPrice = e.qtysale! * e.price!;
+      totalPrice -= totalPrice * (e.discount! / 100);
+      totalAmount += totalPrice;
     }
     totalController.add(null);
   }

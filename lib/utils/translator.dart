@@ -79,7 +79,8 @@ const Map<String, String> vals = {
   'visit':'Այց',
   'visit, goods not needed':'Ապրանք պետք չէ',
   'visit, closed': 'Խանութը փակ է',
-  'close':'Փակել'
+  'close':'Փակել',
+  'executor':'Կատարող',
 };
 
 String tr(String s) {

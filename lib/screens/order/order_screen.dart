@@ -3,6 +3,7 @@ import 'package:cafe5_shop_mobile_client/models/lists.dart';
 import 'package:cafe5_shop_mobile_client/models/model.dart';
 import 'package:cafe5_shop_mobile_client/screens/bloc/screen_event.dart';
 import 'package:cafe5_shop_mobile_client/screens/bloc/screen_state.dart';
+import 'package:cafe5_shop_mobile_client/screens/drivers_list/driver_list_screen.dart';
 import 'package:cafe5_shop_mobile_client/screens/goods_list/goods_list_screen.dart';
 import 'package:cafe5_shop_mobile_client/screens/order/order_decor.dart';
 import 'package:cafe5_shop_mobile_client/screens/order/order_popup.dart';
@@ -64,7 +65,7 @@ class OrderScreen extends StatelessWidget {
             for (var e in data['goods']) {
               model.goods.add(Goods.fromJson(e));
             }
-            if (model.goods.length > 0) {
+            if (model.goods.isNotEmpty) {
               model.storage = model.goods.first.storage!;
             }
             model.partnerController.add(model.partner);
@@ -105,8 +106,7 @@ class OrderScreen extends StatelessWidget {
     return Row(
       children: [
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(model.storageName(),
-              style: OrderDecor.headerDecor),
+          Text(model.storageName(), style: OrderDecor.headerDecor),
           Text(saleTypeName(model.pricePolitic).toUpperCase(),
               style: OrderDecor.headerDecor)
         ]),
@@ -131,14 +131,45 @@ class OrderScreen extends StatelessWidget {
   }
 
   Widget _rowDeliveryDate(BuildContext context) {
-    return Row(
-      children: [InkWell(onTap: () {
-        DatePicker.showDatePicker(context, minTime: DateTime.now(), onConfirm: (date) {
-          model.deliveryDate = date;
-          model.partnerController.add(model.partner);
-        });
-      }, child: Text('${tr('Delivery date')}: ${DateFormat('dd/MM/yyyy').format(model.deliveryDate)}', style: OrderDecor.headerDecor))],
-    );
+    return Column(children: [
+      Row(
+        children: [
+          InkWell(
+              onTap: () {
+                DatePicker.showDatePicker(context, minTime: DateTime.now(),
+                    onConfirm: (date) {
+                  model.deliveryDate = date;
+                  model.partnerController.add(model.partner);
+                });
+              },
+              child: Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 5, 0, 10),
+                  child: Text(
+                      '${tr('Delivery date')}: ${DateFormat('dd/MM/yyyy').format(model.deliveryDate)}',
+                      style: OrderDecor.headerDecor)))
+        ],
+      ),
+      Row(children: [
+        InkWell(
+            onTap: () {
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return const SimpleDialog(children: [DriverListScreen()]);
+                  }).then((value) {
+                if (value != null) {
+                  model.executor = value;
+                  model.partnerController.add(model.partner);
+                }
+              });
+            },
+            child: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 5, 0, 10),
+                child: Text(
+                    '${tr('Executor')}: ${Lists.findDriver(model.executor).name}',
+                    style: OrderDecor.headerDecor)))
+      ])
+    ]);
   }
 
   List<Widget> _rowPartner(BuildContext context) {
@@ -332,22 +363,17 @@ class OrderScreen extends StatelessWidget {
           double price = model.pricePolitic == mdPriceRetail
               ? model.goods[i].price1
               : model.goods[i].price2;
-          price -= price * model.partner.discount;
+          var special = false;
           if (Lists.specialPrices.containsKey(model.partner.id)) {
             if (Lists.specialPrices[model.partner.id]!
                 .containsKey(model.goods[i].id)) {
               price =
                   Lists.specialPrices[model.partner.id]![model.goods[i].id]!;
+              special = true;
             }
           }
-          model.goods[i] = model.goods[i].copyWith(price: price);
-        }
-        if (model.partner.discount > 0) {
-          for (int i = 0; i < model.goods.length; i++) {
-            model.goods[i] = model.goods[i].copyWith(
-                price: model.goods[i].price! -
-                    (model.goods[i].price! * (model.partner.discount / 100)));
-          }
+          model.goods[i] = model.goods[i].copyWith(
+              price: price, discount: special ? 0 : model.partner.discount, specialflag: special ? 1 : 0);
         }
         model.goodsController.add(model.goods);
         model.inputDataChanged(null, -1);
@@ -470,7 +496,8 @@ class _GoodsRow extends StatelessWidget {
   Widget build(BuildContext context) {
     editSale.text = mdFormatDouble(goods.qtysale);
     editBack.text = mdFormatDouble(goods.qtyback);
-    editPrice.text = mdFormatDouble(goods.price);
+    editPrice.text =
+        mdFormatDouble(goods.price! - (goods.price! * (goods.discount! / 100)));
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

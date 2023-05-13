@@ -1,20 +1,10 @@
 import 'package:cafe5_shop_mobile_client/models/http_query/http_query.dart';
+import 'package:cafe5_shop_mobile_client/models/lists.dart';
+import 'package:cafe5_shop_mobile_client/utils/data_types.dart';
 import 'package:cafe5_shop_mobile_client/utils/prefs.dart';
 import 'package:cafe5_shop_mobile_client/utils/translator.dart';
 import 'package:cafe5_shop_mobile_client/widgets/loading.dart';
 import 'package:flutter/material.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
-
-part 'driver_list_screen.freezed.dart';
-
-part 'driver_list_screen.g.dart';
-
-@freezed
-class Driver with _$Driver {
-  const factory Driver({required int id, required String name}) = _Driver;
-
-  factory Driver.fromJson(Map<String, Object?> json) => _$DriverFromJson(json);
-}
 
 class DriverListScreen extends StatelessWidget {
   const DriverListScreen({super.key});
@@ -54,13 +44,6 @@ class DriverListScreen extends StatelessWidget {
   }
 
   Future<List<Driver>> _getList() async {
-    List<Driver> l = [];
-    Map<String, dynamic> data = {};
-    if (await HttpQuery(hqDriverList).request(data) == hrOk) {
-      for (var e in data[pkData]) {
-        l.add(Driver.fromJson(e));
-      }
-    }
-    return l;
+    return Lists.drivers.values.toList();
   }
 }

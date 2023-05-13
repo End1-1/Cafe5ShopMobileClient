@@ -25,6 +25,9 @@ class Goods with _$Goods {
         required double? price,
         required double price1,
         required double price2,
+        required double? discount,
+        required int specialflag,
+        required double? qtystop,
         required double? qtysale,
         required double? qtyback}) = _Goods;
 
@@ -115,4 +118,10 @@ class PaymentTypes {
     }
     return 'undefined';
   }
+}
+
+@freezed
+class Driver with _$Driver {
+  const factory Driver({required int id, required String name}) = _Driver;
+  factory Driver.fromJson(Map<String, dynamic> json) => _$DriverFromJson(json);
 }

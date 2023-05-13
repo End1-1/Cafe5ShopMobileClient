@@ -11,7 +11,7 @@ class Dir {
 
   static Future<String> appPath() async {
     final dir = await getApplicationDocumentsDirectory();
-    return '${dir?.path}/Magnit';
+    return '${dir.path}/Magnit';
   }
 
   static Future<String> dataFile() async {

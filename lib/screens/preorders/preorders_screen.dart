@@ -31,7 +31,7 @@ class PreordersScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<ScreenBloc>(
         create: (_) => ScreenBloc(SSInProgress())
-          ..add(model.query(model.driver)),
+          ..add(model.query(prefs.getInt(pkSaleDriver) ?? 0)),
         child: AppScaffold(
       key: _scaffoldKey,
         title: 'Preorders',
@@ -79,7 +79,7 @@ class PreordersScreen extends StatelessWidget {
                                       Map<String, dynamic> response = {'id': e.id};
                                       HttpQuery(hqCompleteDelivery).request(response).then((value) {
                                         if (value == hrOk) {
-                                          BlocProvider.of<ScreenBloc>(_scaffoldKey.currentContext!).add(model.query(model.driver));
+                                          BlocProvider.of<ScreenBloc>(_scaffoldKey.currentContext!).add(model.query(prefs.getInt(pkSaleDriver) ?? 0));
                                         } else {
                                           appDialog(context, response[pkData]);
                                         }
@@ -120,7 +120,7 @@ class PreordersScreen extends StatelessWidget {
     return [
       squareImageButton(() {
         model.previousDate();
-        BlocProvider.of<ScreenBloc>(_scaffoldKey.currentContext!).add(model.query(model.driver));
+        BlocProvider.of<ScreenBloc>(_scaffoldKey.currentContext!).add(model.query(prefs.getInt(pkSaleDriver) ?? 0));
       }, 'assets/images/left.png'),
       StreamBuilder<String>(
           stream: model.dateStream.stream,
@@ -130,15 +130,15 @@ class PreordersScreen extends StatelessWidget {
           }),
       squareImageButton(() {
         model.nextDate();
-        BlocProvider.of<ScreenBloc>(_scaffoldKey.currentContext!).add(model.query(model.driver));
+        BlocProvider.of<ScreenBloc>(_scaffoldKey.currentContext!).add(model.query(prefs.getInt(pkSaleDriver) ?? 0));
       }, 'assets/images/right.png'),
       squareImageButton(() {
         showDialog(context: _scaffoldKey.currentContext!, builder: (context) {
           return const SimpleDialog(children: [DriverListScreen()]);
         }).then((value) {
           if (value != null) {
-            model.driver = value;
-            BlocProvider.of<ScreenBloc>(_scaffoldKey.currentContext!).add(model.query(model.driver));
+            prefs.setInt(pkSaleDriver, value);
+            BlocProvider.of<ScreenBloc>(_scaffoldKey.currentContext!).add(model.query(prefs.getInt(pkSaleDriver) ?? 0));
           }
         });
       }, 'assets/images/filter.png')

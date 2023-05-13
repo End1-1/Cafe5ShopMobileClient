@@ -27,7 +27,6 @@ class RouteModel {
   final List<RouteItem> route = [];
   late DateTime date;
   final dateStream = StreamController<String>();
-  int driver = 0;
 
   RouteModel() {
     date = DateTime.now();
@@ -37,9 +36,6 @@ class RouteModel {
   void previousDate() {
     DateTime now = DateTime.now();
     now = DateTime(now.year, now.month, now.day);
-    if (date.add(const Duration(days: -1)).compareTo(now) < 0) {
-      return;
-    }
     date = date.add(const Duration(days: -1));
     dateStream.add(DateFormat('dd/MM/yyyy').format(date));
   }

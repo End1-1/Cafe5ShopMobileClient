@@ -26,7 +26,6 @@ class Preorder with _$Preorder {
 class PreordersModel {
   final List<Preorder> data = [];
   final dateStream = StreamController<String>();
-  int driver = prefs.getInt(pkDriver) ?? 0;
   int state = 1;
   late DateTime date;
 

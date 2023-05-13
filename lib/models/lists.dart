@@ -12,6 +12,7 @@ class Lists {
   static Map<int, Partner> partners = {};
   static Map<int, Map<int, double>> specialPrices = {};
   static Map<int, Storage> storages = {};
+  static Map<int, Driver> drivers = {};
   static late Config config;
 
   static Future<void> load() async {
@@ -40,6 +41,9 @@ class Lists {
       }
       for (var e in data['storages']) {
         storages[e['id']] = Storage.fromJson(e);
+      }
+      for (var e in data['drivers']) {
+        drivers[e['id']] = Driver.fromJson(e);
       }
       config = Config.fromJson(data['config']);
     } catch (e) {
@@ -74,5 +78,12 @@ class Lists {
 
   static Partner? findPartner(int id) {
     return partners.containsKey(id) ? partners[id] : null;
+  }
+
+  static Driver findDriver(int id){
+    if (id == 0) {
+      return const Driver(id: 0, name: '');
+    }
+    return drivers[id]!;
   }
 }

@@ -19,6 +19,7 @@ class OrderModel {
   bool editable = true;
   DateTime deliveryDate =
       DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+  int executor = prefs.getInt(pkDriver) ?? 0;
   Partner partner = Partner.empty();
   late int pricePolitic;
   int storage = Lists.config.storage;
@@ -42,7 +43,9 @@ class OrderModel {
     for (var e in goods) {
       totalSaleQty += e.qtysale ?? 0;
       totalBackQty += e.qtyback ?? 0;
-      totalAmount += (e.qtysale ?? 0) * (e.price ?? 0);
+      double totalPrice = e.qtysale! * e.price!;
+      totalPrice -= totalPrice * (e.discount! / 100);
+      totalAmount += totalPrice;
     }
     totalController.add(null);
   }
@@ -89,6 +92,7 @@ class OrderModel {
   Map<String, Object?> toMap() {
     Map<String, dynamic> order = {};
     order['orderid'] = orderId;
+    order['executor'] = executor;
     order['partner'] = partner.toJson();
     order['goods'] = <Object?>[];
     order['goods'].addAll(goods.map((e) => e.toJson()));

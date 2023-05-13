@@ -22,14 +22,16 @@ class RouteScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<ScreenBloc>(
-        create: (_) => ScreenBloc(SSInit())..add(model.query(model.driver)),
+        create: (_) => ScreenBloc(SSInit())
+          ..add(model.query(prefs.getInt(pkRouteDriver) ?? 0)),
         child: AppScaffold(
-          key: _scaffoldKey,
+            key: _scaffoldKey,
             title: 'Route',
             headerWidgets: [
               squareImageButton(() {
                 model.previousDate();
-                BlocProvider.of<ScreenBloc>(_scaffoldKey.currentContext!).add(model.query(model.driver));
+                BlocProvider.of<ScreenBloc>(_scaffoldKey.currentContext!)
+                    .add(model.query(prefs.getInt(pkRouteDriver) ?? 0));
               }, 'assets/images/left.png'),
               StreamBuilder<String>(
                   stream: model.dateStream.stream,
@@ -39,15 +41,19 @@ class RouteScreen extends StatelessWidget {
                   }),
               squareImageButton(() {
                 model.nextDate();
-                BlocProvider.of<ScreenBloc>(_scaffoldKey.currentContext!).add(model.query(model.driver));
+                BlocProvider.of<ScreenBloc>(_scaffoldKey.currentContext!)
+                    .add(model.query(prefs.getInt(pkRouteDriver) ?? 0));
               }, 'assets/images/right.png'),
               squareImageButton(() {
-                showDialog(context: _scaffoldKey.currentContext!, builder: (context) {
-                  return SimpleDialog(children: [DriverListScreen()]);
-                }).then((value) {
+                showDialog(
+                    context: _scaffoldKey.currentContext!,
+                    builder: (context) {
+                      return const SimpleDialog(children: [DriverListScreen()]);
+                    }).then((value) {
                   if (value != null) {
-                    model.driver = value;
-                    BlocProvider.of<ScreenBloc>(_scaffoldKey.currentContext!).add(model.query(model.driver));
+                    prefs.setInt(pkRouteDriver, value);
+                    BlocProvider.of<ScreenBloc>(_scaffoldKey.currentContext!)
+                        .add(model.query(prefs.getInt(pkRouteDriver) ?? 0));
                   }
                 });
               }, 'assets/images/filter.png')
@@ -83,30 +89,65 @@ class RouteScreen extends StatelessWidget {
                               MaterialPageRoute(
                                   builder: (context) => OrderScreen(
                                       pricePolitic: p.pricepolitic,
-                                      partner: p)));
+                                      partner: p))).then((value) {
+                            BlocProvider.of<ScreenBloc>(
+                                    _scaffoldKey.currentContext!)
+                                .add(model
+                                    .query(prefs.getInt(pkRouteDriver) ?? 0));
+                          });
                         },
                         child: Container(
-                          height: 50,
+                            height: 50,
                             margin: const EdgeInsets.fromLTRB(0, 5, 0, 5),
                             padding: const EdgeInsets.fromLTRB(5, 5, 5, 0),
-                            decoration: BoxDecoration(
-                                color:  Colors.black12),
+                            decoration:
+                                const BoxDecoration(color: Colors.black12),
                             child: Row(
                               children: [
                                 Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                     Text(e.partnername, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.indigo)),
-                                    Row(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                      if (e.action == 1) ... [Image.asset('assets/images/goodsnotneeded.png', height: 20, width: 20)],
-                                      if (e.action == 2) ... [Image.asset('assets/images/order.png', height: 20, width: 20)],
-                                      if (e.action == 3) ... [Image.asset('assets/images/visitclosed.png', height: 20, width: 20)],
-                                      if (e.action == 4) ... [Image.asset('assets/images/completedelivery.png', height: 20, width: 20)],
-                                      if (e.orders > 0) ... [Image.asset('assets/images/delivery.png', height: 20, width: 20)],
-                                      //Expanded(child: Container())
-                                    ])
+                                      Text(e.partnername,
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.indigo)),
+                                      Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            if (e.action == 1) ...[
+                                              Image.asset(
+                                                  'assets/images/goodsnotneeded.png',
+                                                  height: 20,
+                                                  width: 20)
+                                            ],
+                                            if (e.action == 2) ...[
+                                              Image.asset(
+                                                  'assets/images/order.png',
+                                                  height: 20,
+                                                  width: 20)
+                                            ],
+                                            if (e.action == 3) ...[
+                                              Image.asset(
+                                                  'assets/images/visitclosed.png',
+                                                  height: 20,
+                                                  width: 20)
+                                            ],
+                                            if (e.action == 4) ...[
+                                              Image.asset(
+                                                  'assets/images/completedelivery.png',
+                                                  height: 20,
+                                                  width: 20)
+                                            ],
+                                            if (e.orders > 0) ...[
+                                              Image.asset(
+                                                  'assets/images/delivery.png',
+                                                  height: 20,
+                                                  width: 20)
+                                            ],
+                                            //Expanded(child: Container())
+                                          ])
                                     ]),
                                 const SizedBox(width: 5),
                                 Expanded(
