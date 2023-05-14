@@ -84,6 +84,6 @@ class Lists {
     if (id == 0) {
       return const Driver(id: 0, name: '');
     }
-    return drivers[id]!;
+    return drivers[id] ?? Driver(id: 0, name: 'Unknown driver');
   }
 }

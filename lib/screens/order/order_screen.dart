@@ -14,11 +14,11 @@ import 'package:cafe5_shop_mobile_client/utils/dialogs.dart';
 import 'package:cafe5_shop_mobile_client/utils/mtext_editing_controller.dart';
 import 'package:cafe5_shop_mobile_client/utils/prefs.dart';
 import 'package:cafe5_shop_mobile_client/utils/translator.dart';
+import 'package:cafe5_shop_mobile_client/widgets/dialogs.dart';
 import 'package:cafe5_shop_mobile_client/widgets/scrolls.dart';
 import 'package:cafe5_shop_mobile_client/widgets/square_button.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' ;
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 
 import '../bloc/screen_bloc.dart';
@@ -136,10 +136,11 @@ class OrderScreen extends StatelessWidget {
         children: [
           InkWell(
               onTap: () {
-                DatePicker.showDatePicker(context, minTime: DateTime.now(),
-                    onConfirm: (date) {
-                  model.deliveryDate = date;
-                  model.partnerController.add(model.partner);
+                dateDialog(context, DateTime.now(), model.deliveryDate).then((value) {
+                  if (value != null) {
+                    model.deliveryDate = value;
+                    model.partnerController.add(model.partner);
+                  }
                 });
               },
               child: Padding(
