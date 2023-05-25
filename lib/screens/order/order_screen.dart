@@ -268,7 +268,9 @@ class OrderScreen extends StatelessWidget {
                                 ],
                               ),
                             ],
-                          )))
+                          ))),
+            if (model.mark) 
+              Image.asset('assets/images/flag.png', width: 40, height: 40)
                 ])),
       if (model.editComment.text.isNotEmpty) ...[Text(model.editComment.text)]
     ];

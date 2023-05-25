@@ -186,6 +186,17 @@ extension popup on OrderScreen {
               }
             }, null);
           }),
+      //mark
+      const SizedBox(height: 40),
+      ListTile(
+          dense: false,
+          title: Text(tr('Mark')),
+          leading: Image.asset('assets/images/flag.png'),
+          onTap: () async {
+            Navigator.pop(context);
+            model.mark = !model.mark;
+            model.partnerController.add(model.partner);
+          }),
       //Exit
       const SizedBox(height: 40),
       ListTile(

@@ -28,6 +28,7 @@ class OrderModel {
   double totalSaleQty = 0.0;
   double totalBackQty = 0.0;
   double totalAmount = 0.0;
+  bool mark = false;
 
   OrderModel() {
     storage = Lists.config.storage;
@@ -100,6 +101,7 @@ class OrderModel {
     order['paymenttype'] = paymentType;
     order['comment'] = editComment.text;
     order['deliverydate'] = DateFormat('dd/MM/yyyy').format(deliveryDate);
+    order['mark'] = mark ? 1 : 0;
     return order;
   }
 
