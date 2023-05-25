@@ -34,7 +34,7 @@ class PreordersScreen extends StatelessWidget {
           ..add(model.query(prefs.getInt(pkSaleDriver) ?? 0)),
         child: AppScaffold(
       key: _scaffoldKey,
-        title: 'Preorders',
+        title: model.state==1 ? 'Pending preorders' : 'Preorders',
         headerWidgets: _headerWidget(context),
         child:  BlocListener<ScreenBloc, ScreenState>(listener:
                 (context, state) {

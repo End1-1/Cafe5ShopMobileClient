@@ -209,7 +209,7 @@ class _GoodsRow extends StatelessWidget {
                 ),
                 width: MediaQuery.of(context).size.width * 0.7,
                 child: Text(goods.goodsname,
-                    style: const TextStyle(fontSize: 18))),
+                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold))),
             //Quantity sale
             Container(
                 height: 55,
