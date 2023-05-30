@@ -112,7 +112,7 @@ class PaymentTypes {
       case 1:
         return tr('Cash');
       case 2:
-        return tr('Cash');
+        return tr('Card');
       case 3:
         return tr('Bank transfer');
     }

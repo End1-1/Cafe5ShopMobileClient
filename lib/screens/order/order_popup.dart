@@ -52,7 +52,7 @@ extension popup on OrderScreen {
                             margin: const EdgeInsets.fromLTRB(30, 30, 30, 0),
                             height: 60,
                             width: 200,
-                            child: Text(tr('Cart'),
+                            child: Text(tr('Card'),
                                 style: const TextStyle(fontSize: 18)))),
                     InkWell(
                         onTap: () {

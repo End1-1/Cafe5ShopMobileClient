@@ -81,6 +81,7 @@ const Map<String, String> vals = {
   'visit, closed': 'Խանութը փակ է',
   'close':'Փակել',
   'executor':'Կատարող',
+  'card':'Բանկի քարտ',
 };
 
 String tr(String s) {
