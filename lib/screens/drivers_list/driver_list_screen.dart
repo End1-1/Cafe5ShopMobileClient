@@ -25,6 +25,13 @@ class DriverListScreen extends StatelessWidget {
                   child: Wrap(
                 direction: Axis.vertical,
                 children: [
+                      InkWell(onTap: (){
+              Navigator.pop(context, 0);
+              }, child: Container(padding: const EdgeInsets.fromLTRB(0, 10, 0, 10), child:
+              Text(
+                tr('All'),
+                style: ts,
+              ))),
                   for (var d in snapshot.data!) ...[
                     InkWell(onTap: (){
                       Navigator.pop(context, d.id);

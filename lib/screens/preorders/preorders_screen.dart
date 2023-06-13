@@ -1,10 +1,6 @@
-import 'dart:io';
-
-import 'package:cafe5_shop_mobile_client/models/http_query/http_preorders.dart';
 import 'package:cafe5_shop_mobile_client/models/http_query/http_query.dart';
 import 'package:cafe5_shop_mobile_client/models/model.dart';
 import 'package:cafe5_shop_mobile_client/screens/bloc/screen_bloc.dart';
-import 'package:cafe5_shop_mobile_client/screens/bloc/screen_event.dart';
 import 'package:cafe5_shop_mobile_client/screens/bloc/screen_state.dart';
 import 'package:cafe5_shop_mobile_client/screens/drivers_list/driver_list_screen.dart';
 import 'package:cafe5_shop_mobile_client/screens/preorder_detail/preorder_details_screen.dart';
@@ -33,10 +29,10 @@ class PreordersScreen extends StatelessWidget {
         create: (_) => ScreenBloc(SSInProgress())
           ..add(model.query(prefs.getInt(pkSaleDriver) ?? 0)),
         child: AppScaffold(
-      key: _scaffoldKey,
-        title: model.state==1 ? 'Pending preorders' : 'Preorders',
-        headerWidgets: _headerWidget(context),
-        child:  BlocListener<ScreenBloc, ScreenState>(listener:
+            key: _scaffoldKey,
+            title: model.state == 1 ? 'Pending preorders' : 'Preorders',
+            headerWidgets: _headerWidget(context),
+            child: BlocListener<ScreenBloc, ScreenState>(listener:
                 (context, state) {
               if (state is SSError) {
                 appDialog(context, state.error).then((value) {
@@ -75,11 +71,21 @@ class PreordersScreen extends StatelessWidget {
                                                     preorder: e)));
                                   },
                                   onLongPress: () {
-                                    appDialogQuestion(context, tr('Is delivery complete?'), (){
-                                      Map<String, dynamic> response = {'id': e.id};
-                                      HttpQuery(hqCompleteDelivery).request(response).then((value) {
+                                    appDialogQuestion(
+                                        context, tr('Is delivery complete?'),
+                                        () {
+                                      Map<String, dynamic> response = {
+                                        'id': e.id
+                                      };
+                                      HttpQuery(hqCompleteDelivery)
+                                          .request(response)
+                                          .then((value) {
                                         if (value == hrOk) {
-                                          BlocProvider.of<ScreenBloc>(_scaffoldKey.currentContext!).add(model.query(prefs.getInt(pkSaleDriver) ?? 0));
+                                          BlocProvider.of<ScreenBloc>(
+                                                  _scaffoldKey.currentContext!)
+                                              .add(model.query(
+                                                  prefs.getInt(pkSaleDriver) ??
+                                                      0));
                                         } else {
                                           appDialog(context, response[pkData]);
                                         }
@@ -120,25 +126,30 @@ class PreordersScreen extends StatelessWidget {
     return [
       squareImageButton(() {
         model.previousDate();
-        BlocProvider.of<ScreenBloc>(_scaffoldKey.currentContext!).add(model.query(prefs.getInt(pkSaleDriver) ?? 0));
+        BlocProvider.of<ScreenBloc>(_scaffoldKey.currentContext!)
+            .add(model.query(prefs.getInt(pkSaleDriver) ?? 0));
       }, 'assets/images/left.png'),
       StreamBuilder<String>(
           stream: model.dateStream.stream,
           builder: (context, snapshot) {
-            return Text(snapshot.data ??
-                DateFormat('dd/MM/yyyy').format(model.date));
+            return Text(
+                snapshot.data ?? DateFormat('dd/MM/yyyy').format(model.date));
           }),
       squareImageButton(() {
         model.nextDate();
-        BlocProvider.of<ScreenBloc>(_scaffoldKey.currentContext!).add(model.query(prefs.getInt(pkSaleDriver) ?? 0));
+        BlocProvider.of<ScreenBloc>(_scaffoldKey.currentContext!)
+            .add(model.query(prefs.getInt(pkSaleDriver) ?? 0));
       }, 'assets/images/right.png'),
       squareImageButton(() {
-        showDialog(context: _scaffoldKey.currentContext!, builder: (context) {
-          return const SimpleDialog(children: [DriverListScreen()]);
-        }).then((value) {
+        showDialog(
+            context: _scaffoldKey.currentContext!,
+            builder: (context) {
+              return const SimpleDialog(children: [DriverListScreen()]);
+            }).then((value) {
           if (value != null) {
             prefs.setInt(pkSaleDriver, value);
-            BlocProvider.of<ScreenBloc>(_scaffoldKey.currentContext!).add(model.query(prefs.getInt(pkSaleDriver) ?? 0));
+            BlocProvider.of<ScreenBloc>(_scaffoldKey.currentContext!)
+                .add(model.query(prefs.getInt(pkSaleDriver) ?? 0));
           }
         });
       }, 'assets/images/filter.png')
