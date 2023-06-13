@@ -85,6 +85,6 @@ class _SplashScreen extends State<SplashScreen> {
             child: SizedBox(
                 height: 200,
                 width: 200,
-                child: Image.asset('assets/images/magnet.png'))));
+                child: Image.asset('assets/logo.png'))));
   }
 }
