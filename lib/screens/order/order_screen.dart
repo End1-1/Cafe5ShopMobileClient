@@ -55,7 +55,8 @@ class OrderScreen extends StatelessWidget {
             });
           }
         }, child:
-                BlocBuilder<ScreenBloc, ScreenState>(builder: (context, state) {
+                BlocBuilder<ScreenBloc, ScreenState>
+                  (builder: (context, state) {
           if (state is SSData) {
             Map<String, dynamic> data = state.data;
             model.partner = Partner.fromJson(data['partner']);
@@ -72,6 +73,7 @@ class OrderScreen extends StatelessWidget {
             model.goodsController.add(model.goods);
             model.inputDataChanged(null, -1);
           }
+          _checkDelivery();
           return WillPopScope(
               onWillPop: () async => false,
               child: AppScaffold(
@@ -92,6 +94,12 @@ class OrderScreen extends StatelessWidget {
                           }),
                       const SizedBox(height: 20),
                       _rowGoodsList(context),
+                      StreamBuilder<int?>(
+                        stream: model.completeDeliveryScreen.stream,
+                        builder: (context, snapshot) {
+                          return _rowCompleteDelivery(context, snapshot.data);
+                        }
+                      ),
                       StreamBuilder(
                           stream: model.totalController.stream,
                           builder: (context, snapshot) {
@@ -130,6 +138,19 @@ class OrderScreen extends StatelessWidget {
     );
   }
 
+  Future<void> _checkDelivery() async {
+    Map<String, dynamic> mp = {};
+      HttpQuery(hqRoute, initData: {
+      pkDate: DateFormat('dd/MM/yyyy').format(DateTime.now()),
+      pkDriver: prefs.getInt(pkDriver),
+        pkPartner: model.partner.id,
+      }).request(mp).then((value) {
+        if (value == hrOk) {
+          model.completeDeliveryScreen.add(mp[pkData][0]["action"]);
+        }
+      });
+  }
+
   Widget _rowDeliveryDate(BuildContext context) {
     return Column(children: [
       Row(
@@ -163,7 +184,6 @@ class OrderScreen extends StatelessWidget {
                   model.partnerController.add(model.partner);
                 }
               });
-            },
             child: Padding(
                 padding: const EdgeInsets.fromLTRB(0, 5, 0, 10),
                 child: Text(
@@ -475,6 +495,21 @@ class OrderScreen extends StatelessWidget {
             ],
           );
         });
+  }
+
+  Widget _rowCompleteDelivery(BuildContext context, int? state) {
+    if (state == null) {
+      return const Center(child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator()));
+    }
+    if (state != 2) {
+      return Container();
+    }
+    return Row(
+      children: [
+        InkWell(onTap:(){
+
+    }, child: Container(alignment: Alignment.center, child: Text(tr('Delivery'), style: const TextStyle(fontSize: 18))))]
+    );
   }
 }
 

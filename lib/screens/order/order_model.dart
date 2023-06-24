@@ -12,6 +12,7 @@ class OrderModel {
   final StreamController<Partner> partnerController = StreamController();
   final StreamController<List<Goods>> goodsController = StreamController();
   final StreamController totalController = StreamController();
+  final completeDeliveryScreen = StreamController<int?>();
   final StreamController<double> debtController = StreamController();
   final editComment = TextEditingController();
 
