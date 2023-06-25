@@ -13,6 +13,7 @@ class Lists {
   static Map<int, Map<int, double>> specialPrices = {};
   static Map<int, Storage> storages = {};
   static Map<int, Driver> drivers = {};
+  static Map<int, List<int>> partnersGoods = {};
   static late Config config;
 
   static Future<void> load() async {
@@ -46,6 +47,12 @@ class Lists {
         drivers[e['id']] = Driver.fromJson(e);
       }
       config = Config.fromJson(data['config']);
+      for (final e in data['partnersgoods']) {
+        if (!partnersGoods.containsKey(e['partner'])) {
+          partnersGoods[e['partner']] = [];
+        }
+        partnersGoods[e['partner']]!.add(e['goods']);
+      }
     } catch (e) {
       if (!e.toString().contains('Cannot open file')) {
         file.delete();

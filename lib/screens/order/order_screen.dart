@@ -17,7 +17,7 @@ import 'package:cafe5_shop_mobile_client/utils/translator.dart';
 import 'package:cafe5_shop_mobile_client/widgets/dialogs.dart';
 import 'package:cafe5_shop_mobile_client/widgets/scrolls.dart';
 import 'package:cafe5_shop_mobile_client/widgets/square_button.dart';
-import 'package:flutter/material.dart' ;
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
@@ -55,8 +55,7 @@ class OrderScreen extends StatelessWidget {
             });
           }
         }, child:
-                BlocBuilder<ScreenBloc, ScreenState>
-                  (builder: (context, state) {
+                BlocBuilder<ScreenBloc, ScreenState>(builder: (context, state) {
           if (state is SSData) {
             Map<String, dynamic> data = state.data;
             model.partner = Partner.fromJson(data['partner']);
@@ -94,12 +93,11 @@ class OrderScreen extends StatelessWidget {
                           }),
                       const SizedBox(height: 20),
                       _rowGoodsList(context),
-                      StreamBuilder<int?>(
-                        stream: model.completeDeliveryScreen.stream,
-                        builder: (context, snapshot) {
-                          return _rowCompleteDelivery(context, snapshot.data);
-                        }
-                      ),
+                      StreamBuilder<List<dynamic>?>(
+                          stream: model.completeDeliveryScreen.stream,
+                          builder: (context, snapshot) {
+                            return _rowCompleteDelivery(context, snapshot.data);
+                          }),
                       StreamBuilder(
                           stream: model.totalController.stream,
                           builder: (context, snapshot) {
@@ -140,15 +138,15 @@ class OrderScreen extends StatelessWidget {
 
   Future<void> _checkDelivery() async {
     Map<String, dynamic> mp = {};
-      HttpQuery(hqRoute, initData: {
+    HttpQuery(hqRoute, initData: {
       pkDate: DateFormat('dd/MM/yyyy').format(DateTime.now()),
       pkDriver: prefs.getInt(pkDriver),
-        pkPartner: model.partner.id,
-      }).request(mp).then((value) {
-        if (value == hrOk) {
-          model.completeDeliveryScreen.add(mp[pkData][0]["action"]);
-        }
-      });
+      pkPartner: model.partner.id,
+    }).request(mp).then((value) {
+      if (value == hrOk) {
+        model.completeDeliveryScreen.add(mp[pkData]);
+      }
+    });
   }
 
   Widget _rowDeliveryDate(BuildContext context) {
@@ -157,7 +155,8 @@ class OrderScreen extends StatelessWidget {
         children: [
           InkWell(
               onTap: () {
-                dateDialog(context, DateTime.now(), model.deliveryDate).then((value) {
+                dateDialog(context, DateTime.now(), model.deliveryDate)
+                    .then((value) {
                   if (value != null) {
                     model.deliveryDate = value;
                     model.partnerController.add(model.partner);
@@ -184,6 +183,7 @@ class OrderScreen extends StatelessWidget {
                   model.partnerController.add(model.partner);
                 }
               });
+            },
             child: Padding(
                 padding: const EdgeInsets.fromLTRB(0, 5, 0, 10),
                 child: Text(
@@ -289,8 +289,8 @@ class OrderScreen extends StatelessWidget {
                               ),
                             ],
                           ))),
-            if (model.mark) 
-              Image.asset('assets/images/flag.png', width: 40, height: 40)
+                  if (model.mark)
+                    Image.asset('assets/images/flag.png', width: 40, height: 40)
                 ])),
       if (model.editComment.text.isNotEmpty) ...[Text(model.editComment.text)]
     ];
@@ -396,7 +396,9 @@ class OrderScreen extends StatelessWidget {
             }
           }
           model.goods[i] = model.goods[i].copyWith(
-              price: price, discount: special ? 0 : model.partner.discount, specialflag: special ? 1 : 0);
+              price: price,
+              discount: special ? 0 : model.partner.discount,
+              specialflag: special ? 1 : 0);
         }
         model.goodsController.add(model.goods);
         model.inputDataChanged(null, -1);
@@ -497,19 +499,50 @@ class OrderScreen extends StatelessWidget {
         });
   }
 
-  Widget _rowCompleteDelivery(BuildContext context, int? state) {
-    if (state == null) {
-      return const Center(child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator()));
+  Widget _rowCompleteDelivery(BuildContext context, List<dynamic>? data) {
+    if (data == null) {
+      return const Center(
+          child: SizedBox(
+              width: 20, height: 20, child: CircularProgressIndicator()));
     }
-    if (state != 2) {
+    Map<String, dynamic>? d;
+    for (final e in data) {
+      if (e["action"].contains('2') && !e["action"].contains('4')) {
+        d = e;
+        break;
+      }
+    }
+    if (d == null) {
       return Container();
     }
-    return Row(
-      children: [
-        InkWell(onTap:(){
-
-    }, child: Container(alignment: Alignment.center, child: Text(tr('Delivery'), style: const TextStyle(fontSize: 18))))]
-    );
+    return Row(children: [
+      Expanded(
+          child: InkWell(
+              onTap: () {
+                appDialogQuestion(
+                    context, tr('Is delivery complete?'),
+                        () {
+                      Map<String, dynamic> response = {
+                        'id': d!["deliveryid"]!
+                      };
+                      model.completeDeliveryScreen.add(null);
+                      HttpQuery(hqCompleteDelivery)
+                          .request(response)
+                          .then((value) {
+                        if (value == hrOk) {
+                      _checkDelivery();
+                        } else {
+                          appDialog(context, response[pkData]);
+                        }
+                      });
+                    }, null);
+              },
+              child: Container(
+                  padding: const EdgeInsets.all(5),
+                  alignment: Alignment.center,
+                  child: Text(tr('Delivery'),
+                      style: const TextStyle(fontSize: 18)))))
+    ]);
   }
 }
 

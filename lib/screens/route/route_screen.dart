@@ -122,24 +122,21 @@ class RouteScreen extends StatelessWidget {
                                                   height: 20,
                                                   width: 20)
                                             ],
-                                            if (e.action == 2) ...[
+                                            if (e.action.contains('2'))
                                               Image.asset(
                                                   'assets/images/order.png',
                                                   height: 20,
-                                                  width: 20)
-                                            ],
-                                            if (e.action == 3) ...[
+                                                  width: 20),
+                                            if (e.action.contains('3'))
                                               Image.asset(
                                                   'assets/images/visitclosed.png',
                                                   height: 20,
-                                                  width: 20)
-                                            ],
-                                            if (e.action == 4) ...[
+                                                  width: 20),
+                                            if (e.action.contains('4'))
                                               Image.asset(
                                                   'assets/images/completedelivery.png',
                                                   height: 20,
-                                                  width: 20)
-                                            ],
+                                                  width: 20),
                                             if (e.orders > 0) ...[
                                               Image.asset(
                                                   'assets/images/delivery.png',

@@ -82,7 +82,8 @@ const Map<String, String> vals = {
   'close':'Փակել',
   'executor':'Կատարող',
   'card':'Բանկի քարտ',
-  'all':'Բոլորը'
+  'all':'Բոլորը',
+  'delivery': 'Առաքում'
 };
 
 String tr(String s) {

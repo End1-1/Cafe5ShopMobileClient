@@ -17,7 +17,7 @@ class RouteItem with _$RouteItem {
       required String partnername,
       required String address,
       required int orders,
-      required int action}) = _RouteItem;
+      required String action}) = _RouteItem;
 
   factory RouteItem.fromJson(Map<String, Object?> json) =>
       _$RouteItemFromJson(json);

@@ -113,6 +113,7 @@ class GoodsListScreen extends StatelessWidget {
                                           _GoodsRow(
                                               goods: e,
                                               model: model,
+                                              partnerid: partnerId,
                                               inputDataChanged: inputDataChanged)
                                         ]
                                       ],
@@ -178,6 +179,7 @@ class GoodsListScreen extends StatelessWidget {
 class _GoodsRow extends StatelessWidget {
   final GoodsListModel model;
   late Goods goods;
+  final int partnerid;
   final TextEditingController editSale = TextEditingController();
   final TextEditingController editBack = TextEditingController();
   final TextEditingController editPrice = TextEditingController();
@@ -187,6 +189,7 @@ class _GoodsRow extends StatelessWidget {
   _GoodsRow(
       {required this.goods,
       required this.model,
+        required this.partnerid,
       required this.inputDataChanged});
 
   @override
@@ -195,19 +198,31 @@ class _GoodsRow extends StatelessWidget {
     editBack.text = mdFormatDouble(goods.qtyback);
     editStock.text = mdFormatDouble(model.stockQty(goods.id));
     editPrice.text = mdFormatDouble(goods.price);
+    bool ws = false;
+    if (Lists.partnersGoods.containsKey(partnerid))
+      if (Lists.partnersGoods[partnerid]!.contains(goods.id))
+        ws = true;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            if (ws)
+                Container(
+                  height: 10,
+                  width: 10,
+                  decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(30)),
+                  color: Colors.indigo
+                ),),
             Container(
                 padding: const EdgeInsets.fromLTRB(5, 2, 5, 2),
                 height: 55,
                 decoration: const BoxDecoration(
                   color: Color(0xffbcbcec),
                 ),
-                width: MediaQuery.of(context).size.width * 0.7,
+                width: MediaQuery.of(context).size.width * 0.7 - (ws ? 10 : 0),
                 child: Text(goods.goodsname,
                     style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold))),
             //Quantity sale
