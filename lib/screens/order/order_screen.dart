@@ -181,6 +181,7 @@ class OrderScreen extends StatelessWidget {
                 if (value != null) {
                   model.executor = value;
                   model.partnerController.add(model.partner);
+                  prefs.setInt(pkExecutor, value);
                 }
               });
             },

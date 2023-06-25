@@ -20,7 +20,7 @@ class OrderModel {
   bool editable = true;
   DateTime deliveryDate =
       DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
-  int executor = prefs.getInt(pkDriver) ?? 0;
+  int executor = prefs.getInt(pkExecutor) ?? 0;
   Partner partner = Partner.empty();
   late int pricePolitic;
   int storage = Lists.config.storage;

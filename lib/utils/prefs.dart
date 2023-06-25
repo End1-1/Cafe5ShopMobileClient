@@ -16,6 +16,7 @@ const pkStock = 'pkStock';
 const pkGroup = 'pkGroup';
 const pkAppVersion = 'pkAppVersion';
 const pkDriver = "pkDriver";
+const pkExecutor = "pkExecutor";
 const pkDate = "pkDate";
 const pkRouteDriver = "pkRouteDriver";
 const pkSaleDriver = "pkSaleDriver";
