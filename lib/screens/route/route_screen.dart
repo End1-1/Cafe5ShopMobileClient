@@ -74,6 +74,7 @@ class RouteScreen extends StatelessWidget {
                   model.route.add(RouteItem.fromJson(e));
                 }
               }
+              int row = 1;
               return SingleChildScrollView(
                   child: Column(
                 children: [
@@ -108,7 +109,7 @@ class RouteScreen extends StatelessWidget {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(e.partnername,
+                                      Text('${row++}. ${e.partnername}',
                                           style: const TextStyle(
                                               fontWeight: FontWeight.bold,
                                               color: Colors.indigo)),
@@ -116,7 +117,7 @@ class RouteScreen extends StatelessWidget {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            if (e.action == 1) ...[
+                                            if (e.action.contains('1')) ...[
                                               Image.asset(
                                                   'assets/images/goodsnotneeded.png',
                                                   height: 20,
