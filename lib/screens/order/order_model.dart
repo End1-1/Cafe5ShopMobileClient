@@ -46,7 +46,9 @@ class OrderModel {
       totalSaleQty += e.qtysale ?? 0;
       totalBackQty += e.qtyback ?? 0;
       double totalPrice = e.qtysale! * e.price!;
-      totalPrice -= totalPrice * (e.discount! / 100);
+      if (e.nospecialprice == 0) {
+        totalPrice -= totalPrice * (e.discount! / 100);
+      }
       totalAmount += totalPrice;
     }
     totalController.add(null);

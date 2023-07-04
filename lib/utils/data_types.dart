@@ -27,6 +27,7 @@ class Goods with _$Goods {
         required double price2,
         required double? discount,
         required int specialflag,
+        required int nospecialprice,
         required double? qtystop,
         required double? qtysale,
         required double? qtyback}) = _Goods;

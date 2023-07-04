@@ -388,18 +388,20 @@ class OrderScreen extends StatelessWidget {
               ? model.goods[i].price1
               : model.goods[i].price2;
           var special = false;
-          if (Lists.specialPrices.containsKey(model.partner.id)) {
-            if (Lists.specialPrices[model.partner.id]!
-                .containsKey(model.goods[i].id)) {
-              price =
-                  Lists.specialPrices[model.partner.id]![model.goods[i].id]!;
-              special = true;
+          if (model.goods[i].nospecialprice == 0) {
+            if (Lists.specialPrices.containsKey(model.partner.id)) {
+              if (Lists.specialPrices[model.partner.id]!
+                  .containsKey(model.goods[i].id)) {
+                price =
+                    Lists.specialPrices[model.partner.id]![model.goods[i].id]!;
+                special = true;
+              }
             }
           }
           model.goods[i] = model.goods[i].copyWith(
               price: price,
-              discount: special ? 0 : model.partner.discount,
-              specialflag: special ? 1 : 0);
+              discount: (special || (model.goods[i].nospecialprice == 0)) ? 0 : model.partner.discount,
+              specialflag: special ? (model.goods[i].nospecialprice == 0 ? 1 : 0) : 0);
         }
         model.goodsController.add(model.goods);
         model.inputDataChanged(null, -1);
