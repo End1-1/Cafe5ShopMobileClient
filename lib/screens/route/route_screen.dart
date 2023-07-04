@@ -117,12 +117,11 @@ class RouteScreen extends StatelessWidget {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            if (e.action.contains('1')) ...[
+                                            if (e.action.contains('1'))
                                               Image.asset(
                                                   'assets/images/goodsnotneeded.png',
                                                   height: 20,
-                                                  width: 20)
-                                            ],
+                                                  width: 20),
                                             if (e.action.contains('2'))
                                               Image.asset(
                                                   'assets/images/order.png',
@@ -133,17 +132,16 @@ class RouteScreen extends StatelessWidget {
                                                   'assets/images/visitclosed.png',
                                                   height: 20,
                                                   width: 20),
+                                            if (e.orders > 0)
+                                              Image.asset(
+                                                  'assets/images/delivery.png',
+                                                  height: 20,
+                                                  width: 20),
                                             if (e.action.contains('4'))
                                               Image.asset(
                                                   'assets/images/completedelivery.png',
                                                   height: 20,
                                                   width: 20),
-                                            if (e.orders > 0) ...[
-                                              Image.asset(
-                                                  'assets/images/delivery.png',
-                                                  height: 20,
-                                                  width: 20)
-                                            ],
                                             //Expanded(child: Container())
                                           ])
                                     ]),
