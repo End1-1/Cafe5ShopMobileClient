@@ -1,4 +1,5 @@
 import 'package:cafe5_shop_mobile_client/models/model.dart';
+import 'package:cafe5_shop_mobile_client/sales_history/screen.dart';
 import 'package:cafe5_shop_mobile_client/screens/data_download/data_download_screen.dart';
 import 'package:cafe5_shop_mobile_client/screens/login/login_screen.dart';
 import 'package:cafe5_shop_mobile_client/screens/order/order_screen.dart';
@@ -29,6 +30,16 @@ class HomeScreen extends StatelessWidget {
               spacing: 10,
               runSpacing: 10,
               children: [
+                RectButton(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  SalesHistoryScreen()));
+                    },
+                    title: tr('Sales history'),
+                    assetPath: 'assets/images/order.png'),
                 RectButton(
                     onTap: () {
                       Navigator.push(

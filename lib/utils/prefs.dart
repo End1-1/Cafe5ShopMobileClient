@@ -21,6 +21,8 @@ const pkDate = "pkDate";
 const pkRouteDriver = "pkRouteDriver";
 const pkSaleDriver = "pkSaleDriver";
 const pkPartner = "pkPartner";
+const pkDate1 = "date1";
+const pkDate2 = "date2";
 
 const rcServerList = 'serverList';
 
@@ -45,5 +47,6 @@ const hqDriverList = 15;
 const hqVisit = 16;
 const hqCompleteDelivery = 17;
 const hqGoodsPartners = 18;
+const hqSales = 19;
 
 const prStorage = 14;
