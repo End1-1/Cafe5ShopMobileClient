@@ -27,6 +27,7 @@ class SalesHistoryModel {
     return HttpQuery(hqSales, initData: {
       pkDate1: DateFormat("dd/MM/yyyy").format(date1),
       pkDate2 : DateFormat("dd/MM/yyyy").format(date1),
+      pkReportType: viewType,
     });
   }
 }

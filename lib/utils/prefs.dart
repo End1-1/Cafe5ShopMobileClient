@@ -21,8 +21,9 @@ const pkDate = "pkDate";
 const pkRouteDriver = "pkRouteDriver";
 const pkSaleDriver = "pkSaleDriver";
 const pkPartner = "pkPartner";
-const pkDate1 = "date1";
-const pkDate2 = "date2";
+const pkDate1 = "pkDate1";
+const pkDate2 = "pkDate2";
+const pkReportType = "pkReportType";
 
 const rcServerList = 'serverList';
 

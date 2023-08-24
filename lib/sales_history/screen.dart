@@ -43,11 +43,13 @@ class SalesHistoryScreen extends StatelessWidget {
                   BlocBuilder<ScreenBloc, ScreenState>(
                       builder: (context, state) {
                     if (state is SSInProgress) {
-                      return Expanded(child: Loading(tr('Load stock')));
+                      return Expanded(child: Loading(tr('Load report')));
                     }
                     return const Expanded(
                         child:
-                            SingleChildScrollView(child: Column(children: [])));
+                            SingleChildScrollView(child: Column(children: [
+
+                            ])));
                   })
                 ]))));
   }
