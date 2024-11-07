@@ -25,7 +25,8 @@ class HttpState extends Equatable {
 
 class HttpEvent extends Equatable {
   final String route;
-  HttpEvent(this.route);
+  final Map<String, String> data;
+  const HttpEvent(this.route, this.data);
   @override
   List<Object?> get props => [];
 }
@@ -37,7 +38,7 @@ class HttpBloc extends Bloc<HttpEvent, HttpState> {
 
   void _httpQuery(HttpEvent e) async {
     emit (HttpState(true, ''));
-    HttpQuery
+    HttpQuery(e.route, e.data).request();
   }
 }
 

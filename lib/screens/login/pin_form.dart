@@ -1,6 +1,5 @@
-import 'package:cafe5_shop_mobile_client/models/http_query/http_login.dart';
-import 'package:cafe5_shop_mobile_client/screens/bloc/screen_bloc.dart';
-import 'package:cafe5_shop_mobile_client/screens/bloc/screen_event.dart';
+import 'package:cafe5_shop_mobile_client/models/http_query/http_query.dart';
+import 'package:cafe5_shop_mobile_client/screens/base/screen.dart';
 import 'package:cafe5_shop_mobile_client/utils/prefs.dart';
 import 'package:cafe5_shop_mobile_client/widgets/square_button.dart';
 import 'package:flutter/material.dart';
@@ -8,11 +7,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../utils/translator.dart';
 
-class PinForm extends StatelessWidget {
+class PinForm extends MiuraApp {
   static final TextEditingController _pinController = TextEditingController();
 
+  const PinForm({super.key});
+
   @override
-  Widget build(BuildContext context) {
+  Widget body(BuildContext context) {
     return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -95,10 +96,8 @@ class PinForm extends StatelessWidget {
                               //     MaterialPageRoute(
                               //         builder: (context) => RegisterDeviceScreen()));
                             }
-                            BlocProvider.of<ScreenBloc>(context).add(
-                                SEHttpQuery(
-                                    query:
-                                        HttpLogin(pin: _pinController.text)));
+                            BlocProvider.of<HttpBloc>(context).add(
+                                HttpEvent('miura/login.php', {'pin': _pinController.text}));
                           }, 'assets/images/user.png', height: 72),
                           squareButton(() {
                             _pinController.text += '0';
