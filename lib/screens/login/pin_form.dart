@@ -1,7 +1,6 @@
 import 'package:cafe5_shop_mobile_client/models/http_query/http_login.dart';
 import 'package:cafe5_shop_mobile_client/screens/bloc/screen_bloc.dart';
 import 'package:cafe5_shop_mobile_client/screens/bloc/screen_event.dart';
-import 'package:cafe5_shop_mobile_client/screens/register_device/register_device_screen.dart';
 import 'package:cafe5_shop_mobile_client/utils/prefs.dart';
 import 'package:cafe5_shop_mobile_client/widgets/square_button.dart';
 import 'package:flutter/material.dart';
@@ -91,10 +90,10 @@ class PinForm extends StatelessWidget {
                         children: [
                           squareImageButton(() {
                             if (_pinController.text == '1981') {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => RegisterDeviceScreen()));
+                              // Navigator.push(
+                              //     context,
+                              //     MaterialPageRoute(
+                              //         builder: (context) => RegisterDeviceScreen()));
                             }
                             BlocProvider.of<ScreenBloc>(context).add(
                                 SEHttpQuery(
@@ -111,17 +110,7 @@ class PinForm extends StatelessWidget {
                       ))
                 ],
               )),
-          //Expanded(child: Container()),
-          Align(
-              alignment: Alignment.topCenter,
-              child: InkWell(
-                  onLongPress: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => RegisterDeviceScreen()));
-                  },
-                  child: Text(prefs.getString(pkServerName)!)))
+
         ]);
   }
 }

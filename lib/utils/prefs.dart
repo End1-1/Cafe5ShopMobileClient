@@ -1,9 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-const pkServerName = 'pkServerName';
+
 const pkServerAddress = 'pkServerAddress';
-const pkServerPort = 'pkServerPort';
-const pkServerAPIKey = 'pkServerAPIKey';
 const pkFcmToken = 'pkFcmToken';
 const pkPassHash = 'pkPassHash';
 const pkFirstName = 'pkFirstName';
@@ -27,7 +26,6 @@ const pkReportType = "pkReportType";
 
 const rcServerList = 'serverList';
 
-final List<Map<String, String>> servers = [];
 late final SharedPreferences prefs;
 
 const hqRegisterDevice = 1;
@@ -51,3 +49,14 @@ const hqGoodsPartners = 18;
 const hqSales = 19;
 
 const prStorage = 14;
+
+extension Prefs on SharedPreferences {
+  static final navigatorKey = GlobalKey<NavigatorState>();
+  String string(String key) {
+    return getString(key) ?? '';
+  }
+
+  BuildContext context() {
+    return navigatorKey.currentContext!;
+  }
+}

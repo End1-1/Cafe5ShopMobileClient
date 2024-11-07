@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:cafe5_shop_mobile_client/utils/prefs.dart';
 
@@ -7,16 +9,47 @@ const hrFail = 0;
 const hrOk = 1;
 const hrNetworkError = 2;
 
+class HttpState extends Equatable {
+  static int _counter = 0;
+  late final int version;
+  final bool loading;
+  final int errorCode;
+  final String errorMessage;
+  final dynamic data;
+  HttpState(this.loading, this.data, {this.errorCode = 200, this.errorMessage = ''}) {
+    version = ++_counter;
+  }
+  @override
+  List<Object?> get props => [];
+}
+
+class HttpEvent extends Equatable {
+  final String route;
+  HttpEvent(this.route);
+  @override
+  List<Object?> get props => [];
+}
+
+class HttpBloc extends Bloc<HttpEvent, HttpState> {
+  HttpBloc(super.initialState) {
+    on<HttpEvent>((event, emit) => _httpQuery(event));
+  }
+
+  void _httpQuery(HttpEvent e) async {
+    emit (HttpState(true, ''));
+    HttpQuery
+  }
+}
+
 class HttpQuery {
+  final String route;
   Map<String, dynamic> data = {};
 
-  HttpQuery(int action, {Map<String, dynamic> initData = const {}}) {
-    data[pkAction] = action;
+  HttpQuery({required this.route, Map<String, dynamic> initData = const {}}) {
     data.addAll(initData);
   }
 
   void makeJson(Map<String, Object?> other) {
-    data[pkServerAPIKey] = prefs.getString(pkServerAPIKey);
     data[pkFcmToken] = prefs.getString(pkFcmToken);
     data[pkPassHash] = prefs.getString(pkPassHash);
     data.addAll(other);
@@ -35,8 +68,7 @@ class HttpQuery {
     }
     try {
       var response = await http.post(
-          Uri.parse(
-              'https://${prefs.getString(pkServerAddress)}:${prefs.getString(pkServerPort)}/magnit'),
+          Uri.https(prefs.string(pkServerAddress), ),
           headers: {
             'Content-Type': 'application/json',
             'Content-Length': '${utf8.encode(strBody).length}'

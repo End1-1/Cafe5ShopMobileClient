@@ -1,4 +1,4 @@
-package com.example.cafe5_mobile_client;
+package com.am.miura;
 
 import io.flutter.embedding.android.FlutterActivity;
 

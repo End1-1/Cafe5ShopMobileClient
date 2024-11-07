@@ -14,7 +14,7 @@ import 'goods_list_model.dart';
 
 class GoodsListScreen extends StatelessWidget {
   final model = GoodsListModel();
-  final carouselController = CarouselController();
+  final carouselController = CarouselSliderController();
   final List<Goods> goods = [];
   final StreamController<String?> goodsGroupController = StreamController.broadcast();
   final StreamController<List<Goods>> goodsController = StreamController.broadcast();

@@ -48,7 +48,7 @@ class LocalNotificationService {
       scheduleTime,
       noticeDetail,
       uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
-      androidAllowWhileIdle: true,
+      androidScheduleMode: AndroidScheduleMode.alarmClock,
     );
   }
 }
